@@ -1,0 +1,310 @@
+The keyboard actions available are listed under these headings:
+
+Sources Menu
+	Select emails
+	Extract text
+Documents Menu
+Results Menu
+Buttons
+Popup menus
+Tab navigation
+	Administration
+	Club Codes
+	Club List
+	ECF Events
+	ECF Event Detail
+	Edit
+	Events
+	Event Summary
+	Exported Events
+	Feedback
+	Game Summary
+	Grading Codes
+	Grading List
+	Import Events
+	Master List
+	NewPlayers
+	Performances
+	Players
+	Player ECF Detail
+	Population
+	Predictions
+
+
+Sources Menu
+
+Select emails and extract text into documents.  Also quit program.
+
+
+Documents Menu
+
+Open and close documents.
+
+Validate documents and apply the results to a database if one is open.
+
+Documents can be edited to make corrections to all details: games, player names, and so forth.  The corrections are made to the database by re-applying the document to the database.
+
+The Edit section under Tab navigation lists the actions available.
+
+The Take On menu item handles results prepared by the prepare_ecf_format and prepare_league_format programs.  It is a specialized Open.
+
+
+Results Menu
+
+Open, create, and delete results databases.
+
+All actions on the tabs available under the results menu, everything except Edit, are related to recording decisions about who played a set of games and telling interested parties, such as the ECF, the results of these games.
+
+These actions are listed in the sections, except Edit, under Tab navigation.
+
+The Import Events action on the Administration tab processes files generated using the Export Events action on the Events tab.  It may ask that the identify program be used to resolve some player identities.
+
+
+Buttons
+
+The buttons just below the menu bar emulate a tabbed notebook (for example like the preference editor in most browsers).  (This user interface was built before Tk8.5 became available making tabbed notebook a standard feature.)
+
+The buttons at the bottom of a tab are the actions specific to the tab.  An action such as 'Close' appears on several tabs, but the thing being closed is different.
+
+
+Popup menus
+
+These appear by right-click when the pointer location makes a choice of actions relevant.
+
+On the tabs controlled by the Results menu highlighting a line yellow is a sign that a popup menu is available.
+
+On the tabs controlled by the Documents menu right-click scrolls one of the other panes in the tab to a relevant position if one can be determined.
+
+On the windows created by the Sources menu items right-click usually scrolls one of the other panes in the window to a relevant position if one can be determined, but may ask for confirmation of an action instead.
+
+
+Tab navigation
+
+Alt + a		Administration
+Alt + e		Events
+Alt + n		New players
+Alt + p		Players
+Alt + g		Grading Codes
+Alt + c		Club Codes
+Alt + v		ECF Events
+
+A number of tabs become available as subsidiaries of these tabs.
+
+The sections below assume that the appropriate tab is active.
+
+
+Administration:
+
+Alt + b		Close the database.
+Alt + i		Import events exported from a database managed by this program.
+
+Additionally on the Online Grading Database (OGD) version,
+Alt + w		Show contents of grading list file.
+Alt + l		Close list of zip file contents.
+Alt + o		Import grading codes from ECF Grading List.
+
+Additionally on the Grading (ecf) version,
+Alt + f		Apply ECF Results Feedback files to the database.
+Alt + h		Show contents of ECF club file.
+Alt + l		Close list of zip file contents.
+Alt + m		Apply ECF Master File reference data to the database.
+Alt + u		Apply ECF Master File updates to the database. Obsolete.
+Alt + w		Show contents of ECF master list file.
+
+
+Club Codes:
+('ecf' version only)
+
+F5		Select Player entry widget given focus.
+F6		Select Club Reference entry widget given focus.
+F7		Player list (top pane) given focus.
+F8		Club Reference list (bottom pane) given focus.
+Alt + f		Link selected player on Player list with selected club in Club Reference list.
+Alt + u		Edit ECF club detail of selected player on Player list.
+Alt + o		Link selected player on Player list to no club at all.
+
+
+Club List:
+('ecf' version only)
+
+Alt + c		Cancel the task at any time.
+Alt + i		Start the import of club names and codes in club list.
+
+
+ECF Events:
+('ecf' version only)
+
+Alt + b		Create ECF Results Submission file.
+Alt + u		Enter detail of ECF Results Submission file.
+
+
+ECF Event Detail:
+('ecf' version only, accessed from ECF Events by Alt + u)
+
+Alt + o		Refresh tab with data before any editing done.
+Alt + n		Return to ECF Events tab without saving changes.
+
+
+Edit:
+
+Alt + c		Close the document
+Alt + g		Generate a validation report of the document contents.
+Alt + o		Show, or hide, the original document without any editing.
+Alt + p		Save the validation report to a file.
+Alt + u		Update a results database with the game results.
+Alt + v		Save any edits made to the document.
+
+
+Events:
+
+Alt + l		Delete selected events from database.
+Alt + m		List games in selected events by player in separate windows.
+Alt + u		Create csv files of game counts per player and games in events.
+Alt + x		Export selected events for 'Administration | Import Events'.
+
+On the 'ecf' version only,
+Alt + f		Put event's players on Grading Codes and Club Codes tabs.
+Alt + j		Show names present in other editions of event.
+
+On the 'lite' and 'ogd' versions only,
+Alt + f		Calculate player performances for selected events.
+Alt + i		Calculate predicted performances for selected events.
+Alt + o		Calculate player populations for selected events.
+
+
+Event Summary:
+(accessed from Events by Alt + u)
+
+Alt + c		Cancel the task at any time.
+Alt + v		Save games and player counts to compressed csv files (gzip).
+
+
+Export Events:
+(accessed from Events by Alt + x)
+
+Alt + c		Cancel the task at any time.
+Alt + v		Export events for import to a database managed by this program.
+
+
+Feedback:
+('ecf' version only)
+
+Alt + c		Cancel the task at any time.
+Alt + a		Apply grading codes in feedback for new players to database.
+
+
+Game Summary:
+(accessed from Events by Alt + m)
+
+Alt + c		Cancel the task at any time.
+
+
+Grading Codes:
+(the 'ogd' version)
+
+F5		Select Player entry widget given focus.
+F6		Select Player Reference entry widget given focus.
+F7		Player list (top pane) given focus.
+F8		Player Reference list (bottom pane) given focus.
+Alt + i		Link selected player on Player list with selected player on Player Reference list.
+Alt + b		Break grading code link of selected player.
+
+
+Grading Codes:
+(the 'ecf' version)
+
+F5		Select New Player entry widget given focus.
+F6		Select Player Reference entry widget given focus.
+F7		New Player list (top pane) given focus.
+F8		Player Reference list (bottom pane) given focus.
+Alt + i		Link selected player on New Player list with selected player on Player Reference list.
+Alt + f		Remove selected player from New Player list.
+Alt + m		Edit ECF-style name of selected New Player.
+Alt + o		Edit grading code associated with selected New Player.
+Alt + l		Cancel edit of ECF-style name provided by ECF.
+
+
+Grading List:
+('ogd' version only)
+
+Alt + c		Cancel the task at any time.
+Alt + i		Start the import of the grading codes in grading list.
+
+
+Import Events:
+(accessed from Administration by Alt + i)
+
+Alt + c		Cancel the task at any time.
+Alt + e		Confirm that listed events should be imported.
+Alt + i		List the events contained in the selected import file.
+Alt + o		Check identification import against report on original import.
+Alt + v		Save the import report for use by the Identify program.
+
+
+Master List:
+('ecf' version only)
+
+Alt + c		Cancel the task at any time.
+Alt + i		Start the import of the grading codes in master list.
+
+
+New Players:
+
+F5		Select New Player entry widget given focus.
+F6		Select Player Reference entry widget given focus.
+F7		New Player list (top pane) given focus.
+F8		Player Reference list (bottom pane) given focus.
+Alt + m		Merge bookmarked new players and selected new player into selected reference player.
+Alt + j		Join bookmarked reference players into selected reference player.
+Alt + l		Display details of bookmarked and selected reference players.
+
+
+Performances:
+(accessed from Events by Alt + f)
+(the 'lite' and 'ogd' versions only)
+
+Alt + c		Cancel the task at any time.
+
+
+Players:
+
+F5		Select Player entry widget given focus.
+F6		Select Player Reference entry widget given focus.
+F7		Player list (top pane) given focus.
+F8		Player Reference list (bottom pane) given focus.
+Alt + l		Display details of bookmarked and selected players and reference players.
+Alt + i		Undo all merges and joins involving selected reference player.
+Alt + b		Undo merges and joins between bookmarked players and selected player on Players list and the selected player on the Player Reference list.
+
+
+Player ECF Detail:
+('ecf' version only)
+
+F6		Select Player entry widget given focus.
+F7		Player list (only one) given focus.
+Alt + k		Break club link of selected player.
+Alt + b		Break grading code link of selected player.
+Alt + f		Put player on Grading Codes for editing ECF-style name provided by ECF.
+
+
+Population:
+(accessed from Events by Alt + o)
+(the 'lite' and 'ogd' versions only)
+
+Alt + c		Cancel the task at any time.
+
+
+Predictions:
+(accessed from Events by Alt + c)
+(the 'lite' and 'ogd' versions only)
+
+Alt + c		Cancel the task at any time.
+
+
+Join Event New Players:
+(accessed from Events by Alt + j)
+('ecf' version only)
+
+Alt + j		Merge bookmarked players with those in other editions of event with same name.
+Alt + r		Display details of bookmarked and selected players and reference players.
+Alt + c		Return to Event tab at any time.

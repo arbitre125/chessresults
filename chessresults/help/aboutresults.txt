@@ -1,0 +1,20 @@
+ChessResults validates source documents containing results of chess games and updates a database of results.
+
+
+This is chessresults-5.0.1
+
+It depends on the following being installed:
+solentware-base-4.1.4
+solentware-grid-2.1.2
+solentware-misc-1.3
+chesscalc-1.2.1
+emailstore-1.4.2
+emailextract-0.7.2
+
+ChessResults uses features introduced at Python3.4.
+
+Python3.4, or later versions when available, must be installed to run ChessResults.
+
+tkinter, part of Python, must be installed to run ChessResults.  Sometimes this is installed separately.
+
+One of sqlite3, apsw, or bsddb3, must be installed to run ChessResults.  sqlite3 is part of Python, but sometimes is installed separately.  apsw and bsddb3 are packages for Python, so must be installed separately.
