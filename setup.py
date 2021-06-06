@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     setup(
         name='chessresults',
-        version='5.0.1',
+        version='5.0.2.dev0',
         description='Results database for chess games',
         author='Roger Marsh',
         author_email='roger.marsh@solentware.co.uk',
@@ -40,19 +40,19 @@ if __name__ == '__main__':
             'Intended Audience :: End Users/Desktop',
             'Development Status :: 3 - Alpha',
             ],
-        install_requires=['solentware-base==4.1.4',
+        install_requires=['solentware-base==4.1.5.dev0',
                           'chesscalc==1.2.1',
                           'emailstore==1.4.2',
                           'emailextract==0.7.2',
-                          'solentware-grid==2.1.2',
+                          'solentware-grid==2.1.3.dev0',
                           'solentware-misc==1.3',
                           ],
         dependency_links=[
-            'http://solentware.co.uk/files/solentware-base-4.1.4.tar.gz',
+            'http://solentware.co.uk/files/solentware-base-4.1.5.dev0.tar.gz',
             'http://solentware.co.uk/files/chesscalc-1.2.1.tar.gz',
             'http://solentware.co.uk/files/emailstore-1.4.2.tar.gz',
             'http://solentware.co.uk/files/emailextract-0.7.2.tar.gz',
-            'http://solentware.co.uk/files/solentware-grid-2.1.2.tar.gz',
+            'http://solentware.co.uk/files/solentware-grid-2.1.3.dev0.tar.gz',
             'http://solentware.co.uk/files/solentware-misc-1.3.tar.gz',
             ],
         )
