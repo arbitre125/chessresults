@@ -32,6 +32,10 @@ try:
 except ImportError: # Not ModuleNotFoundError for Pythons earlier than 3.6
     chessdb = None
 try:
+    from ..berkeleydb import resultsdatabase as chessberkeleydb
+except ImportError: # Not ModuleNotFoundError for Pythons earlier than 3.6
+    chessberkeleydb = None
+try:
     from ..dpt import resultsdatabase as chessdpt
 except ImportError: # Not ModuleNotFoundError for Pythons earlier than 3.6
     chessdpt = None
@@ -61,6 +65,8 @@ class CreateChessResultsDatabase(create_database.CreateDatabase):
             engines[chessapsw.apsw_database.apsw] = chessapsw.ResultsDatabase
         if chessdb:
             engines[chessdb.bsddb3_database.bsddb3] = chessdb.ResultsDatabase
+        if chessberkeleydb:
+            engines[chessberkeleydb.berkeleydb_database.berkeleydb] = chessberkeleydb.ResultsDatabase
         if chessdpt:
             engines[chessdpt.dpt_database._dpt.dptapi
                     ] = chessdpt.ResultsDatabase

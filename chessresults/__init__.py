@@ -14,7 +14,10 @@ from solentware_base.core.constants import (
     VEDIS_MODULE,
     )
 
-# Berkeley DB interface module name
+# berkeleydb interface module name
+_BERKELEYDBRESULTS = __name__ + '.berkeleydb.resultsdatabase'
+
+# bsddb3 interface module name
 _DBRESULTS = __name__ + '.db.resultsdatabase'
 
 # DPT interface module name
@@ -34,7 +37,7 @@ _VEDISRESULTS = __name__ + '.vedis.resultsdatabase'
 
 # Map database module names to application module
 APPLICATION_DATABASE_MODULE = {
-    BERKELEYDB_MODULE: _DBRESULTS,
+    BERKELEYDB_MODULE: _BERKELEYDBRESULTS,
     BSDDB3_MODULE: _DBRESULTS,
     SQLITE3_MODULE: _SQLITE3RESULTS,
     APSW_MODULE: _APSWRESULTS,
