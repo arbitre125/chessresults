@@ -24,26 +24,21 @@ from ..core import filespec
 
 
 class NewIdentityDSS(DataSourceSet):
-    
+
     """Define an interface between a database and GUI controls.
-    
+
     The database is an instance of a subclass of solentware_base/dptapi.DPTapi.
-    
+
     """
 
     def __init__(
-        self,
-        dbhome,
-        dbset=None,
-        dbname=filespec.PLAYER_FIELD_DEF,
-        newrow=None):
+        self, dbhome, dbset=None, dbname=filespec.PLAYER_FIELD_DEF, newrow=None
+    ):
         """Define an interface between DPT database and GUI controls.
-        
+
         See superclass for description of arguments.
 
         """
         super(NewIdentityDSS, self).__init__(
-            dbhome,
-            filespec.PLAYER_FILE_DEF,
-            dbname,
-            newrow=newrow)
+            dbhome, filespec.PLAYER_FILE_DEF, dbname, newrow=newrow
+        )

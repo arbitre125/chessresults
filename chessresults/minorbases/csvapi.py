@@ -26,9 +26,9 @@ class CSVapiError(DatabaseError):
 
 
 class CSVapi(Database):
-    
+
     """Define a CSV database structure.
-    
+
     The database is read only.
     CSV databases consist of one or more files each of which has zero
     or more fields defined. File names are unique and field names are
@@ -39,12 +39,12 @@ class CSVapi(Database):
     Applications are expected to store instances of one class on a file.
     Each instance is a dictionary containing a subset of the fields
     defined for the file.
-    
+
     """
 
     def __init__(self, CSVfiles, CSVfolder):
         """Define database structure.
-        
+
         CSVfiles = {
             file:{
                 folder:name,
@@ -61,7 +61,7 @@ class CSVapi(Database):
         """
         # The database definition from CSVfiles after validation
         self.CSVfiles = None
-        
+
         # The folder from CSVfolder after validation
         self.CSVfolder = None
 
@@ -72,40 +72,48 @@ class CSVapi(Database):
         try:
             CSVfolder = os.path.abspath(CSVfolder)
         except:
-            msg = ' '.join(['Main folder name', str(CSVfolder),
-                            'is not valid'])
+            msg = " ".join(
+                ["Main folder name", str(CSVfolder), "is not valid"]
+            )
             raise CSVapiError(msg)
-        
+
         for dd in CSVfiles:
             try:
                 folder = CSVfiles[dd].get(FOLDER, None)
             except:
-                msg = ' '.join(['dBase file definition for', repr(dd),
-                                'must be a dictionary'])
+                msg = " ".join(
+                    [
+                        "dBase file definition for",
+                        repr(dd),
+                        "must be a dictionary",
+                    ]
+                )
                 raise CSVapiError(msg)
-            
+
             if folder == None:
                 folder = CSVfolder
             try:
                 folder = os.path.abspath(folder)
-                fname = os.path.join(folder,
-                                     CSVfiles[dd].get(FILE, None))
+                fname = os.path.join(folder, CSVfiles[dd].get(FILE, None))
             except:
-                msg = ' '.join(['File name for', dd, 'is invalid'])
+                msg = " ".join(["File name for", dd, "is invalid"])
                 raise CSVapiError(msg)
-            
+
             if fname in pathnames:
-                msg = ' '.join(['File name', fname,
-                                'linked to', pathnames[fname],
-                                'cannot link to', dd])
+                msg = " ".join(
+                    [
+                        "File name",
+                        fname,
+                        "linked to",
+                        pathnames[fname],
+                        "cannot link to",
+                        dd,
+                    ]
+                )
                 raise CSVapiError(msg)
-            
+
             pathnames[fname] = dd
-            files[dd] = self.make_root(
-                dd,
-                fname,
-                CSVfiles[dd],
-                sfi)
+            files[dd] = self.make_root(dd, fname, CSVfiles[dd], sfi)
             sfi += 1
 
         self.CSVfiles = files
@@ -126,13 +134,11 @@ class CSVapi(Database):
 
     def database_cursor(self, dbname, indexname, keyrange=None):
         """Create a cursor on indexname in dbname.
-        
+
         keyrange is an addition for DPT. It may yet be removed.
-        
+
         """
-        return self.CSVfiles[dbname].make_cursor(
-            indexname,
-            keyrange)
+        return self.CSVfiles[dbname].make_cursor(indexname, keyrange)
 
     def get_database(self, dbset, dbname):
         """Return file for dbname.
@@ -200,23 +206,23 @@ class CSVapi(Database):
 
 
 class CSV:
-    
+
     """Emulate Berkeley DB file and record structure for CSV files.
-    
+
     The first, last, nearest, next, prior, and Set methods return the
     pickled value for compatibility with the bsddb and DPT interfaces.
     This is despite the data already being available as a dictionary
     of values keyed by field name.
-    
+
     """
 
     def __init__(self, filename):
-        
+
         self.filename = filename
         self._set_closed_state()
 
     def __del__(self):
-        
+
         self.close()
 
     def close(self):
@@ -279,20 +285,20 @@ class CSV:
             value = self._next_record()
 
     def open_csv(self):
-        
+
         try:
             # use open or bz2 open depending on extension
-            if os.path.splitext(self.filename)[-1].lower() == '.bz2':
-                self._table_link = bz2.BZ2File(self.filename, 'r')
+            if os.path.splitext(self.filename)[-1].lower() == ".bz2":
+                self._table_link = bz2.BZ2File(self.filename, "r")
             else:
-                self._table_link = open(self.filename, 'rb')
+                self._table_link = open(self.filename, "rb")
             reader = csv.DictReader(self._table_link)
             self.records = [row for row in reader]
             self.fields = reader.fieldnames
             print(self.fields, len(self.records))
             self._table_link.close()
         except:
-            print('except')
+            print("except")
             self._table_link = None
 
     def prior(self, current):
@@ -315,7 +321,7 @@ class CSV:
                 return (self.record_select, dumps(value))
 
     def _set_closed_state(self):
-        
+
         self._table_link = None
         self.version = None
         self.record_count = None
@@ -327,7 +333,7 @@ class CSV:
         self.record_control = None
         self.fieldnames = None
         self.sortedfieldnames = None
-        
+
     def _first_record(self):
         """Position at and return first record."""
         self._select_first()
@@ -335,9 +341,9 @@ class CSV:
 
     def _get_record(self):
         """Return selected record.
-        
+
         Copy record deleted/exists marker to self.record_control.
-        
+
         """
         if self._table_link == None:
             return None
@@ -354,7 +360,7 @@ class CSV:
             self._table_link.seek(seek - tell, 1)
         fielddata = self._table_link.read(self.record_length)
         self.record_control = fielddata[0]
-        '''if self.record_control in _PRESENT:
+        """if self.record_control in _PRESENT:
             result = {}
             for fieldname in self.fieldnames:
                 s = self.fields[fieldname][START]
@@ -362,7 +368,7 @@ class CSV:
                 result[fieldname] = fielddata[s:f].strip()
             return result
         else:
-            return None'''
+            return None"""
 
     def _last_record(self):
         """Position at and return last record."""
@@ -419,15 +425,15 @@ class CSV:
 
 
 class CursorCSVfile:
-    
+
     """Define a dBase III file cursor.
 
     Wrap the CSV methods in corresponding cursor method names.
-    
+
     """
 
     def __init__(self, dbobject):
-        
+
         if isinstance(dbobject, CSV):
             self._dbobject = dbobject
             self._current = -1
@@ -436,7 +442,7 @@ class CursorCSVfile:
             self._current = None
 
     def __del__(self):
-        
+
         self.close()
 
     def close(self):
@@ -482,21 +488,21 @@ class CursorCSVfile:
 
 
 class _CSVapiRoot:
-    
+
     """Provide file level access to a CSV file.
 
     This class containing methods to open and close dBase files.
     Record level access is the responsibility of subclasses.
-    
+
     """
 
     def __init__(self, dd, fname, dptdesc):
         """Define a CSV file.
-        
+
         dd = file description name
         fname = path to data file (.dbf) for dd
         dptdesc = field description for data file
-        
+
         """
         self._ddname = dd
         self._fields = None
@@ -515,21 +521,33 @@ class _CSVapiRoot:
 
         fields = dptdesc.get(FIELDS, dict())
         if not isinstance(fields, dict):
-            msg = ' '.join(['Field description of file', repr(dd),
-                            'must be a dictionary'])
+            msg = " ".join(
+                ["Field description of file", repr(dd), "must be a dictionary"]
+            )
             raise CSVapiError(msg)
 
         for fieldname in fields:
             if not isinstance(fieldname, str):
-                msg = ' '.join(['Field name must be string not',
-                                repr(fieldname),
-                                'in file', dd,])
+                msg = " ".join(
+                    [
+                        "Field name must be string not",
+                        repr(fieldname),
+                        "in file",
+                        dd,
+                    ]
+                )
                 raise CSVapiError(msg)
-            
+
             if not fieldname.isupper():
-                msg = ' '.join(['Field name', fieldname,
-                                'in file', dd,
-                                'must be upper case'])
+                msg = " ".join(
+                    [
+                        "Field name",
+                        fieldname,
+                        "in file",
+                        dd,
+                        "must be upper case",
+                    ]
+                )
                 raise CSVapiError(msg)
 
             if fields[fieldname] == None:
@@ -537,15 +555,22 @@ class _CSVapiRoot:
 
         primary = dptdesc.get(PRIMARY, dict())
         if not isinstance(primary, dict):
-            msg = ' '.join(['Field mapping of file', repr(dd),
-                            'must be a dictionary'])
+            msg = " ".join(
+                ["Field mapping of file", repr(dd), "must be a dictionary"]
+            )
             raise CSVapiError(msg)
 
         for p in primary:
             if not isinstance(p, str):
-                msg = ' '.join(['Primary field name', str(p),
-                                'for', dd,
-                                'must be a string'])
+                msg = " ".join(
+                    [
+                        "Primary field name",
+                        str(p),
+                        "for",
+                        dd,
+                        "must be a string",
+                    ]
+                )
                 raise CSVapiError(msg)
 
             f = primary[p]
@@ -553,30 +578,45 @@ class _CSVapiRoot:
                 f = p.upper()
                 primary[p] = f
             elif not isinstance(f, str):
-                msg = ' '.join(['Field', str(f),
-                                'for primary field name', p,
-                                'in file', dd,
-                                'must be a string'])
+                msg = " ".join(
+                    [
+                        "Field",
+                        str(f),
+                        "for primary field name",
+                        p,
+                        "in file",
+                        dd,
+                        "must be a string",
+                    ]
+                )
                 raise CSVapiError(msg)
 
             if f not in fields:
-                msg = ' '.join(['Field', f,
-                                'for primary field name', p,
-                                'in file', dd,
-                                'must have a field description'])
+                msg = " ".join(
+                    [
+                        "Field",
+                        f,
+                        "for primary field name",
+                        p,
+                        "in file",
+                        dd,
+                        "must have a field description",
+                    ]
+                )
                 raise CSVapiError(msg)
 
         secondary = dptdesc.get(SECONDARY, dict())
         if not isinstance(secondary, dict):
-            msg = ' '.join(['Index definition of file', repr(dd),
-                            'must be a dictionary'])
+            msg = " ".join(
+                ["Index definition of file", repr(dd), "must be a dictionary"]
+            )
             raise CSVapiError(msg)
-        
+
         for s in secondary:
             if not isinstance(s, str):
-                msg = ' '.join(['Index name', str(s),
-                                'for', dd,
-                                'must be a string'])
+                msg = " ".join(
+                    ["Index name", str(s), "for", dd, "must be a string"]
+                )
                 raise CSVapiError(msg)
 
             i = secondary[s]
@@ -584,25 +624,46 @@ class _CSVapiRoot:
                 i = (s.upper(),)
                 secondary[s] = i
             elif not isinstance(i, tuple):
-                msg = ' '.join(['Index definition', str(i),
-                                'in field', s,
-                                'in file', dd,
-                                'must be a tuple of strings'])
+                msg = " ".join(
+                    [
+                        "Index definition",
+                        str(i),
+                        "in field",
+                        s,
+                        "in file",
+                        dd,
+                        "must be a tuple of strings",
+                    ]
+                )
                 raise CSVapiError(msg)
 
             for f in i:
                 if not isinstance(f, str):
-                    msg = ' '.join(['Field name', str(f),
-                                    'in index definition for', s,
-                                    'in file', dd,
-                                    'must be a string'])
+                    msg = " ".join(
+                        [
+                            "Field name",
+                            str(f),
+                            "in index definition for",
+                            s,
+                            "in file",
+                            dd,
+                            "must be a string",
+                        ]
+                    )
                     raise CSVapiError(msg)
 
                 if f not in fields:
-                    msg = ' '.join(['Field', f,
-                                    'for index definition', s,
-                                    'in file', dd,
-                                    'must have a field description'])
+                    msg = " ".join(
+                        [
+                            "Field",
+                            f,
+                            "for index definition",
+                            s,
+                            "in file",
+                            dd,
+                            "must have a field description",
+                        ]
+                    )
                     raise CSVapiError(msg)
 
         self._fields = fields
@@ -628,28 +689,27 @@ class _CSVapiRoot:
             opendb.open_csv()
             for f in self._fields:
                 if f not in opendb.fields:
-                    raise CSVapiError(' '.join((
-                        'Field', f, 'not in file', self._ddname)))
+                    raise CSVapiError(
+                        " ".join(("Field", f, "not in file", self._ddname))
+                    )
             self._CSVobject = opendb
         elif self._CSVobject == False:
-            raise CSVapiError('Create csv file not supported')
-            
-            
+            raise CSVapiError("Create csv file not supported")
+
+
 class CSVapiRoot(_CSVapiRoot):
 
-    """Provide record level access to a CSV file.
-    
-    """
+    """Provide record level access to a CSV file."""
 
     def __init__(self, dd, fname, dptdesc, sfi):
         """Define a CSV file.
-        
+
         See base class for argument descriptions.
         sfi - for compatibility with bsddb
-        
+
         """
         super().__init__(dd, fname, dptdesc)
-        
+
         # All active CursorCSV objects opened by make_cursor
         self._clientcursors = dict()
 
@@ -660,7 +720,6 @@ class CSVapiRoot(_CSVapiRoot):
         self._clientcursors.clear()
 
         super().close()
-        
 
     def get_database(self):
         """Return the open file."""
@@ -669,13 +728,13 @@ class CSVapiRoot(_CSVapiRoot):
     def make_cursor(self, indexname, keyrange=None):
         """Create a cursor on the CSV file."""
         if indexname not in self._secondary:
-            #c = self._CSVobject.Cursor()
+            # c = self._CSVobject.Cursor()
             c = CursorCSV(self._CSVobject, keyrange)
             if c:
                 self._clientcursors[c] = True
             return c
         else:
-            raise CSVapiError('Indexes not supported')
+            raise CSVapiError("Indexes not supported")
 
     def _get_deferable_update_files(self, defer, dd):
         """Return a dictionary of empty lists for the CSV files.
@@ -683,7 +742,7 @@ class CSVapiRoot(_CSVapiRoot):
         Provided for compatibility with DPT
 
         """
-        defer[dd] = {self._ddname : []} # _file rather than _ddname?
+        defer[dd] = {self._ddname: []}  # _file rather than _ddname?
 
     def get_primary_record(self, dbname, key):
         """Return None.  Deny existence of primary record.
@@ -691,8 +750,7 @@ class CSVapiRoot(_CSVapiRoot):
         Provided for compatibility with DPT.
 
         """
-        return None # return the pickled dictionary of field values
-
+        return None  # return the pickled dictionary of field values
 
     def open_root(self):
         """Open CSV file."""
@@ -700,28 +758,28 @@ class CSVapiRoot(_CSVapiRoot):
         foldername, filename = os.path.split(pathname)
         if os.path.exists(foldername):
             if not os.path.isdir(foldername):
-                msg = ' '.join([foldername, 'exists but is not a folder'])
+                msg = " ".join([foldername, "exists but is not a folder"])
                 raise CSVapiError(msg)
-            
+
         else:
             os.makedirs(foldername)
         if os.path.exists(pathname):
             if not os.path.isfile(pathname):
-                msg = ' '.join([pathname, 'exists but is not a file'])
+                msg = " ".join([pathname, "exists but is not a file"])
                 raise CSVapiError(msg)
 
             if self._CSVobject == None:
                 self._CSVobject = True
         elif self._CSVobject == None:
             self._CSVobject = False
-            
+
         super().open_root()
-            
+
 
 class CursorCSV(CursorCSVfile, cursor.Cursor):
-    
+
     """Define a CSV cursor.
-    
+
     Clearly not finished.  So notes left as found.
 
     A cursor implemented using a CursorCSVfile cursor for access in
@@ -733,14 +791,13 @@ class CursorCSV(CursorCSVfile, cursor.Cursor):
     set_partial_key is absent. May be better to follow dbapi.Cursor and
     dptbase.Cursor classes and make the CursorCSVfile instance an
     attibute of this Cursor class. CSV.Cursor() supports this.
-    
+
     """
 
     def __init__(self, dbasedb, keyrange=None):
-        
+
         super().__init__(dbobject=dbasedb)
 
     def set_partial_key(self, partial):
         """Do nothing.  Partial key not relevant."""
         pass
-

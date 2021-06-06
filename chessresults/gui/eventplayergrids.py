@@ -17,8 +17,7 @@ from ..core import resultsrecord
 
 class EventPlayerBaseGrid(eventgrids.EventBaseGrid):
 
-    """Base class for grid widgets used on event page.
-    """
+    """Base class for grid widgets used on event page."""
 
 
 class EventPlayerGrid(EventPlayerBaseGrid):
@@ -40,17 +39,18 @@ class EventPlayerGrid(EventPlayerBaseGrid):
         self.make_header(resultsrow.ResultsDBrowNewPlayer.header_specification)
         appsys = self.appsyspanel.get_appsys()
         db = appsys.get_results_database()
-        ds = appsys.get_knownnamesdatasource_module(
-            ).KnownNamesDS(
-                db,
-                filespec.PLAYER_FILE_DEF,
-                filespec.PLAYER_FILE_DEF,
-                newrow=resultsrow.ResultsDBrowNewPlayer)
+        ds = appsys.get_knownnamesdatasource_module().KnownNamesDS(
+            db,
+            filespec.PLAYER_FILE_DEF,
+            filespec.PLAYER_FILE_DEF,
+            newrow=resultsrow.ResultsDBrowNewPlayer,
+        )
         eventrecord = resultsrecord.get_event_from_record_value(
             db.get_primary_record(
                 filespec.EVENT_FILE_DEF,
-                appsys.get_event_detail_context(
-                    ).eventgrid.selection[0][-1]))
+                appsys.get_event_detail_context().eventgrid.selection[0][-1],
+            )
+        )
         ds.get_known_names(eventrecord)
         self.set_data_source(ds)
         appsys.get_data_register().register_in(self, self.on_data_change)

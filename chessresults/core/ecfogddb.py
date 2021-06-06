@@ -12,17 +12,19 @@ from os.path import split
 from solentware_base.core.record import KeyText, ValueText, RecordText
 
 from ..minorbases.textapi import (
-    Textapi, TextapiRoot,
-    FILE, FOLDER, FIELDS,
-    )
+    Textapi,
+    TextapiRoot,
+    FILE,
+    FOLDER,
+    FIELDS,
+)
 
-PLAYERS = 'ogdplayers'
+PLAYERS = "ogdplayers"
 
 
 class ECFOGD(Textapi):
 
-    """Access an Online Grading Database file published by ECF.
-    """
+    """Access an Online Grading Database file published by ECF."""
 
     def __init__(self, DBpath):
 
@@ -34,10 +36,9 @@ class ECFOGD(Textapi):
         dbnames = {
             PLAYERS: {
                 FILE: f,
-                FIELDS: {
-                    },
-                },
-            }
+                FIELDS: {},
+            },
+        }
 
         Textapi.__init__(self, dbnames, d)
 
@@ -58,15 +59,15 @@ class ECFOGDRoot(TextapiRoot):
     """
 
     def open_root(self):
-        
+
         super(ECFOGDRoot, self).open_root()
         self.headerline = self.textlines.pop(0)
         self.record_count = len(self.textlines)
         if isinstance(self.headerline, bytes):
             try:
-                h = self.headerline.decode('utf8')
+                h = self.headerline.decode("utf8")
             except UnicodeDecodeError:
-                h = self.headerline.decode('iso-8859-1')
+                h = self.headerline.decode("iso-8859-1")
             self.fieldnames = csv.DictReader([h]).fieldnames
         else:
             self.fieldnames = csv.DictReader([self.headerline]).fieldnames
@@ -74,29 +75,22 @@ class ECFOGDRoot(TextapiRoot):
 
 class ECFOGDkey(KeyText):
 
-    '''OGD player key.
-    '''
+    """OGD player key."""
 
     pass
 
 
 class ECFOGDvalue(ValueText):
 
-    '''OGD player data.
-    '''
+    """OGD player data."""
 
     pass
 
 
 class ECFOGDrecord(RecordText):
 
-    '''OGD player record.
-    '''
+    """OGD player record."""
 
-    def __init__(self,
-                 keyclass=ECFOGDkey,
-                 valueclass=ECFOGDvalue):
+    def __init__(self, keyclass=ECFOGDkey, valueclass=ECFOGDvalue):
 
-        super(ECFOGDrecord, self).__init__(
-            keyclass,
-            valueclass)
+        super(ECFOGDrecord, self).__init__(keyclass, valueclass)

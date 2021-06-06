@@ -40,7 +40,7 @@ def get_person_for_alias_key(database, key):
     or False.
     Return this record if value.merge is False (identified player).
     Return None if value.merge is None or True (unidentified player).
-    Return None if _get_merge_for_alias_key() returns None. 
+    Return None if _get_merge_for_alias_key() returns None.
 
     """
     r = _get_merge_for_alias_key(database, key[-1])
@@ -80,8 +80,7 @@ def join_merged_players(database, playerrecord, joins):
     newplayerrecord = playerrecord.clone()
     for joinrecord in joins:
         newjoinrecord = joinrecord.clone()
-        newplayerrecord.value.alias.append(
-            joinrecord.key.recno)
+        newplayerrecord.value.alias.append(joinrecord.key.recno)
         newjoinrecord.value.merge = playerrecord.key.recno
         if newplayerrecord.value.merge is None:
             newjoinrecord.value.alias = False
@@ -95,26 +94,32 @@ def join_merged_players(database, playerrecord, joins):
             aliasrecord = resultsrecord.get_alias(database, alias)
             if aliasrecord is None:
                 database.backout()
-                return ''.join(
-                    ('Record for player\n',
-                     resultsrecord.get_player_name_text(
-                         database,
-                         aliasrecord.value.identity()),
-                     '\ndoes not exist.'))
-            newplayerrecord.value.alias.append(
-                aliasrecord.key.recno)
+                return "".join(
+                    (
+                        "Record for player\n",
+                        resultsrecord.get_player_name_text(
+                            database, aliasrecord.value.identity()
+                        ),
+                        "\ndoes not exist.",
+                    )
+                )
+            newplayerrecord.value.alias.append(aliasrecord.key.recno)
             for ak in aliasrecord.value.get_alias_list():
                 r = database.get_primary_record(filespec.PLAYER_FILE_DEF, ak)
                 if r is None:
                     database.backout()
-                    return ''.join(
-                        ('An imported alias for player\n',
-                         resultsrecord.get_player_name_text(
-                             database,
-                             joinrecord.value.identity()),
-                         '\ndoes not exist.'))
+                    return "".join(
+                        (
+                            "An imported alias for player\n",
+                            resultsrecord.get_player_name_text(
+                                database, joinrecord.value.identity()
+                            ),
+                            "\ndoes not exist.",
+                        )
+                    )
             newplayerrecord.value.alias.extend(
-                aliasrecord.value.get_alias_list())
+                aliasrecord.value.get_alias_list()
+            )
             newaliasrecord = aliasrecord.clone()
             newaliasrecord.value.merge = playerrecord.key.recno
             if newplayerrecord.value.merge is None:
@@ -129,12 +134,14 @@ def join_merged_players(database, playerrecord, joins):
                 database,
                 filespec.PLAYER_FILE_DEF,
                 filespec.PLAYER_FIELD_DEF,
-                newaliasrecord)
+                newaliasrecord,
+            )
         joinrecord.edit_record(
             database,
             filespec.PLAYER_FILE_DEF,
             filespec.PLAYER_FIELD_DEF,
-            newjoinrecord)
+            newjoinrecord,
+        )
     if newplayerrecord.value.merge is None:
         newplayerrecord.value.merge = False
     elif newplayerrecord.value.merge is True:
@@ -143,11 +150,12 @@ def join_merged_players(database, playerrecord, joins):
         database,
         filespec.PLAYER_FILE_DEF,
         filespec.PLAYER_FIELD_DEF,
-        newplayerrecord)
+        newplayerrecord,
+    )
     database.commit()
 
     return None
-    
+
 
 def merge_new_players(database, playerrecord, merges):
     """Link merges records into playerrecord record and return True if ok.
@@ -162,25 +170,26 @@ def merge_new_players(database, playerrecord, merges):
     Strictly an integer value for merges[*].merge should raise an exception
     but a planned change is to allow aliases to be merged within an event as
     well as across events. So get_alias_list() is used.
-        
+
     """
     database.start_transaction()
     newplayerrecord = playerrecord.clone()
     for aliasrecord in merges:
-        newplayerrecord.value.alias.append(
-            aliasrecord.key.recno)
+        newplayerrecord.value.alias.append(aliasrecord.key.recno)
         for ak in aliasrecord.value.get_alias_list():
             r = database.get_primary_record(filespec.PLAYER_FILE_DEF, ak)
             if r is None:
                 database.backout()
-                return ''.join(
-                    ('An imported alias for player\n',
-                     resultsrecord.get_player_name_text(
-                         database,
-                         aliasrecord.value.identity()),
-                     '\ndoes not exist.'))
-        newplayerrecord.value.alias.extend(
-            aliasrecord.value.get_alias_list())
+                return "".join(
+                    (
+                        "An imported alias for player\n",
+                        resultsrecord.get_player_name_text(
+                            database, aliasrecord.value.identity()
+                        ),
+                        "\ndoes not exist.",
+                    )
+                )
+        newplayerrecord.value.alias.extend(aliasrecord.value.get_alias_list())
         newaliasrecord = aliasrecord.clone()
         newaliasrecord.value.merge = playerrecord.key.recno
         if newplayerrecord.value.merge is None:
@@ -195,7 +204,8 @@ def merge_new_players(database, playerrecord, merges):
             database,
             filespec.PLAYER_FILE_DEF,
             filespec.PLAYER_FIELD_DEF,
-            newaliasrecord)
+            newaliasrecord,
+        )
     if newplayerrecord.value.merge is None:
         newplayerrecord.value.merge = False
     elif newplayerrecord.value.merge is True:
@@ -204,7 +214,8 @@ def merge_new_players(database, playerrecord, merges):
         database,
         filespec.PLAYER_FILE_DEF,
         filespec.PLAYER_FIELD_DEF,
-        newplayerrecord)
+        newplayerrecord,
+    )
     database.commit()
 
     return None

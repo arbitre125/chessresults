@@ -18,7 +18,7 @@ from ..basecore.knownnames import KnownNames
 
 
 class KnownNamesDS(DataSourceCursor, KnownNames):
-    
+
     """Combine player names known in other editions of event with DPT
     interface.
     """

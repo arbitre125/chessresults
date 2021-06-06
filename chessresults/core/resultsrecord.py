@@ -10,29 +10,30 @@ from ast import literal_eval
 from solentware_base.core.record import KeyData
 from solentware_base.core.record import Value, ValueList, Record
 
-from solentware_misc.api.utilities import (AppSysPersonNameParts,
-                                           AppSysPersonName)
+from solentware_misc.api.utilities import (
+    AppSysPersonNameParts,
+    AppSysPersonName,
+)
+
 # Hack while some non-ISO format dates survive on game records
 from solentware_misc.api.utilities import AppSysDate
 
 from . import filespec
 from .gameresults import ecfresult, awin, draw, hwin
 
-#see note in ResultsDBrecordPlayer about possible modification
+# see note in ResultsDBrecordPlayer about possible modification
 
 
 class ResultsDBkeyEvent(KeyData):
-    
-    """Primary key of event.
-    """
+
+    """Primary key of event."""
 
     pass
-        
+
 
 class ResultsDBvalueEvent(Value):
-    
-    """Event data.
-    """
+
+    """Event data."""
 
     def __init__(self):
 
@@ -40,14 +41,11 @@ class ResultsDBvalueEvent(Value):
         self.name = None
         self.startdate = None
         self.enddate = None
-        self.sections = [] # section codes : Name record for name
+        self.sections = []  # section codes : Name record for name
 
     def get_event_identity(self):
         """Return tab separated event identity."""
-        return (
-            self.name,
-            self.startdate,
-            self.enddate)
+        return (self.name, self.startdate, self.enddate)
 
     def pack(self):
         """Extend, return event record and index data."""
@@ -56,23 +54,21 @@ class ResultsDBvalueEvent(Value):
         index[filespec.EVENTNAME_FIELD_DEF] = [self.name]
         index[filespec.STARTDATE_FIELD_DEF] = [self.startdate]
         index[filespec.ENDDATE_FIELD_DEF] = [self.enddate]
-        index[filespec.EVENTIDENTITY_FIELD_DEF
-              ] = [repr(self.get_event_identity())]
+        index[filespec.EVENTIDENTITY_FIELD_DEF] = [
+            repr(self.get_event_identity())
+        ]
         return v
 
 
 class ResultsDBrecordEvent(Record):
-    
-    """Event record.
-    """
 
-    def __init__(self,
-                 keyclass=ResultsDBkeyEvent,
-                 valueclass=ResultsDBvalueEvent):
+    """Event record."""
 
-        super(ResultsDBrecordEvent, self).__init__(
-            keyclass,
-            valueclass)
+    def __init__(
+        self, keyclass=ResultsDBkeyEvent, valueclass=ResultsDBvalueEvent
+    ):
+
+        super(ResultsDBrecordEvent, self).__init__(keyclass, valueclass)
 
     def get_keys(self, datasource=None, partial=None):
         """Override, return [(key, value), ...] by partial key in datasource."""
@@ -93,26 +89,24 @@ class ResultsDBrecordEvent(Record):
                 elif dbname == filespec.ENDDATE_FIELD_DEF:
                     return [(self.value.enddate, srkey)]
                 elif dbname == filespec.EVENTIDENTITY_FIELD_DEF:
-                    #return [(self.value.get_event_identity(), srkey)]
+                    # return [(self.value.get_event_identity(), srkey)]
                     return [(repr(self.value.get_event_identity()), srkey)]
                 else:
                     return []
         except:
             return []
 
-        
+
 class ResultsDBkeyGame(KeyData):
 
-    """Primary key of game.
-    """
+    """Primary key of game."""
 
     pass
-        
+
 
 class ResultsDBvalueGame(ValueList):
-    
-    """Game data.
-    """
+
+    """Game data."""
 
     attributes = dict(
         homeplayer=None,
@@ -126,7 +120,7 @@ class ResultsDBvalueGame(ValueList):
         section=None,
         hometeam=None,
         awayteam=None,
-        )
+    )
     _attribute_order = tuple(sorted(attributes.keys()))
 
     def pack(self):
@@ -135,9 +129,12 @@ class ResultsDBvalueGame(ValueList):
         index = v[1]
         index[filespec.GAMEEVENT_FIELD_DEF] = [repr(self.event)]
         index[filespec.GAMEPLAYER_FIELD_DEF] = [
-            repr(self.homeplayer), repr(self.awayplayer)]
+            repr(self.homeplayer),
+            repr(self.awayplayer),
+        ]
         index[filespec.GAMESECTION_FIELD_DEF] = [
-            repr((self.event, self.section))]
+            repr((self.event, self.section))
+        ]
         index[filespec.GAMEDATE_FIELD_DEF] = [self.date]
         return v
 
@@ -186,20 +183,17 @@ class ResultsDBvalueGame(ValueList):
             if s[i] != o[i]:
                 return True
         return False
-    
+
 
 class ResultsDBrecordGame(Record):
-    
-    """Game record.
-    """
 
-    def __init__(self,
-                 keyclass=ResultsDBkeyGame,
-                 valueclass=ResultsDBvalueGame):
+    """Game record."""
 
-        super(ResultsDBrecordGame, self).__init__(
-            keyclass,
-            valueclass)
+    def __init__(
+        self, keyclass=ResultsDBkeyGame, valueclass=ResultsDBvalueGame
+    ):
+
+        super(ResultsDBrecordGame, self).__init__(keyclass, valueclass)
 
     def get_keys(self, datasource=None, partial=None):
         """Override, return [(key, value), ...] by partial key in datasource."""
@@ -216,24 +210,29 @@ class ResultsDBrecordGame(Record):
                 if dbname == filespec.GAMEEVENT_FIELD_DEF:
                     return [(self.value.event, srkey)]
                 elif dbname == filespec.GAMESECTION_FIELD_DEF:
-                    return [(''.join((self.value.event, self.value.section)),
-                             srkey)]
+                    return [
+                        (
+                            "".join((self.value.event, self.value.section)),
+                            srkey,
+                        )
+                    ]
                 elif dbname == filespec.GAMEDATE_FIELD_DEF:
                     return [(self.value.date, srkey)]
                 elif dbname == filespec.GAMEPLAYER_FIELD_DEF:
-                    return [(self.value.homeplayer, srkey),
-                            (self.value.awayplayer, srkey)]
+                    return [
+                        (self.value.homeplayer, srkey),
+                        (self.value.awayplayer, srkey),
+                    ]
                 else:
                     return []
         except:
             return []
 
-        
+
 class ResultsDBkeyName(KeyData):
 
-    """Primary key of name.
-    """
-    
+    """Primary key of name."""
+
     pass
 
 
@@ -250,7 +249,7 @@ class ResultsDBvalueName(ValueList):
     attributes = dict(
         name=None,
         reference_count=None,
-        )
+    )
     _attribute_order = tuple(sorted(attributes.keys()))
 
     def __init__(self):
@@ -258,12 +257,12 @@ class ResultsDBvalueName(ValueList):
         super(ResultsDBvalueName, self).__init__()
         self.name = None
         self.reference_count = None
-        
+
     def empty(self):
         """(Re)Initialize value attribute."""
-        self.name = ''
-        self.reference_count = ''
-            
+        self.name = ""
+        self.reference_count = ""
+
     def pack(self):
         """Extend, return name record and index data."""
         v = super(ResultsDBvalueName, self).pack()
@@ -274,18 +273,14 @@ class ResultsDBvalueName(ValueList):
 
 class ResultsDBrecordName(Record):
 
-    """Name record. A lookup for text used many times in other records.
-    """
+    """Name record. A lookup for text used many times in other records."""
 
-    def __init__(self,
-                 keyclass=ResultsDBkeyName,
-                 valueclass=ResultsDBvalueName):
+    def __init__(
+        self, keyclass=ResultsDBkeyName, valueclass=ResultsDBvalueName
+    ):
 
-        super(ResultsDBrecordName, self).__init__(
-            keyclass,
-            valueclass)
+        super(ResultsDBrecordName, self).__init__(keyclass, valueclass)
 
-        
     def get_keys(self, datasource=None, partial=None):
         """Override, return [(key, value), ...] by partial key in datasource."""
         try:
@@ -305,19 +300,17 @@ class ResultsDBrecordName(Record):
         except:
             return []
 
-        
+
 class ResultsDBkeyPlayer(KeyData):
 
-    """Primary key of player.
-    """
+    """Primary key of player."""
 
     pass
-        
+
 
 class ResultsDBvaluePlayer(ValueList):
 
-    """Player data.
-    """
+    """Player data."""
 
     attributes = dict(
         name=None,
@@ -328,7 +321,7 @@ class ResultsDBvaluePlayer(ValueList):
         alias=None,
         merge=None,
         reported_codes=None,
-        )
+    )
 
     # The new attribute, reported_codes, is after others to keep disruption to
     # a minimum when wrong version of ChessResults is used with a database.
@@ -343,9 +336,9 @@ class ResultsDBvaluePlayer(ValueList):
         self.event = None
         self.section = None
         self.pin = None
-        self.affiliation = None # (ecf club)
-        self.alias = [] # event startdate endate pin are equal, implies merge
-        self.merge = None # cannot break merge if in alias as well
+        self.affiliation = None  # (ecf club)
+        self.alias = []  # event startdate endate pin are equal, implies merge
+        self.merge = None  # cannot break merge if in alias as well
         self.reported_codes = None
 
     def empty(self):
@@ -358,14 +351,14 @@ class ResultsDBvaluePlayer(ValueList):
         self.alias = []
         self.merge = None
         self.reported_codes = None
-            
+
     def get_alias_list(self):
         """Return list of aliases for this record.
 
         None False and True mean this record is an alias, merge is an integer,
         so there are no aliases for this record. Value is that of merge in the
         aliased record.
-        
+
         """
         if self.alias is None:
             return []
@@ -404,19 +397,24 @@ class ResultsDBvaluePlayer(ValueList):
         nameparts = AppSysPersonNameParts(self.name)
         if self.merge is None:
             index[filespec.PLAYERNAMENEW_FIELD_DEF] = [
-                AppSysPersonName(self.name).name]
+                AppSysPersonName(self.name).name
+            ]
             index[filespec.PLAYERNEW_FIELD_DEF] = [identity]
             index[filespec.PLAYERPARTIALNEW_FIELD_DEF] = [
-                pn for pn in nameparts.partialnames]
+                pn for pn in nameparts.partialnames
+            ]
         elif self.merge is True:
             index[filespec.PLAYERNAMENEW_FIELD_DEF] = [
-                AppSysPersonName(self.name).name]
+                AppSysPersonName(self.name).name
+            ]
             index[filespec.PLAYERNEW_FIELD_DEF] = [identity]
             index[filespec.PLAYERPARTIALNEW_FIELD_DEF] = [
-                pn for pn in nameparts.partialnames]
+                pn for pn in nameparts.partialnames
+            ]
         else:
             index[filespec.PLAYERPARTIALNAME_FIELD_DEF] = [
-                pn for pn in nameparts.partialnames]
+                pn for pn in nameparts.partialnames
+            ]
             if self.merge is False:
                 index[filespec.PLAYERIDENTITY_FIELD_DEF] = [identity]
                 index[filespec.PLAYERNAMEIDENTITY_FIELD_DEF] = [nameparts.name]
@@ -430,19 +428,16 @@ class ResultsDBvaluePlayer(ValueList):
 
 class ResultsDBrecordPlayer(Record):
 
-    """Player record.
-    """
+    """Player record."""
 
-    #handle changes to related records when alias and merge modified by
-    #overriding Record methods delete_record edit_record put_record?
+    # handle changes to related records when alias and merge modified by
+    # overriding Record methods delete_record edit_record put_record?
 
-    def __init__(self,
-                 keyclass=ResultsDBkeyPlayer,
-                 valueclass=ResultsDBvaluePlayer):
+    def __init__(
+        self, keyclass=ResultsDBkeyPlayer, valueclass=ResultsDBvaluePlayer
+    ):
 
-        super(ResultsDBrecordPlayer, self).__init__(
-            keyclass,
-            valueclass)
+        super(ResultsDBrecordPlayer, self).__init__(keyclass, valueclass)
 
     def get_keys(self, datasource=None, partial=None):
         """Override, return [(key, value), ...] by partial key in datasource."""
@@ -482,15 +477,21 @@ class ResultsDBrecordPlayer(Record):
                     return [(AppSysPersonName(self.value.name).name, srkey)]
                 elif self.value.merge is not False:
                     if self.alias is not False:
-                        return [(AppSysPersonName(self.value.name).name, srkey)]
+                        return [
+                            (AppSysPersonName(self.value.name).name, srkey)
+                        ]
             elif dbname == filespec.PLAYERPARTIALNAME_FIELD_DEF:
                 if self.merge is None:
                     return []
                 elif self.merge is True:
                     return []
                 else:
-                    return [(k, srkey) for k in AppSysPersonNameParts(
-                        self.value.name).partialnames]
+                    return [
+                        (k, srkey)
+                        for k in AppSysPersonNameParts(
+                            self.value.name
+                        ).partialnames
+                    ]
             return []
         except:
             return []
@@ -499,12 +500,12 @@ class ResultsDBrecordPlayer(Record):
 def get_affiliation_details(database, affiliation):
     """Return ResultsDBrecordName instance for affiliation."""
     if affiliation is None:
-        return ''
+        return ""
     return get_name_from_record_value(
-        database.get_primary_record(
-            filespec.NAME_FILE_DEF, affiliation)).value.name
+        database.get_primary_record(filespec.NAME_FILE_DEF, affiliation)
+    ).value.name
 
-        
+
 def get_alias(database, key):
     """Return ResultsDBrecordPlayer instance for key."""
     a = database.get_primary_record(filespec.PLAYER_FILE_DEF, key)
@@ -512,7 +513,7 @@ def get_alias(database, key):
         ar = ResultsDBrecordPlayer()
         ar.load_record(a)
         return ar
-    
+
 
 def get_alias_details(database, srkey):
     """Return (name, event, section, affiliation) for alias."""
@@ -521,15 +522,16 @@ def get_alias_details(database, srkey):
         pr.value.name,
         get_event_details(database, pr.value.event),
         get_section_details(database, pr.value.section, pr.value.pin),
-        get_affiliation_details(database, pr.value.affiliation)
-        )
-    
+        get_affiliation_details(database, pr.value.affiliation),
+    )
+
 
 def get_alias_for_player(database, name):
     """Return ResultsDBrecordPlayer instance for name."""
     name = database.encode_record_selector(name)
     cursor = database.database_cursor(
-        filespec.PLAYER_FILE_DEF, filespec.PLAYERALIAS_FIELD_DEF)
+        filespec.PLAYER_FILE_DEF, filespec.PLAYERALIAS_FIELD_DEF
+    )
     try:
         r = cursor.nearest(name)
         if r:
@@ -542,13 +544,13 @@ def get_alias_for_player(database, name):
                     return alias
     finally:
         cursor.close()
-    
+
 
 def get_aliases_for_event(database, event):
     """Return {record key : ResultsDBrecordPlayer(), ...} for event."""
     return get_aliases_for_games(
-        database,
-        get_games_for_event(database, event))
+        database, get_games_for_event(database, event)
+    )
 
 
 def get_aliases_for_games(database, games):
@@ -568,7 +570,7 @@ def get_event(database, key):
         er = ResultsDBrecordEvent()
         er.load_record(e)
         return er
-    
+
 
 def get_event_from_record_value(value):
     """Return ResultsDBrecordEvent instance for value on database or None."""
@@ -578,16 +580,16 @@ def get_event_from_record_value(value):
     else:
         er = None
     return er
-    
+
 
 def get_event_details(database, event):
     """Return tab separated event identity for event."""
     record = get_event_from_record_value(
-        database.get_primary_record(filespec.EVENT_FILE_DEF, event))
-    return '\t'.join((
-        record.value.startdate,
-        record.value.enddate,
-        record.value.name))
+        database.get_primary_record(filespec.EVENT_FILE_DEF, event)
+    )
+    return "\t".join(
+        (record.value.startdate, record.value.enddate, record.value.name)
+    )
 
 
 def get_events_matching_event_identity(database, eventidentity):
@@ -595,7 +597,8 @@ def get_events_matching_event_identity(database, eventidentity):
     events = dict()
     eventidentity = database.encode_record_number(eventidentity)
     cursor = database.database_cursor(
-        filespec.EVENT_FILE_DEF, filespec.EVENTIDENTITY_FIELD_DEF)
+        filespec.EVENT_FILE_DEF, filespec.EVENTIDENTITY_FIELD_DEF
+    )
     try:
         r = cursor.nearest(eventidentity)
         while r:
@@ -616,7 +619,8 @@ def get_games_for_event(database, event):
     """Return [ResultsDBrecordGame(), ...] for event."""
     games = []
     cursor = database.database_cursor(
-        filespec.GAME_FILE_DEF, filespec.GAMEEVENT_FIELD_DEF)
+        filespec.GAME_FILE_DEF, filespec.GAMEEVENT_FIELD_DEF
+    )
     try:
         evkey = database.encode_record_number(event.key.recno)
         r = cursor.nearest(evkey)
@@ -641,7 +645,7 @@ def get_name(database, key):
         nr = ResultsDBrecordName()
         nr.load_record(n)
         return nr
-    
+
 
 def get_name_from_record_value(value):
     """Return ResultsDBrecordName instance for value from database or None."""
@@ -651,7 +655,7 @@ def get_name_from_record_value(value):
     else:
         nr = None
     return nr
-    
+
 
 def get_names_for_games(database, games):
     """Return {record key : ResultsDBrecordName(), ...} for games."""
@@ -661,7 +665,8 @@ def get_names_for_games(database, games):
             if v is not None:
                 if v not in names:
                     names[v] = get_name_from_record_value(
-                        database.get_primary_record(filespec.NAME_FILE_DEF, v))
+                        database.get_primary_record(filespec.NAME_FILE_DEF, v)
+                    )
     return names
 
 
@@ -679,22 +684,26 @@ def get_player_name_text(database, playername):
     """Return newline separated player identity for playername."""
     name, e = playername
     kevent, ksection, tpin = e
-    return '\n'.join((
-        name,
-        get_event_details(database, kevent),
-        get_section_details(database, ksection, tpin),
-        ))
+    return "\n".join(
+        (
+            name,
+            get_event_details(database, kevent),
+            get_section_details(database, ksection, tpin),
+        )
+    )
 
 
 def get_player_name_text_tabs(database, playername):
     """Return tab separated player identity for playername."""
     name, e = playername
     kevent, ksection, tpin = e
-    return '\t'.join((
-        name,
-        get_event_details(database, kevent),
-        get_section_details(database, ksection, tpin),
-        ))
+    return "\t".join(
+        (
+            name,
+            get_event_details(database, kevent),
+            get_section_details(database, ksection, tpin),
+        )
+    )
 
 
 def get_players(database, aliases):
@@ -788,16 +797,12 @@ def get_persons_for_players(database, aliases):
 
 def get_players_for_event(database, event):
     """Return {record key : ResultsDBrecordPlayer(), ...} for event."""
-    return get_players(
-        database,
-        get_aliases_for_event(database, event))
+    return get_players(database, get_aliases_for_event(database, event))
 
 
 def get_players_for_games(database, games):
     """Return {record key : ResultsDBrecordPlayer(), ...} for games."""
-    return get_players(
-        database,
-        get_aliases_for_games(database, games))
+    return get_players(database, get_aliases_for_games(database, games))
 
 
 def get_alias_for_player_import(database, player, sections, lookupevent=None):
@@ -820,14 +825,18 @@ def get_alias_for_player_import(database, player, sections, lookupevent=None):
         sectionkey = get_encoded_section_key(database, s)
         if sectionkey is not None:
             for v in get_events_matching_event_identity(
-                database, ev.get_event_identity()).values():
+                database, ev.get_event_identity()
+            ).values():
                 if sectionkey in v.value.sections:
                     pv.event = v.key.recno
-                    alias = get_alias_for_player(database, pv.identity_packed())
+                    alias = get_alias_for_player(
+                        database, pv.identity_packed()
+                    )
                     if lookupevent:
                         if alias:
                             lookupevent[
-                                (name, startdate, enddate, s)] = pv.event
+                                (name, startdate, enddate, s)
+                            ] = pv.event
                     return alias
 
 
@@ -847,7 +856,8 @@ def get_alias_for_player_takeon(database, player, lookupevent=None):
     sectionkey = get_encoded_section_key(database, section)
     if sectionkey is not None:
         for v in get_events_matching_event_identity(
-            database, ev.get_event_identity()).values():
+            database, ev.get_event_identity()
+        ).values():
             if sectionkey in v.value.sections:
                 pv.event = v.key.recno
                 pv.section = sectionkey
@@ -864,10 +874,12 @@ def get_encoded_section_key(database, section):
         database.get_primary_record(
             filespec.NAME_FILE_DEF,
             database.database_cursor(
-                filespec.NAME_FILE_DEF,
-                filespec.NAMETEXT_FIELD_DEF
-                ).get_unique_primary_for_index_key(
-                    database.encode_record_selector(section))))
+                filespec.NAME_FILE_DEF, filespec.NAMETEXT_FIELD_DEF
+            ).get_unique_primary_for_index_key(
+                database.encode_record_selector(section)
+            ),
+        )
+    )
     if s:
         return s.key.recno
 
@@ -875,11 +887,12 @@ def get_encoded_section_key(database, section):
 def get_section_details(database, section, pin):
     """Return section name. Format depends on pin."""
     if section is None:
-        return ''
+        return ""
     record = get_name_from_record_value(
-        database.get_primary_record(filespec.NAME_FILE_DEF, section))
+        database.get_primary_record(filespec.NAME_FILE_DEF, section)
+    )
     if pin:
-        return '\t'.join((record.value.name, str(pin)))
+        return "\t".join((record.value.name, str(pin)))
     else:
         return record.value.name
 
@@ -895,31 +908,29 @@ def get_alias_identity(record):
     Sorted tuple of event sections
     Player section (may be a club if event is a league)
     Player pin (usually the pairing number in a swiss event section)
-    
+
     The event sections are included to associate the player with the event
     record rather than the event. The player identity does not include the
     event sections when comparing players between exporting and importing
     databases.
-    
+
     """
     v = record.value
     db = record.database
     event = get_event_from_record_value(
-        db.get_primary_record(
-            filespec.EVENT_FILE_DEF,
-            v.event)).value
+        db.get_primary_record(filespec.EVENT_FILE_DEF, v.event)
+    ).value
     sections = set()
     for s in event.sections:
         sections.add(
             get_name_from_record_value(
-                db.get_primary_record(
-                    filespec.NAME_FILE_DEF,
-                    s)).value.name)
+                db.get_primary_record(filespec.NAME_FILE_DEF, s)
+            ).value.name
+        )
     if v.section:
         section = get_name_from_record_value(
-            db.get_primary_record(
-                filespec.NAME_FILE_DEF,
-                v.section)).value.name
+            db.get_primary_record(filespec.NAME_FILE_DEF, v.section)
+        ).value.name
     else:
         section = v.section
     return (
@@ -930,7 +941,7 @@ def get_alias_identity(record):
         sections,
         section,
         v.pin,
-        )
+    )
 
 
 def get_events_for_performance_calculation(database, events):
@@ -941,12 +952,8 @@ def get_events_for_performance_calculation(database, events):
     opponents = dict()
     names = dict()
     for e in events:
-        eventgames = get_games_for_event(
-            database,
-            get_event(database, e[-1]))
-        eventaliases = get_aliases_for_games(
-            database,
-            eventgames)
+        eventgames = get_games_for_event(database, get_event(database, e[-1]))
+        eventaliases = get_aliases_for_games(database, eventgames)
         eventpersons = get_persons(database, eventaliases)
         alias = dict()
         for k in eventaliases.keys():
@@ -956,7 +963,7 @@ def get_events_for_performance_calculation(database, events):
             alias[k] = v.key.recno
             names[alias[k]] = v.value.name
         for g in eventgames:
-            if g.value.result in ecfresult: # 'a', 'd', 'h'
+            if g.value.result in ecfresult:  # 'a', 'd', 'h'
                 for a in (g.value.homeplayer, g.value.awayplayer):
                     p = alias[a]
                     if p not in players:
@@ -968,11 +975,13 @@ def get_events_for_performance_calculation(database, events):
                 game_opponent[g.key.recno] = {
                     alias[g.value.homeplayer]: alias[g.value.awayplayer],
                     alias[g.value.awayplayer]: alias[g.value.homeplayer],
-                    }
+                }
                 opponents[alias[g.value.homeplayer]].add(
-                    alias[g.value.awayplayer])
+                    alias[g.value.awayplayer]
+                )
                 opponents[alias[g.value.awayplayer]].add(
-                    alias[g.value.homeplayer])
+                    alias[g.value.homeplayer]
+                )
                 result = dict()
                 if g.value.result == awin:
                     result[alias[g.value.awayplayer]] = 1
@@ -989,28 +998,30 @@ def get_events_for_performance_calculation(database, events):
 
 def get_events_for_performance_prediction(database, events):
     """Return calculation data from database records for events."""
-    (games,
-     players,
-     game_opponent,
-     opponents,
-     names,
-     ) = get_events_for_performance_calculation(database, events)
+    (
+        games,
+        players,
+        game_opponent,
+        opponents,
+        names,
+    ) = get_events_for_performance_calculation(database, events)
     seasons = {}
     game = ResultsDBrecordGame()
     asd = AppSysDate()
     for gk in sorted(games):
         game.load_record(
-            database.get_primary_record(filespec.GAME_FILE_DEF, gk))
+            database.get_primary_record(filespec.GAME_FILE_DEF, gk)
+        )
         # Hack to deal with surviving non-ISO format dates
-        #y, m, d = [int(e) for e in game.value.date.split('-')]
+        # y, m, d = [int(e) for e in game.value.date.split('-')]
         if asd.parse_date(game.value.date) > 0:
-            y, m, d = [int(e) for e in asd.iso_format_date().split('-')]
+            y, m, d = [int(e) for e in asd.iso_format_date().split("-")]
         else:
             y, m, d = (1950, 1, 1)
         # End hack
         if m < 7:
             y -= 1
-        seasons.setdefault('-'.join((str(y), '12', '25')), set()).add(gk)
+        seasons.setdefault("-".join((str(y), "12", "25")), set()).add(gk)
     return (seasons, games, players, game_opponent, opponents, names)
 
 
@@ -1034,7 +1045,8 @@ def get_events_matching_event_name(database, eventname, sections):
     sections = {get_encoded_section_key(database, s) for s in sections}
     eventname = eventname.pop()
     cursor = database.database_cursor(
-        filespec.EVENT_FILE_DEF, filespec.EVENTNAME_FIELD_DEF)
+        filespec.EVENT_FILE_DEF, filespec.EVENTNAME_FIELD_DEF
+    )
     try:
         r = cursor.nearest(database.encode_record_selector(eventname[0]))
         while r:
@@ -1045,13 +1057,16 @@ def get_events_matching_event_name(database, eventname, sections):
             if e is not None:
                 er = ResultsDBrecordEvent()
                 er.load_record(e)
-                if (er.value.startdate == eventname[1] and
-                    er.value.enddate == eventname[2] and
-                    sections.issubset(er.value.sections)):
+                if (
+                    er.value.startdate == eventname[1]
+                    and er.value.enddate == eventname[2]
+                    and sections.issubset(er.value.sections)
+                ):
                     event = ek, er
                 else:
                     events.append(
-                        (er.value.startdate, er.value.enddate, ek, er))
+                        (er.value.startdate, er.value.enddate, ek, er)
+                    )
             r = cursor.next()
     finally:
         cursor.close()

@@ -33,23 +33,27 @@ def copy_ecf_players_post_2020_rules(
     parent=None,
     datecontrol=None,
     **kwargs
-    ):
+):
     """Import a new ECF player file.
 
     widget - the manager object for the ecf data import tab
 
     """
-    
+
     # DPT database engine code to ensure ECFPLAYER_FILE_DEF file is large
     # enough for any extra records.
 
     if logwidget:
-        logwidget.append_text('', timestamp=False)
-        logwidget.append_text(''.join(
-            ('Ensure ',
-             filespec.ECFPLAYER_FILE_DEF,
-             ' is large enough for any extra records on Master player file.',
-             )))
+        logwidget.append_text("", timestamp=False)
+        logwidget.append_text(
+            "".join(
+                (
+                    "Ensure ",
+                    filespec.ECFPLAYER_FILE_DEF,
+                    " is large enough for any extra records on Master player file.",
+                )
+            )
+        )
     players = ecffile.database_cursor(ecfplayerdb.PLAYERS, ecfplayerdb.PLAYERS)
     ecfimp = ecfplayerdb.ECFplayersDBrecord()
 
@@ -60,11 +64,13 @@ def copy_ecf_players_post_2020_rules(
     newrefs = dict()
     while data:
         ecfimp.load_instance(
-            ecffile, ecfplayerdb.PLAYERS, ecfplayerdb.PLAYERS, data)
+            ecffile, ecfplayerdb.PLAYERS, ecfplayerdb.PLAYERS, data
+        )
         newrefs[ecfimp.value.REF] = ecfimp.key.recno
         data = players.next()
     ecfcursor = results.database_cursor(
-        filespec.ECFPLAYER_FILE_DEF, filespec.ECFPLAYER_FIELD_DEF)
+        filespec.ECFPLAYER_FILE_DEF, filespec.ECFPLAYER_FIELD_DEF
+    )
     ecfrec = ecfrecord.ECFrefDBrecordECFplayer()
 
     # Go through existing records for equivalents to master list records
@@ -74,7 +80,8 @@ def copy_ecf_players_post_2020_rules(
             results,
             filespec.ECFPLAYER_FILE_DEF,
             filespec.ECFPLAYER_FIELD_DEF,
-            r)
+            r,
+        )
         ref = ecfrec.value.ECFcode
         if ref in newrefs:
             bothrefs[ref] = newrefs[ref]
@@ -91,7 +98,8 @@ def copy_ecf_players_post_2020_rules(
 
     # Increase file size if necessary.
     results.increase_database_size(
-        {filespec.ECFPLAYER_FILE_DEF: (extra_records, extra_records)})
+        {filespec.ECFPLAYER_FILE_DEF: (extra_records, extra_records)}
+    )
 
     # Import data (identical to other database engine versions).
 
@@ -102,7 +110,8 @@ def copy_ecf_players_post_2020_rules(
         ecfdate=ecfdate,
         parent=parent,
         datecontrol=datecontrol,
-        **kwargs)
+        **kwargs
+    )
 
 
 def copy_ecf_clubs_post_2020_rules(
@@ -113,7 +122,7 @@ def copy_ecf_clubs_post_2020_rules(
     parent=None,
     datecontrol=None,
     **kwargs
-    ):
+):
     """Import a new ECF club file
 
     widget - the manager object for the ecf data import tab
@@ -124,12 +133,16 @@ def copy_ecf_clubs_post_2020_rules(
     # enough for any extra records.
 
     if logwidget:
-        logwidget.append_text('', timestamp=False)
-        logwidget.append_text(''.join(
-            ('Ensure ',
-             filespec.ECFCLUB_FILE_DEF,
-             ' is large enough for any extra records on Master club file.',
-             )))
+        logwidget.append_text("", timestamp=False)
+        logwidget.append_text(
+            "".join(
+                (
+                    "Ensure ",
+                    filespec.ECFCLUB_FILE_DEF,
+                    " is large enough for any extra records on Master club file.",
+                )
+            )
+        )
     clubs = ecffile.database_cursor(ecfclubdb.CLUBS, ecfclubdb.CLUBS)
     ecfimp = ecfclubdb.ECFclubsDBrecord()
 
@@ -139,22 +152,20 @@ def copy_ecf_clubs_post_2020_rules(
     bothrefs = dict()
     newrefs = dict()
     while data:
-        ecfimp.load_instance(
-            ecffile, ecfclubdb.CLUBS, ecfclubdb.CLUBS, data)
+        ecfimp.load_instance(ecffile, ecfclubdb.CLUBS, ecfclubdb.CLUBS, data)
         newrefs[ecfimp.value.CODE] = ecfimp.key.recno
         data = clubs.next()
     ecfcursor = results.database_cursor(
-        filespec.ECFCLUB_FILE_DEF, filespec.ECFCLUB_FIELD_DEF)
+        filespec.ECFCLUB_FILE_DEF, filespec.ECFCLUB_FIELD_DEF
+    )
     ecfrec = ecfrecord.ECFrefDBrecordECFclub()
-    
+
     # Go through existing records for equivalents to master list records.
     r = ecfcursor.first()
     while r:
         ecfrec.load_instance(
-            results,
-            filespec.ECFCLUB_FILE_DEF,
-            filespec.ECFCLUB_FIELD_DEF,
-            r)
+            results, filespec.ECFCLUB_FILE_DEF, filespec.ECFCLUB_FIELD_DEF, r
+        )
         ref = ecfrec.value.ECFcode
         if ref in newrefs:
             bothrefs[ref] = newrefs[ref]
@@ -171,7 +182,8 @@ def copy_ecf_clubs_post_2020_rules(
 
     # Increase file size if necessary.
     results.increase_database_size(
-        {filespec.ECFCLUB_FILE_DEF: (extra_records, extra_records)})
+        {filespec.ECFCLUB_FILE_DEF: (extra_records, extra_records)}
+    )
 
     # Import data (identical to other database engine versions).
 
@@ -182,7 +194,8 @@ def copy_ecf_clubs_post_2020_rules(
         ecfdate=ecfdate,
         parent=parent,
         datecontrol=datecontrol,
-        **kwargs)
+        **kwargs
+    )
 
 
 def copy_ecf_players_post_2011_rules(
@@ -193,23 +206,27 @@ def copy_ecf_players_post_2011_rules(
     parent=None,
     datecontrol=None,
     **kwargs
-    ):
+):
     """Import a new ECF player file.
 
     widget - the manager object for the ecf data import tab
 
     """
-    
+
     # DPT database engine code to ensure ECFPLAYER_FILE_DEF file is large
     # enough for any extra records.
 
     if logwidget:
-        logwidget.append_text('', timestamp=False)
-        logwidget.append_text(''.join(
-            ('Ensure ',
-             filespec.ECFPLAYER_FILE_DEF,
-             ' is large enough for any extra records on Master player file.',
-             )))
+        logwidget.append_text("", timestamp=False)
+        logwidget.append_text(
+            "".join(
+                (
+                    "Ensure ",
+                    filespec.ECFPLAYER_FILE_DEF,
+                    " is large enough for any extra records on Master player file.",
+                )
+            )
+        )
     players = ecffile.database_cursor(ecfplayerdb.PLAYERS, ecfplayerdb.PLAYERS)
     ecfimp = ecfplayerdb.ECFplayersDBrecord()
 
@@ -220,11 +237,13 @@ def copy_ecf_players_post_2011_rules(
     newrefs = dict()
     while data:
         ecfimp.load_instance(
-            ecffile, ecfplayerdb.PLAYERS, ecfplayerdb.PLAYERS, data)
+            ecffile, ecfplayerdb.PLAYERS, ecfplayerdb.PLAYERS, data
+        )
         newrefs[ecfimp.value.REF] = ecfimp.key.recno
         data = players.next()
     ecfcursor = results.database_cursor(
-        filespec.ECFPLAYER_FILE_DEF, filespec.ECFPLAYER_FIELD_DEF)
+        filespec.ECFPLAYER_FILE_DEF, filespec.ECFPLAYER_FIELD_DEF
+    )
     ecfrec = ecfrecord.ECFrefDBrecordECFplayer()
 
     # Go through existing records for equivalents to master list records
@@ -234,7 +253,8 @@ def copy_ecf_players_post_2011_rules(
             results,
             filespec.ECFPLAYER_FILE_DEF,
             filespec.ECFPLAYER_FIELD_DEF,
-            r)
+            r,
+        )
         ref = ecfrec.value.ECFcode
         if ref in newrefs:
             bothrefs[ref] = newrefs[ref]
@@ -251,7 +271,8 @@ def copy_ecf_players_post_2011_rules(
 
     # Increase file size if necessary.
     results.increase_database_size(
-        {filespec.ECFPLAYER_FILE_DEF: (extra_records, extra_records)})
+        {filespec.ECFPLAYER_FILE_DEF: (extra_records, extra_records)}
+    )
 
     # Import data (identical to other database engine versions).
 
@@ -262,7 +283,8 @@ def copy_ecf_players_post_2011_rules(
         ecfdate=ecfdate,
         parent=parent,
         datecontrol=datecontrol,
-        **kwargs)
+        **kwargs
+    )
 
 
 def copy_ecf_clubs_post_2011_rules(
@@ -273,7 +295,7 @@ def copy_ecf_clubs_post_2011_rules(
     parent=None,
     datecontrol=None,
     **kwargs
-    ):
+):
     """Import a new ECF club file
 
     widget - the manager object for the ecf data import tab
@@ -284,12 +306,16 @@ def copy_ecf_clubs_post_2011_rules(
     # enough for any extra records.
 
     if logwidget:
-        logwidget.append_text('', timestamp=False)
-        logwidget.append_text(''.join(
-            ('Ensure ',
-             filespec.ECFCLUB_FILE_DEF,
-             ' is large enough for any extra records on Master club file.',
-             )))
+        logwidget.append_text("", timestamp=False)
+        logwidget.append_text(
+            "".join(
+                (
+                    "Ensure ",
+                    filespec.ECFCLUB_FILE_DEF,
+                    " is large enough for any extra records on Master club file.",
+                )
+            )
+        )
     clubs = ecffile.database_cursor(ecfclubdb.CLUBS, ecfclubdb.CLUBS)
     ecfimp = ecfclubdb.ECFclubsDBrecord()
 
@@ -299,22 +325,20 @@ def copy_ecf_clubs_post_2011_rules(
     bothrefs = dict()
     newrefs = dict()
     while data:
-        ecfimp.load_instance(
-            ecffile, ecfclubdb.CLUBS, ecfclubdb.CLUBS, data)
+        ecfimp.load_instance(ecffile, ecfclubdb.CLUBS, ecfclubdb.CLUBS, data)
         newrefs[ecfimp.value.CODE] = ecfimp.key.recno
         data = clubs.next()
     ecfcursor = results.database_cursor(
-        filespec.ECFCLUB_FILE_DEF, filespec.ECFCLUB_FIELD_DEF)
+        filespec.ECFCLUB_FILE_DEF, filespec.ECFCLUB_FIELD_DEF
+    )
     ecfrec = ecfrecord.ECFrefDBrecordECFclub()
-    
+
     # Go through existing records for equivalents to master list records.
     r = ecfcursor.first()
     while r:
         ecfrec.load_instance(
-            results,
-            filespec.ECFCLUB_FILE_DEF,
-            filespec.ECFCLUB_FIELD_DEF,
-            r)
+            results, filespec.ECFCLUB_FILE_DEF, filespec.ECFCLUB_FIELD_DEF, r
+        )
         ref = ecfrec.value.ECFcode
         if ref in newrefs:
             bothrefs[ref] = newrefs[ref]
@@ -331,7 +355,8 @@ def copy_ecf_clubs_post_2011_rules(
 
     # Increase file size if necessary.
     results.increase_database_size(
-        {filespec.ECFCLUB_FILE_DEF: (extra_records, extra_records)})
+        {filespec.ECFCLUB_FILE_DEF: (extra_records, extra_records)}
+    )
 
     # Import data (identical to other database engine versions).
 
@@ -342,4 +367,5 @@ def copy_ecf_clubs_post_2011_rules(
         ecfdate=ecfdate,
         parent=parent,
         datecontrol=datecontrol,
-        **kwargs)
+        **kwargs
+    )

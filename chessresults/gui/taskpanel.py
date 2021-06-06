@@ -15,24 +15,15 @@ from solentware_misc.gui import logpanel
 
 
 class TaskPanel(logpanel.TextAndLogPanel):
-    
-    """The background task panel for a Results database.
-    """
-    
-    _btn_closebackgroundtask = 'taskpanel_close'
 
-    def __init__(
-        self,
-        parent=None,
-        starttaskmsg=None,
-        cnf=dict(),
-        **kargs):
+    """The background task panel for a Results database."""
+
+    _btn_closebackgroundtask = "taskpanel_close"
+
+    def __init__(self, parent=None, starttaskmsg=None, cnf=dict(), **kargs):
         """Extend and define the results ECF reference data import tab."""
-        super(TaskPanel, self).__init__(
-            parent=parent,
-            cnf=cnf,
-            **kargs)
+        super(TaskPanel, self).__init__(parent=parent, cnf=cnf, **kargs)
 
         if starttaskmsg is not None:
             self.tasklog.append_text(starttaskmsg)
-            self.tasklog.append_text_only('')
+            self.tasklog.append_text_only("")

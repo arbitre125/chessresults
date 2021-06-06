@@ -39,20 +39,20 @@ from .gameresults import (
     HOME_PLAYER,
     AWAY_PLAYER,
     ROUND,
-    )
+)
 
 # May need displayresulttag constant from slcollation too.
 # Probably add this to gameresults.resultmap.
 _GAME_RESULT = {
-    ('1', '0'): hwin,
-    ('0', '1'): awin,
-    ('0.5', '0.5'): draw,
+    ("1", "0"): hwin,
+    ("0", "1"): awin,
+    ("0.5", "0.5"): draw,
     (None, None): tobereported,
-    }
+}
 
 _GRADE_ONLY_TAG = {
-    True: 'grading only',
-    }
+    True: "grading only",
+}
 
 # Grading code is [0-9]{6}[A-M] but accept [0-9]{3} embedded in a word to allow
 # for a one character typo in the grading code or a one character digit typo in
@@ -62,28 +62,27 @@ _GRADE_ONLY_TAG = {
 # Text in brackets containing a digit are treated as a code: '(UG est 170)' for
 # example. The '{}', '[]', and '<>', pairs are not treated as codes at present
 # because they do not survive till code_in_name is used.
-code_in_name = re.compile('\([^0-9]*[0-9].*?\)|\s*[^\s]*[0-9]{3}[^\s]*\s*')
+code_in_name = re.compile("\([^0-9]*[0-9].*?\)|\s*[^\s]*[0-9]{3}[^\s]*\s*")
 
 
 class MatchFixture(object):
-    """Detail of a fixture extracted from a fixture list file.
-    """
+    """Detail of a fixture extracted from a fixture list file."""
 
     attributes = {
-        'competition': None,
-        'source': None,
-        'round': None,
-        'hometeam': None,
-        'awayteam': None,
-        'date': None,
-        'day': None,
-        'pdate': None,
-        'dateok': None,
-        }
+        "competition": None,
+        "source": None,
+        "round": None,
+        "hometeam": None,
+        "awayteam": None,
+        "date": None,
+        "day": None,
+        "pdate": None,
+        "dateok": None,
+    }
 
     def __init__(self, tagger=None, **kargs):
         """Override, set default values for <class>.attributes not in kargs."""
-        self.__dict__['tagger'] = tagger
+        self.__dict__["tagger"] = tagger
         for a in kargs:
             if a not in self.__class__.attributes:
                 raise AttributeError(a)
@@ -110,17 +109,16 @@ class MatchFixture(object):
 
 
 class Game(object):
-    """Detail of a game result extracted from event report.
-    """
+    """Detail of a game result extracted from event report."""
 
     attributes = {
-        'result': None,
-        'date': None,
-        'homeplayerwhite': None,  # True|False|None. None means "not known"
-        'homeplayer': None,  # the leftmost player in "Smith 1-0 Jones" etc
-        'awayplayer': None,  # the rightmost player in "Smith 1-0 Jones" etc
-        'gradegame': True,  # True|False. True means store result for grading
-        }
+        "result": None,
+        "date": None,
+        "homeplayerwhite": None,  # True|False|None. None means "not known"
+        "homeplayer": None,  # the leftmost player in "Smith 1-0 Jones" etc
+        "awayplayer": None,  # the rightmost player in "Smith 1-0 Jones" etc
+        "gradegame": True,  # True|False. True means store result for grading
+    }
 
     def __init__(self, tagger=None, **kargs):
         """Override, set default values for <class>.attributes not in kargs."""
@@ -128,7 +126,7 @@ class Game(object):
         # default.  Should that come here or should caller be responsible for
         # setting gradegame argument.  Round by round swiss results, not match
         # games, may say something like 'J Smith 1-0 default' too.
-        self.__dict__['tagger'] = tagger
+        self.__dict__["tagger"] = tagger
         for a in kargs:
             if a not in self.__class__.attributes:
                 raise AttributeError(a)
@@ -169,7 +167,7 @@ class Game(object):
     def game_result_exists(result):
         """Return True if game result is allowed"""
         return result in resultmap
-    
+
     def get_print_result(self):
         """Return (<printable result>, <status comment>).
 
@@ -178,10 +176,10 @@ class Game(object):
 
         """
         return (
-            displayresult.get(self.result, ''),
-            displayresulttag.get(self.result, ''),
-            )
-    
+            displayresult.get(self.result, ""),
+            displayresulttag.get(self.result, ""),
+        )
+
     def is_inconsistent(self, other, problems):
         """Return True if attribute values of self and other are inconsistent.
 
@@ -214,6 +212,7 @@ class MatchGame(Game):
     MatchGame.attributes is Game.attributes plus board
 
     """
+
     # PDLRapidplayMatchGame is not used because each game is reported in full.
     # The problem is interpreting scores like 1-1.  Is that two draws or one
     # win by each player, and who had white pieces in each game?  The result
@@ -221,9 +220,9 @@ class MatchGame(Game):
     # See Game for notes on SLMatchGame.
 
     attributes = {
-        'board': None,
-        'gradingonly': None,
-        }
+        "board": None,
+        "gradingonly": None,
+    }
     attributes.update(Game.attributes)
 
     def is_inconsistent(self, other, problems):
@@ -242,7 +241,7 @@ class MatchGame(Game):
     def is_game_counted_in_match_score(self):
         """Return True if game is not 'for grading only'."""
         return not self.gradingonly
-    
+
     def get_print_result(self):
         """Return (<printable result>, <status comment>).
 
@@ -251,17 +250,18 @@ class MatchGame(Game):
 
         """
         return (
-            displayresult.get(self.result, ''),
+            displayresult.get(self.result, ""),
             displayresulttag.get(
                 self.result,
-                '' if self.result in displayresult else 'invalid result'),
-            _GRADE_ONLY_TAG.get(self.gradingonly, ''),
-            )
-    
+                "" if self.result in displayresult else "invalid result",
+            ),
+            _GRADE_ONLY_TAG.get(self.gradingonly, ""),
+        )
+
 
 class UnfinishedGame(MatchGame):
-    """Detail of completed match game that was originally reported unfinished.
-    """
+    """Detail of completed match game that was originally reported unfinished."""
+
     # A merge of pdlcollation.UnfinishedGame and slcollation.SLMatchGame is
     # used.  The PDL version has the right superclass but the game_result
     # method is broken.
@@ -270,20 +270,18 @@ class UnfinishedGame(MatchGame):
     # out the gradingonly attribute, but that attribute has been added to Game.
 
     attributes = {
-        'source': None,
-        'section': None,
-        'competition': None,
-        'hometeam': None,
-        'awayteam': None,
-        }
+        "source": None,
+        "section": None,
+        "competition": None,
+        "hometeam": None,
+        "awayteam": None,
+    }
     attributes.update(MatchGame.attributes)
 
     @staticmethod
     def game_result(homeplayerscore, awayplayerscore):
         """Override, return value representing result such as 'h' for '1-0'."""
-        return _GAME_RESULT.get(
-            (homeplayerscore, awayplayerscore),
-            '')
+        return _GAME_RESULT.get((homeplayerscore, awayplayerscore), "")
 
     def is_inconsistent(self, other, problems):
         """Extend to compare PDL attributes. Return True if inconsistent."""
@@ -322,7 +320,7 @@ class UnfinishedGame(MatchGame):
             state = True
 
         # Surely wrong to do this now, or in pre problems argument code.
-        #if (self.homeplayerwhite == other.homeplayerwhite and
+        # if (self.homeplayerwhite == other.homeplayerwhite and
         #    self.result == other.result and
         #    self.gradingonly == other.gradingonly):
         #    return state
@@ -345,8 +343,8 @@ class SwissGame(Game):
     """
 
     attributes = {
-        'round': None,
-        }
+        "round": None,
+    }
     attributes.update(Game.attributes)
 
     def is_inconsistent(self, other, problems):
@@ -368,9 +366,9 @@ class SwissMatchGame(Game):
     """
 
     attributes = {
-        'board': None,
-        'round': None,
-        }
+        "board": None,
+        "round": None,
+    }
     attributes.update(Game.attributes)
 
     def is_inconsistent(self, other, problems):
@@ -389,23 +387,22 @@ class SwissMatchGame(Game):
 
 
 class Section(object):
-    """Detail of a result extracted from a file of event reports.
-    """
+    """Detail of a result extracted from a file of event reports."""
 
     attributes = {
-        'competition': None,
-        'order': None,  # f(source) for sorting
-        'source': None,  # tag to identify duplicate match reports
-        'games': None,
-        'date': None,
-        'day': None,
-        'pdate': None,
-        'dateok': None,
-        }
+        "competition": None,
+        "order": None,  # f(source) for sorting
+        "source": None,  # tag to identify duplicate match reports
+        "games": None,
+        "date": None,
+        "day": None,
+        "pdate": None,
+        "dateok": None,
+    }
 
     def __init__(self, tagger=None, **kargs):
         """Override, set default values for <class>.attributes not in kargs."""
-        self.__dict__['tagger'] = tagger
+        self.__dict__["tagger"] = tagger
         for a in kargs:
             if a not in self.__class__.attributes:
                 raise AttributeError(a)
@@ -462,13 +459,13 @@ class MatchReport(Section):
     """
 
     attributes = {
-        'round': None,
-        'hometeam': None,
-        'homescore': None,
-        'awayteam': None,
-        'awayscore': None,
-        'default': None,
-        }
+        "round": None,
+        "hometeam": None,
+        "homescore": None,
+        "awayteam": None,
+        "awayscore": None,
+        "default": None,
+    }
     attributes.update(Section.attributes)
 
     def get_unfinished_games_and_score_consistency(self):
@@ -517,55 +514,57 @@ class MatchReport(Section):
 
 
 class Player(object):
-    """A player in an event.
-    """
+    """A player in an event."""
 
     # There is a design flaw here because the attributes 'tagger', '_identity',
     # and 'reported codes', are left out of 'attributes' because they do not
     # contribute to the __eq__ and __ne__ methods.
     # These should be included for the __setattr__ and __getattr__ methods.
     attributes = {
-        'name': None,
-        'event': None,
-        'startdate': None,
-        'enddate': None,
-        'section': None,  # eg. swiss tournament or league division
-        'club': None,  # the club played for in league
-        'pin': None,
-        'affiliation': None,  # eg. club or location (ECF "club")
-        }
+        "name": None,
+        "event": None,
+        "startdate": None,
+        "enddate": None,
+        "section": None,  # eg. swiss tournament or league division
+        "club": None,  # the club played for in league
+        "pin": None,
+        "affiliation": None,  # eg. club or location (ECF "club")
+    }
 
     def __init__(self, tagger=None, reported_codes=None, **kargs):
         """Override, set default values for <class>.attributes not in kargs."""
-        self.__dict__['tagger'] = tagger
-        self.__dict__['reported_codes'] = reported_codes
+        self.__dict__["tagger"] = tagger
+        self.__dict__["reported_codes"] = reported_codes
         for a in kargs:
             if a not in self.__class__.attributes:
                 raise AttributeError(a)
         self.__dict__.update(self.attributes)
         self.__dict__.update(kargs)
         if self.club:
-            self.__dict__['_identity'] = (
+            self.__dict__["_identity"] = (
                 self.name,
                 self.event,
                 self.startdate,
                 self.enddate,
-                self.club)
+                self.club,
+            )
             affiliation = self.club
         elif self.section:
-            self.__dict__['_identity'] = (
+            self.__dict__["_identity"] = (
                 self.name,
                 self.event,
                 self.startdate,
                 self.enddate,
                 self.section,
-                self.pin)
+                self.pin,
+            )
         else:
-            self.__dict__['_identity'] = (
+            self.__dict__["_identity"] = (
                 self.name,
                 self.event,
                 self.startdate,
-                self.enddate)
+                self.enddate,
+            )
 
     def __eq__(self, other):
         """Return True if self[a] == other[a] for a in Player.attributes."""
@@ -636,34 +635,41 @@ class Player(object):
     def get_full_identity(self):
         """Return a tab separated string containing player identity."""
         if self.club:
-            return '\t'.join((
-                self.name,
-                self.event,
-                self.startdate,
-                self.enddate,
-                self.club))
+            return "\t".join(
+                (
+                    self.name,
+                    self.event,
+                    self.startdate,
+                    self.enddate,
+                    self.club,
+                )
+            )
         elif self.section:
             if self.pin:
-                return '\t'.join((
-                    self.name,
-                    self.event,
-                    self.startdate,
-                    self.enddate,
-                    self.section,
-                    str(self.pin)))
+                return "\t".join(
+                    (
+                        self.name,
+                        self.event,
+                        self.startdate,
+                        self.enddate,
+                        self.section,
+                        str(self.pin),
+                    )
+                )
             else:
-                return '\t'.join((
-                    self.name,
-                    self.event,
-                    self.startdate,
-                    self.enddate,
-                    self.section))
+                return "\t".join(
+                    (
+                        self.name,
+                        self.event,
+                        self.startdate,
+                        self.enddate,
+                        self.section,
+                    )
+                )
         else:
-            return '\t'.join((
-                self.name,
-                self.event,
-                self.startdate,
-                self.enddate))
+            return "\t".join(
+                (self.name, self.event, self.startdate, self.enddate)
+            )
 
     def get_identity(self):
         """Return tuple of player identity with fillers for absent elements.
@@ -678,7 +684,8 @@ class Player(object):
                 self.startdate,
                 self.enddate,
                 self.club,
-                None)
+                None,
+            )
         elif self.section:
             if self.pin:
                 return (
@@ -687,7 +694,8 @@ class Player(object):
                     self.startdate,
                     self.enddate,
                     self.section,
-                    self.pin)
+                    self.pin,
+                )
             else:
                 return (
                     self.name,
@@ -695,7 +703,8 @@ class Player(object):
                     self.startdate,
                     self.enddate,
                     self.section,
-                    False)
+                    False,
+                )
         else:
             return (
                 self.name,
@@ -703,7 +712,8 @@ class Player(object):
                 self.startdate,
                 self.enddate,
                 None,
-                None)
+                None,
+            )
 
     def get_player_event(self):
         """Return a tuple containing event part of player identity."""
@@ -729,25 +739,16 @@ class Player(object):
 
         """
         if self.club:
-            return '\t\t'.join((
-                self.name,
-                self.club))
+            return "\t\t".join((self.name, self.club))
         elif self.section:
             if self.pin:
-                return ''.join((
-                    self.name,
-                    '\t\t',
-                    self.section,
-                    ' ',
-                    str(self.pin)))
+                return "".join(
+                    (self.name, "\t\t", self.section, " ", str(self.pin))
+                )
             else:
-                return ''.join((
-                    self.name,
-                    '\t\t',
-                    self.section))
+                return "".join((self.name, "\t\t", self.section))
         else:
-            return '\t'.join((
-                self.name,))
+            return "\t".join((self.name,))
 
     def is_inconsistent(self, other, problems):
         """Return True if attribute values of self and other are inconsistent.
@@ -757,22 +758,22 @@ class Player(object):
         player.
 
         """
-        #state = False
+        # state = False
         for a in Player.attributes:
             if self.__dict__[a] != other.__getattr__(a):
                 if other.__getattr__(a):
 
                     # Listing attribute names as problems may be too much.
-                    #problems.add(a)
+                    # problems.add(a)
 
-                    #state = True
+                    # state = True
                     return True
-        #return state
+        # return state
         return False
 
     def add_reported_codes(self, code):
         """Add code(s) to self.reported_codes."""
-        self.__dict__['reported_codes'].update(code)
+        self.__dict__["reported_codes"].update(code)
 
     def get_reported_codes(self):
         """Return space separated string of reported codes.
@@ -782,16 +783,16 @@ class Player(object):
         treated as a code by the parser.
 
         """
-        return ' '.join(self.reported_codes
-                        if self.reported_codes is not None else '')
+        return " ".join(
+            self.reported_codes if self.reported_codes is not None else ""
+        )
 
 
 # GameCollation is superclass of Collation and CollationEvents, the latter used
 # when importing data from another database.
 class GameCollation(object):
-    
-    """Base class for results extracted from a file of game reports.
-    """
+
+    """Base class for results extracted from a file of game reports."""
 
     def __init__(self):
         """Extend, define game and player dictionaries and error report list."""

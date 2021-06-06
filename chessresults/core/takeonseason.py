@@ -40,7 +40,7 @@ class TakeonSeasonError(Exception):
 
 
 class TakeonSeason(object):
-    
+
     """Default management of source and derived data files for an event.
 
     Assume that the initial schedule and results files are empty and that
@@ -49,8 +49,9 @@ class TakeonSeason(object):
     files with data from source files and perform additional consistency
     checks between the versions when updating or extracting data.  Use this
     class when there is no need for audit of the data.
-    
+
     """
+
     _sourcefiles = (constants.TAKEON_SCHEDULE, constants.TAKEON_REPORTS)
 
     def __init__(self, folder, season=None):
@@ -58,10 +59,10 @@ class TakeonSeason(object):
 
         folder - contains files of event data
         season - identifies the season in which the event happens
-        
+
         """
         self.folder = folder
-        self.config = 'conf'
+        self.config = "conf"
         self.season = season
         self.fixtures = None
         self.fixturesfile = None
@@ -73,7 +74,7 @@ class TakeonSeason(object):
 
     @property
     def collation(self):
-        """"""
+        """ """
         return self._collation
 
     def get_data_file_names(self, config):
@@ -82,10 +83,10 @@ class TakeonSeason(object):
         Source files and difference files are in the list.  Caller is expected
         to check that all source files exist before creating any difference
         files that should exist.
-        
+
         """
-        cf = open(config, 'r')
-        lines = [s.strip().split('=', 1) for s in cf.readlines()]
+        cf = open(config, "r")
+        lines = [s.strip().split("=", 1) for s in cf.readlines()]
         cf.close()
         srcfiles = dict()
         for sf in self._sourcefiles:
@@ -94,8 +95,7 @@ class TakeonSeason(object):
             if len(s) == 2:
                 k, v = s
                 if k in srcfiles:
-                    srcfiles[k] = os.path.join(
-                        self.folder, v)
+                    srcfiles[k] = os.path.join(self.folder, v)
         return srcfiles
 
     def get_folder_contents(self, folder, takeonfiles):
@@ -108,14 +108,15 @@ class TakeonSeason(object):
         instead. The files containing the take-on data for TAKEON_ECF_FORMAT
         will be named <take-on>/<take-on>.txt (perhaps .TXT).
         LEAGUE_DATABASE_DATA is the data file.
-        
+
         """
         fn = os.path.join(folder, constants.LEAGUE_DATABASE_DATA)
         if os.path.isfile(fn):
             takeonfiles.add(fn)
             return
         takeon_conf_isfile = os.path.isfile(
-            os.path.join(folder, constants.TAKEON_ECF_FORMAT))
+            os.path.join(folder, constants.TAKEON_ECF_FORMAT)
+        )
         for f in os.listdir(folder):
             fn = os.path.join(folder, f)
             if os.path.isfile(fn):
@@ -129,7 +130,7 @@ class TakeonSeason(object):
                     takeonfiles.add(fn)
             elif os.path.isdir(fn):
                 self.get_folder_contents(fn, takeonfiles)
-                
+
     def get_folder_contents_for_merge(self, folder):
         """Return TakeonLeagueDumpFile or TakeonSubmissionFile object.
 
@@ -145,7 +146,7 @@ class TakeonSeason(object):
             merge = TakeonSubmissionFile(folder)
         merge.get_folder_contents(folder)
         return merge
-                
+
     def get_results_from_file(self):
         """Override, create Collation object from text files.
 
@@ -156,33 +157,35 @@ class TakeonSeason(object):
         """
         if self._collation == None:
             self.get_schedule_from_file(TakeonSchedule)
-            textlines = [t
-                         for t in difflib.restore(self.results, 2)]
-            if (len(self.takeonfiles.files) == 1 and
-                os.path.join(
-                    self.folder,
-                    constants.LEAGUE_DATABASE_DATA) in self.takeonfiles.files):
+            textlines = [t for t in difflib.restore(self.results, 2)]
+            if (
+                len(self.takeonfiles.files) == 1
+                and os.path.join(self.folder, constants.LEAGUE_DATABASE_DATA)
+                in self.takeonfiles.files
+            ):
                 results = TakeonLeagueDump()
             else:
                 results = TakeonSubmission()
             results.build_results(
                 textlines,
                 self._fixtures,
-                os.path.splitext(os.path.basename(self.folder))[0])
+                os.path.splitext(os.path.basename(self.folder))[0],
+            )
             # The next two lines are a relic of the two steps being done in
             # separate consecutive processes, possibly days apart.  Nothing is
             # actually exported in the first step but the second step expects
             # stuff in that format.
             exportgames = results.export_games(pins=True)
-            importdata = get_import_event_results(exportgames, '')
+            importdata = get_import_event_results(exportgames, "")
             self._collation = TakeonCollation(
-                results, self._fixtures, importdata)
+                results, self._fixtures, importdata
+            )
             # Following is a poor comment but it suggests I think PDLCollation
             # has the inferior way of doing this.
-            #rather than follow lead of class PDLCollation with Collation
-            #self._collation.error.extend(results.error)
-            #self._collation.collate_matches()
-            #self._collation.collate_players()
+            # rather than follow lead of class PDLCollation with Collation
+            # self._collation.error.extend(results.error)
+            # self._collation.collate_matches()
+            # self._collation.collate_players()
 
     def open_documents(self, parent):
         """Override, extract data from text files and return True if ok."""
@@ -190,54 +193,71 @@ class TakeonSeason(object):
         if not len(merge.files):
             tkinter.messagebox.showinfo(
                 parent=parent,
-                message=' '.join(
-                    ['Folder', os.path.split(self.folder)[-1],
-                     'and its sub-folders, if any, do not contain any data',
-                     'files marked for addition to a Results database.']),
-                title='Open results take-on data')
+                message=" ".join(
+                    [
+                        "Folder",
+                        os.path.split(self.folder)[-1],
+                        "and its sub-folders, if any, do not contain any data",
+                        "files marked for addition to a Results database.",
+                    ]
+                ),
+                title="Open results take-on data",
+            )
             return
         if not merge.translate_results_format():
             tkinter.messagebox.showerror(
                 parent=parent,
-                title='Results data take-on',
-                message=' '.join((
-                    'Format error found while processing data in',
-                    self.folder))
-                )
+                title="Results data take-on",
+                message=" ".join(
+                    (
+                        "Format error found while processing data in",
+                        self.folder,
+                    )
+                ),
+            )
             return
 
         config = os.path.join(self.folder, self.config)
         if not os.path.exists(config):
-            cf = open(config, 'w')
+            cf = open(config, "w")
             for sf in self._sourcefiles:
-                cf.writelines((
-                    ''.join((sf, '=')),
-                    os.path.join(
-                        ''.join((sf, self.season, '.txt'))),
-                    os.linesep))
+                cf.writelines(
+                    (
+                        "".join((sf, "=")),
+                        os.path.join("".join((sf, self.season, ".txt"))),
+                        os.linesep,
+                    )
+                )
             cf.close()
-            
+
             tkinter.messagebox.showinfo(
                 parent=parent,
-                message=' '.join(
-                    ['Configuration file', config, 'created with',
-                     'default file names for event schedule and',
-                     'reports. Edit now, if necessary, to match',
-                     'actual file names. Click OK when ready.']),
-                title='Open results take-on data')
+                message=" ".join(
+                    [
+                        "Configuration file",
+                        config,
+                        "created with",
+                        "default file names for event schedule and",
+                        "reports. Edit now, if necessary, to match",
+                        "actual file names. Click OK when ready.",
+                    ]
+                ),
+                title="Open results take-on data",
+            )
 
         srcfiles = self.get_data_file_names(config)
         if not self.source_documents_exist(srcfiles, config, parent):
             return False
-            
+
         # Get the fixtures
         schedule = srcfiles[constants.TAKEON_SCHEDULE]
         fixtures = self.get_difference_file(
             [mn for mn in merge.matchnames],
             schedule,
-            'Schedule Files',
+            "Schedule Files",
             parent,
-            'Open take-on schedule data')
+            "Open take-on schedule data",
+        )
         if not isinstance(fixtures, list):
             return False
 
@@ -246,9 +266,10 @@ class TakeonSeason(object):
         results = self.get_difference_file(
             merge.get_lines_for_difference_file(),
             reports,
-            'Report Files',
+            "Report Files",
             parent,
-            'Open take-on reports data')
+            "Open take-on reports data",
+        )
         if not isinstance(results, list):
             return False
 
@@ -264,7 +285,7 @@ class TakeonSeason(object):
 
         sourcefiles will contain names of difference files to be generated or
         updated from source files.  Existence of these files is not checked.
-        
+
         """
         ok = True
         for s in sourcefiles:
@@ -272,17 +293,18 @@ class TakeonSeason(object):
                 ok = False
                 tkinter.messagebox.showinfo(
                     parent=parent,
-                    message=' '.join(
-                        ['Specification for', s, 'not in', config]),
-                    title='Open results take-on data')
+                    message=" ".join(
+                        ["Specification for", s, "not in", config]
+                    ),
+                    title="Open results take-on data",
+                )
         if not ok:
             return False
         return True
 
     # Copy code from original season.py instead of delegating to superclass
     def extract_schedule(self, newfixtures):
-        """Update the Schedule object getfixtures from newfixtures text lines.
-        """
+        """Update the Schedule object getfixtures from newfixtures text lines."""
         oldfixtures = list(difflib.restore(self.fixtures, 1))
         self.fixtures = list(difflib.ndiff(oldfixtures, newfixtures))
         self._fixtures = None
@@ -301,20 +323,20 @@ class TakeonSeason(object):
         and newresults.  In other words the old version of current text is
         replaced by the new version of current text while retaining the
         original text entered into the file.
-        
+
         """
         oldfixtures = list(difflib.restore(self.fixtures, 1))
         self.fixtures = list(difflib.ndiff(oldfixtures, newfixtures))
         oldresults = list(difflib.restore(self.results, 1))
         self.results = list(difflib.ndiff(oldresults, newresults))
         try:
-            ff = open(self.fixturesfile, 'wb')
-            ff.write('\n'.join(self.fixtures).encode('utf8'))
+            ff = open(self.fixturesfile, "wb")
+            ff.write("\n".join(self.fixtures).encode("utf8"))
         finally:
             ff.close()
         try:
-            fr = open(self.resultsfile, 'wb')
-            fr.write('\n'.join(self.results).encode('utf8'))
+            fr = open(self.resultsfile, "wb")
+            fr.write("\n".join(self.results).encode("utf8"))
         finally:
             fr.close()
 
@@ -323,7 +345,7 @@ class TakeonSeason(object):
 
         It is assumed that get_results_from_file call will update a Results
         object.
-        
+
         """
         oldresults = list(difflib.restore(self.results, 1))
         self.results = list(difflib.ndiff(oldresults, newresults))
@@ -346,7 +368,7 @@ class TakeonSeason(object):
         in self.folder are consistent with the files created by the
         open_documents method of that subclass.
         """
-        raise TakeonSeasonError('datafiles_exist not implemented')
+        raise TakeonSeasonError("datafiles_exist not implemented")
 
     def get_collated_games(self):
         """Return the Collation.games object"""
@@ -360,87 +382,97 @@ class TakeonSeason(object):
         orig - source of data being added to diff
         parent - master widget for create file information dialogue
         dlgcaption - title for dialogue
-        
+
         """
         if not os.path.exists(diff):
             difflines = list(difflib.ndiff(lines, lines))
-            fo = open(diff, 'wb')
-            fo.write('\n'.join(difflines).encode('utf8'))
+            fo = open(diff, "wb")
+            fo.write("\n".join(difflines).encode("utf8"))
             fo.close()
             if len(lines):
                 tkinter.messagebox.showinfo(
                     parent=parent,
-                    message=' '.join(
-                        ['Data extracted from',
-                         orig,
-                         'into',
-                         diff]),
-                    title=dlgcaption)
+                    message=" ".join(
+                        ["Data extracted from", orig, "into", diff]
+                    ),
+                    title=dlgcaption,
+                )
             else:
                 tkinter.messagebox.showinfo(
                     parent=parent,
-                    message=' '.join(
-                        ['Empty', diff, 'created']),
-                    title=dlgcaption)
+                    message=" ".join(["Empty", diff, "created"]),
+                    title=dlgcaption,
+                )
             return difflines
         else:
-            fd = open(diff, 'rb')
+            fd = open(diff, "rb")
             diffbytes = fd.read()
             fd.close()
             # Early versions of program did not use utf-8 and in practice
             # assumed iso-8859-1 encoding.
             try:
-                difflines = diffbytes.decode('utf8').splitlines()
+                difflines = diffbytes.decode("utf8").splitlines()
             except UnicodeDecodeError:
-                difflines = diffbytes.decode('iso-8859-1').splitlines()
+                difflines = diffbytes.decode("iso-8859-1").splitlines()
             origlines = list(difflib.restore(difflines, 1))
             if len(origlines) > len(lines):
                 tkinter.messagebox.showinfo(
                     parent=parent,
-                    message=''.join(
-                        [orig,
-                         ', ignoring editing since creation, contains more ',
-                         'data than the source documents.',
-                         os.linesep,
-                         'To use the new data delete ',
-                         diff,
-                         os.linesep,
-                         '(losing any editing done), or provide source ',
-                         'documents consistent with earlier versions.']),
-                    title=dlgcaption)
+                    message="".join(
+                        [
+                            orig,
+                            ", ignoring editing since creation, contains more ",
+                            "data than the source documents.",
+                            os.linesep,
+                            "To use the new data delete ",
+                            diff,
+                            os.linesep,
+                            "(losing any editing done), or provide source ",
+                            "documents consistent with earlier versions.",
+                        ]
+                    ),
+                    title=dlgcaption,
+                )
                 return False
-            elif origlines != lines[:len(origlines)]:
+            elif origlines != lines[: len(origlines)]:
                 tkinter.messagebox.showinfo(
                     parent=parent,
-                    message=''.join(
-                        [orig,
-                         ', ignoring editing since creation, is not ',
-                         'consistent with the new source documents.',
-                         os.linesep,
-                         'To use the new data delete ',
-                         diff,
-                         os.linesep,
-                         '(losing any editing done), or provide source ',
-                         'documents consistent with earlier versions.']),
-                    title=dlgcaption)
+                    message="".join(
+                        [
+                            orig,
+                            ", ignoring editing since creation, is not ",
+                            "consistent with the new source documents.",
+                            os.linesep,
+                            "To use the new data delete ",
+                            diff,
+                            os.linesep,
+                            "(losing any editing done), or provide source ",
+                            "documents consistent with earlier versions.",
+                        ]
+                    ),
+                    title=dlgcaption,
+                )
                 return False
             elif len(lines) > len(origlines):
-                fd = open(diff, 'wb')
-                newlines = lines[len(origlines):]
+                fd = open(diff, "wb")
+                newlines = lines[len(origlines) :]
                 newdifflines = difflib.ndiff(newlines, newlines)
                 difflines.extend(newdifflines)
-                fd.write('\n'.join(difflines).encode('utf8'))
+                fd.write("\n".join(difflines).encode("utf8"))
                 fd.close()
                 tkinter.messagebox.showinfo(
                     parent=parent,
-                    message=''.join(
-                        ['Extended source documents consistent with earlier ',
-                         'versions have been supplied.',
-                         os.linesep,
-                         orig,
-                         ' is extended and previous edits have been retained.',
-                         ]),
-                    title=dlgcaption)
+                    message="".join(
+                        [
+                            "Extended source documents consistent with earlier ",
+                            "versions have been supplied.",
+                            os.linesep,
+                            orig,
+                            " is extended and previous edits have been retained.",
+                        ]
+                    ),
+                    title=dlgcaption,
+                )
                 return difflines
             else:
                 return difflines
@@ -449,7 +481,7 @@ class TakeonSeason(object):
         """Extract schedule from text file using getfixtures.build_schedule.
 
         getfixtures - the Schedule class or a subclass
-        
+
         """
         if self._fixtures == None:
             f = list(difflib.restore(self.fixtures, 2))

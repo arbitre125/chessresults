@@ -15,8 +15,8 @@ def get_event_from_player(p):
         p[1],
         p[2],
         p[3],
-        )
-    
+    )
+
 
 def convert_alias_to_transfer_format(alias, cname):
     """Convert alias to key=value strings and return in a list.
@@ -25,34 +25,32 @@ def convert_alias_to_transfer_format(alias, cname):
 
     """
     outputdata = [
-        '='.join((constants._event, alias[3])),
-        '='.join((constants._startdate, alias[1])),
-        '='.join((constants._enddate, alias[2]))]
+        "=".join((constants._event, alias[3])),
+        "=".join((constants._startdate, alias[1])),
+        "=".join((constants._enddate, alias[2])),
+    ]
     for s in alias[4]:
-        outputdata.append(
-            '='.join((constants._eventsection, s)))
+        outputdata.append("=".join((constants._eventsection, s)))
     if alias[5]:
-        outputdata.append(
-            '='.join((constants._section, alias[5])))
+        outputdata.append("=".join((constants._section, alias[5])))
     if alias[6]:
-        outputdata.append(
-            '='.join((constants._pin, str(alias[6]))))
+        outputdata.append("=".join((constants._pin, str(alias[6]))))
     elif alias[6] is False:
-        outputdata.append(
-            '='.join((constants._pinfalse, 'true')))
-    outputdata.append('='.join((cname, alias[0])))
+        outputdata.append("=".join((constants._pinfalse, "true")))
+    outputdata.append("=".join((cname, alias[0])))
     return outputdata
 
-    
+
 def get_player_identifier(
     data,
     player=constants._name,
     pin=constants._pin,
-    section=constants._section):
+    section=constants._section,
+):
     """Return player identifier tuple from data details.
 
     Returned tuple format is:
-    
+
     Player name
     Event name
     Event start date
@@ -76,8 +74,8 @@ def get_player_identifier(
             data[constants._enddate],
             data[constants._section],
             data[pin],
-            )
-    elif section is not constants._section:#data[section] is not None?
+        )
+    elif section is not constants._section:  # data[section] is not None?
         return (
             data[player],
             data[constants._event],
@@ -85,7 +83,7 @@ def get_player_identifier(
             data[constants._enddate],
             data[section],
             None,
-            )
+        )
     else:
         return (
             data[player],
@@ -94,13 +92,12 @@ def get_player_identifier(
             data[constants._enddate],
             None,
             None,
-            )
+        )
 
-    
+
 class ImportReports(object):
 
-    """Class for importing results data.
-    """
+    """Class for importing results data."""
 
     def __init__(self, textlines):
 
@@ -108,7 +105,7 @@ class ImportReports(object):
         self.textlines = textlines
         self.game = dict()
         self.gameplayer = set()
-        self.localplayer = dict()#set()
+        self.localplayer = dict()  # set()
         self.gameplayermerge = dict()
         self.remoteplayer = dict()
         self.new_to_known = dict()
@@ -153,24 +150,31 @@ class ImportReports(object):
                         data[v] = tuple(sorted(data[v]))
                     else:
                         data[v] = ()
-                    
+
             return True
 
         def game():
             if not translate_data(gameitems, translategameitems):
                 return False
-            if data[constants._result] not in displayresult:#constants._storeresults:
+            if (
+                data[constants._result] not in displayresult
+            ):  # constants._storeresults:
                 return False
             for name, pin, affiliation in (
-                (constants._homename,
-                 constants._homepin,
-                 constants._homeaffiliation),
-                (constants._awayname,
-                 constants._awaypin,
-                 constants._awayaffiliation),
-                ):
+                (
+                    constants._homename,
+                    constants._homepin,
+                    constants._homeaffiliation,
+                ),
+                (
+                    constants._awayname,
+                    constants._awaypin,
+                    constants._awayaffiliation,
+                ),
+            ):
                 identity = get_player_identifier(
-                    data, player=name, pin=pin, section=affiliation)
+                    data, player=name, pin=pin, section=affiliation
+                )
                 if identity not in self.gameplayer:
                     self.gameplayer.add(identity)
             gamenumber = len(self.game)
@@ -184,8 +188,8 @@ class ImportReports(object):
                 data[constants._event],
                 data[constants._startdate],
                 data[constants._enddate],
-                )
-            
+            )
+
         def get_player_key(player):
             """Return player key from data details for import name matching
 
@@ -201,7 +205,7 @@ class ImportReports(object):
                 data[constants._enddate],
                 data[constants._section],
                 data[constants._pin],
-                )
+            )
 
         def get_section_identifier():
             """Return event identifier from data details"""
@@ -210,8 +214,8 @@ class ImportReports(object):
                 data[constants._startdate],
                 data[constants._enddate],
                 data[constants._section],
-                )
-            
+            )
+
         def known_player():
             if self._newidentifier is None:
                 return False
@@ -225,7 +229,7 @@ class ImportReports(object):
             self._newidentifier = None
             data.clear()
             return True
-        
+
         def new_player():
             if self._newidentifier is not None:
                 return False
@@ -265,7 +269,7 @@ class ImportReports(object):
             data.clear()
             merges[:] = []
             return True
-        
+
         def players_on_export_database():
             for k in data.keys():
                 if k not in notmergeplayeritems:
@@ -276,7 +280,8 @@ class ImportReports(object):
 
         def remote_player():
             if not translate_data(
-                remoteplayeritems, translateremoteplayeritems):
+                remoteplayeritems, translateremoteplayeritems
+            ):
                 return False
             merge_event_sections(self.remoteevents)
             identity = get_player_key(constants._player)
@@ -304,18 +309,19 @@ class ImportReports(object):
                 del context[key]
             context[constants._identified] = remote_players_finished
             return True
-        
+
         def local_players_finished():
             for key in (
                 constants._exportedeventplayer,
                 constants._exportedplayer,
                 constants._name,
-                constants._homeplayerwhite):
+                constants._homeplayerwhite,
+            ):
                 del context[key]
             context[constants._pin] = games_finished
             context[constants._identified] = remote_players_finished
             return True
-        
+
         def ignore_merge_instructions():
             # Ignore the merge instructions appended by this module after
             # receipt of response from destination system requesting player
@@ -324,12 +330,12 @@ class ImportReports(object):
             # avoiding the data error condition.
             data.clear()
             return True
-        
+
         def merge_event_sections(events):
             e = get_event_identifier()
             es = events.setdefault(e, set())
             es.update(data[constants._eventsections])
-        
+
         def remote_players_finished():
             for k in data.keys():
                 if k != constants._identified:
@@ -337,7 +343,8 @@ class ImportReports(object):
             for key in (
                 constants._player,
                 constants._aliases,
-                constants._identified):
+                constants._identified,
+            ):
                 del context[key]
             context[constants._knownidentity] = known_player
             context[constants._newidentity] = new_player
@@ -353,13 +360,13 @@ class ImportReports(object):
             constants._exportedplayer: players_on_export_database,
             constants._homeplayerwhite: local_players_finished,
             constants._aliases: merge_remote_players,
-            }
+        }
 
         datalistitems = {
             constants._eventsection: constants._eventsections,
             constants._homereportedcodes: constants._homereportedcodes,
             constants._awayreportedcodes: constants._awayreportedcodes,
-            }
+        }
 
         items = {
             constants._startdate,
@@ -395,7 +402,7 @@ class ImportReports(object):
             constants._newidentity,
             constants._knownidentity,
             constants._identified,
-            }
+        }
 
         inputitems = {
             constants._startdate,
@@ -431,7 +438,7 @@ class ImportReports(object):
             constants._newidentity,
             constants._knownidentity,
             constants._identified,
-            }
+        }
 
         gameitems = {
             constants._startdate: True,
@@ -456,11 +463,11 @@ class ImportReports(object):
             constants._round: None,
             constants._homepinfalse: False,
             constants._awaypinfalse: False,
-            }
+        }
 
         mergeremoteplayeritems = {
             constants._aliases: True,
-            }
+        }
 
         newplayeritems = {
             constants._startdate: True,
@@ -471,7 +478,7 @@ class ImportReports(object):
             constants._newidentity: True,
             constants._pin: None,
             constants._pinfalse: False,
-            }
+        }
 
         knownplayeritems = {
             constants._startdate: True,
@@ -482,15 +489,15 @@ class ImportReports(object):
             constants._knownidentity: True,
             constants._pin: None,
             constants._pinfalse: False,
-            }
+        }
 
         mergeplayeritems = {
             constants._exportedeventplayer: True,
-            }
+        }
 
         notmergeplayeritems = {
             constants._exportedplayer: True,
-            }
+        }
 
         playeritems = {
             constants._startdate: True,
@@ -501,7 +508,7 @@ class ImportReports(object):
             constants._name: True,
             constants._pin: None,
             constants._pinfalse: False,
-            }
+        }
 
         remoteplayeritems = {
             constants._startdate: True,
@@ -512,37 +519,37 @@ class ImportReports(object):
             constants._player: True,
             constants._pin: None,
             constants._pinfalse: False,
-            }
+        }
 
         translategameitems = {
             constants._homepinfalse: constants._homepin,
             constants._awaypinfalse: constants._awaypin,
-            }
+        }
 
         translateknownplayeritems = {
             constants._pinfalse: constants._pin,
-            }
+        }
 
         translatenewplayeritems = {
             constants._pinfalse: constants._pin,
-            }
+        }
 
         translateremoteplayeritems = {
             constants._pinfalse: constants._pin,
-            }
+        }
 
         translateplayeritems = {
             constants._pinfalse: constants._pin,
-            }
+        }
 
         data = dict()
         merges = []
         for e, t in enumerate(self.textlines):
-            ts = t.split('=', 1)
+            ts = t.split("=", 1)
             key, value = ts[0], ts[-1]
             if key not in inputitems:
                 if len(key) != 0:
-                    self.error = ['Unknown field name', e, t]
+                    self.error = ["Unknown field name", e, t]
                     return False
             if key in datalistitems:
                 data.setdefault(datalistitems[key], set()).add(value)
@@ -550,13 +557,13 @@ class ImportReports(object):
                 data[key] = value
             if key in context:
                 if not context[key]():
-                    self.error = ['Field processing error', e, t]
+                    self.error = ["Field processing error", e, t]
                     return False
         if len(data):
-            self.error = ['Unprocessed data', e, t]
+            self.error = ["Unprocessed data", e, t]
             return False
         if self._newidentifier is not None:
-            self.error = ['Not new identifier', e, t]
+            self.error = ["Not new identifier", e, t]
             return False
         return True
 
@@ -597,9 +604,7 @@ class ImportReports(object):
         if len(self.known_to_new) == 0:
             return False
         # check for equality of self and request sub-states
-        for rep, req in (
-            (self.gameplayer, request.gameplayer),
-            ):
+        for rep, req in ((self.gameplayer, request.gameplayer),):
             for k in rep:
                 if k not in req:
                     return False
@@ -611,7 +616,7 @@ class ImportReports(object):
             (self.gameplayermerge, request.gameplayermerge),
             (self.localplayer, request.localplayer),
             (self.remoteplayer, request.remoteplayer),
-            ):
+        ):
             for k, v in rep.items():
                 if k not in req:
                     return False
@@ -642,7 +647,7 @@ class ImportReports(object):
                 merge, alias = self.remoteplayer[p]
                 if merge is None:
                     merge, alias = self.remoteplayer[alias]
-                if merge == 'False':
+                if merge == "False":
                     discard.add(p)
         newplayers.difference_update(discard)
         return newplayers
@@ -650,8 +655,9 @@ class ImportReports(object):
     def map_known_to_new(self, knownplayer, newplayer):
         """Add new player to known player map."""
         self.new_to_known[newplayer] = knownplayer
-        self.known_to_new[knownplayer] = (
-            self.localplayer[self.gameplayermerge[newplayer]])
+        self.known_to_new[knownplayer] = self.localplayer[
+            self.gameplayermerge[newplayer]
+        ]
 
     def get_game_players(self):
         """Return dictionary mapping gameplayers to aliases."""
@@ -661,19 +667,20 @@ class ImportReports(object):
         players = dict()
         for gp in gameplayer:
             gpm = gameplayermerge[gp]
-            if gpm in gameplayer: # is exporter main alias used in games
+            if gpm in gameplayer:  # is exporter main alias used in games
                 if gpm not in players:
                     players[gpm] = set()
                 if gpm != gp:
                     players[gpm].add(gp)
             else:
                 for p in localplayer[gpm]:
-                    if p in players: # is any exporter alias already found
+                    if p in players:  # is any exporter alias already found
                         players[p].add(gp)
                         break
-                else: # use this alias as importers main alias
+                else:  # use this alias as importers main alias
                     players[gp] = set()
         return players
+
 
 def get_import_event_reports(data):
     """Convenience function to generate ImportReports instance."""

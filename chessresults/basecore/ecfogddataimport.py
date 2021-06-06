@@ -21,12 +21,8 @@ from ..core import ecfogdrecord
 
 
 def copy_ecf_ogd_players_post_2006_rules(
-    results,
-    logwidget=None,
-    ecffile=None,
-    parent=None,
-    **kwargs
-    ):
+    results, logwidget=None, ecffile=None, parent=None, **kwargs
+):
     """Import a new ECF downloadable OGD player file.
 
     widget - the manager object for the ecf data import tab
@@ -36,14 +32,16 @@ def copy_ecf_ogd_players_post_2006_rules(
     if gcodes is False:
         return
     return _copy_ecf_ogd_players_post_2006_rules(
-        results, logwidget, ecffile, gcodes)
+        results, logwidget, ecffile, gcodes
+    )
 
 
 def _validate_ecf_ogd_players_post_2006_rules(logwidget, ecffile):
     if logwidget:
-        logwidget.append_text('', timestamp=False)
+        logwidget.append_text("", timestamp=False)
         logwidget.append_text(
-            'Start processing Online Grading Database player file.')
+            "Start processing Online Grading Database player file."
+        )
 
     # Get all ECF grading codes in Online Grading Database download file.
     ogdfile = ecffile.main[ecfogddb.PLAYERS]
@@ -54,20 +52,23 @@ def _validate_ecf_ogd_players_post_2006_rules(logwidget, ecffile):
     name = ecfogdrecord._ECFOGDplayernamefield
     clubs = ecfogdrecord._ECFOGDplayerclubsfields
     r = csv.DictReader(
-        [o.decode('iso-8859-1') for o in ogdfile.textlines],
-        ogdfile.fieldnames)
+        [o.decode("iso-8859-1") for o in ogdfile.textlines], ogdfile.fieldnames
+    )
     for row in r:
         try:
             gcodes.setdefault(row[ref], []).append(
-                (row[name], [row[c] for c in clubs]))
+                (row[name], [row[c] for c in clubs])
+            )
         except:
             if logwidget:
-                logwidget.append_text_only('')
+                logwidget.append_text_only("")
                 logwidget.append_text_only(
-                    'Exception while reading a row from Grading List.')
+                    "Exception while reading a row from Grading List."
+                )
                 logwidget.append_text_only(
-                    ''.join((str(len(gcodes)), ' rows read successfully.')))
-                logwidget.append_text_only('')
+                    "".join((str(len(gcodes)), " rows read successfully."))
+                )
+                logwidget.append_text_only("")
             return False
     for k, v in gcodes.items():
         if len(v) > 1:
@@ -83,19 +84,20 @@ def _validate_ecf_ogd_players_post_2006_rules(logwidget, ecffile):
                     break
                 checkdigit += int(tokens[5 - i]) * (i + 2)
             else:
-                if tokens[-1] != 'ABCDEFGHJKL'[checkdigit % 11]:
+                if tokens[-1] != "ABCDEFGHJKL"[checkdigit % 11]:
                     checkfails.append(k)
     if len(duplicates) or len(checkfails):
         if logwidget:
             logwidget.append_text(
-                'Import from Online Grading Database abandonned.')
+                "Import from Online Grading Database abandonned."
+            )
             if len(duplicates):
-                logwidget.append_text_only(
-                    'Duplicate grading codes exist.')
+                logwidget.append_text_only("Duplicate grading codes exist.")
             if len(checkfails):
                 logwidget.append_text_only(
-                    'Grading codes exist that fail the checkdigit test.')
-            logwidget.append_text_only('')
+                    "Grading codes exist that fail the checkdigit test."
+                )
+            logwidget.append_text_only("")
         return False
     return gcodes
 
@@ -105,12 +107,14 @@ def _copy_ecf_ogd_players_post_2006_rules(results, logwidget, ecffile, gcodes):
     # Load the ECF data.
     if logwidget:
         logwidget.append_text(
-            'Update existing records from Online Grading Database file.')
+            "Update existing records from Online Grading Database file."
+        )
     startlengcodes = len(gcodes)
     ogdplayerrec = ecfogdrecord.ECFrefOGDrecordPlayer()
     results.start_transaction()
     ogdplayers = results.database_cursor(
-        filespec.ECFOGDPLAYER_FILE_DEF, filespec.ECFOGDPLAYER_FIELD_DEF)
+        filespec.ECFOGDPLAYER_FILE_DEF, filespec.ECFOGDPLAYER_FIELD_DEF
+    )
     try:
         data = ogdplayers.first()
         while data:
@@ -119,8 +123,7 @@ def _copy_ecf_ogd_players_post_2006_rules(results, logwidget, ecffile, gcodes):
             newrec = ogdplayerrec.clone()
             if code in gcodes:
                 newrec.value.ECFOGDname = gcodes[code][0][0]
-                newrec.value.ECFOGDclubs = [c
-                                            for c in gcodes[code][0][1]]
+                newrec.value.ECFOGDclubs = [c for c in gcodes[code][0][1]]
                 del gcodes[code]
             else:
                 newrec.value.ECFOGDname = None
@@ -129,7 +132,8 @@ def _copy_ecf_ogd_players_post_2006_rules(results, logwidget, ecffile, gcodes):
                 results,
                 filespec.ECFOGDPLAYER_FILE_DEF,
                 filespec.ECFOGDPLAYER_FIELD_DEF,
-                newrec)
+                newrec,
+            )
             data = ogdplayers.next()
 
             # Avoid possible RecursionError on next ogdplayerrec.clone() call.
@@ -138,18 +142,27 @@ def _copy_ecf_ogd_players_post_2006_rules(results, logwidget, ecffile, gcodes):
     finally:
         ogdplayers.close()
     if logwidget:
-        logwidget.append_text_only(''.join(
-            (str(startlengcodes - len(gcodes)),
-             ' records were updated.',
-             )))
+        logwidget.append_text_only(
+            "".join(
+                (
+                    str(startlengcodes - len(gcodes)),
+                    " records were updated.",
+                )
+            )
+        )
 
     if logwidget:
         logwidget.append_text(
-            'Create new records from Online Grading Database file.')
-        logwidget.append_text_only(''.join(
-            (str(len(gcodes)),
-             ' records will be created.',
-             )))
+            "Create new records from Online Grading Database file."
+        )
+        logwidget.append_text_only(
+            "".join(
+                (
+                    str(len(gcodes)),
+                    " records will be created.",
+                )
+            )
+        )
     for k, v in gcodes.items():
         ogdplayerrec = ecfogdrecord.ECFrefOGDrecordPlayer()
         ogdplayerrec.key.recno = None
@@ -158,13 +171,17 @@ def _copy_ecf_ogd_players_post_2006_rules(results, logwidget, ecffile, gcodes):
         ogdplayerrec.value.ECFOGDclubs = [c for c in v[0][1]]
         ogdplayerrec.put_record(results, filespec.ECFOGDPLAYER_FILE_DEF)
     if logwidget:
-        logwidget.append_text('Commit database update.')
-        logwidget.append_text_only('')
+        logwidget.append_text("Commit database update.")
+        logwidget.append_text_only("")
     results.commit()
     if logwidget:
-        logwidget.append_text(''.join(
-            ('Grading Codes and names imported from ',
-             'Online Grading database.',
-             )))
-        logwidget.append_text_only('')
+        logwidget.append_text(
+            "".join(
+                (
+                    "Grading Codes and names imported from ",
+                    "Online Grading database.",
+                )
+            )
+        )
+        logwidget.append_text_only("")
     return True

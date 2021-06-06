@@ -23,11 +23,13 @@ def _do_ecf_downloaded_data_import(
     logwidget=None,
     specification_items=None,
     ecfdata=None,
-    downloaddate=None):
-    """"""
+    downloaddate=None,
+):
+    """ """
 
     results = widget.get_appsys().get_results_database()
-    if not results: return False
+    if not results:
+        return False
 
     results.do_database_task(
         import_method,
@@ -36,9 +38,9 @@ def _do_ecf_downloaded_data_import(
             ecfdata=ecfdata,
             parent=widget.get_widget(),
             downloaddate=downloaddate,
-            ),
+        ),
         use_specification_items=specification_items,
-        )
+    )
 
     return True
 
@@ -49,7 +51,8 @@ def _do_ecf_reference_data_import(
     logwidget=None,
     specification_items=None,
     ecfdate=None,
-    datecontrol=None):
+    datecontrol=None,
+):
     """Import a new ECF club file.
 
     widget - the manager object for the ecf data import tab
@@ -68,13 +71,16 @@ def _do_ecf_reference_data_import(
     # Comparison with the copy_ecf_ogd_players_post_2006_rules() method in the
     # sibling module sqlite3ecfogddataimport, which worked on OpenBSD 5.7 as it
     # stood, highlighted the changes needed.
-    #ecfdate = widget.get_ecf_date()
+    # ecfdate = widget.get_ecf_date()
 
-    if not ecffile: return False
-    if not ecfdate: return False
+    if not ecffile:
+        return False
+    if not ecfdate:
+        return False
 
     results = widget.get_appsys().get_results_database()
-    if not results: return False
+    if not results:
+        return False
 
     results.do_database_task(
         import_method,
@@ -83,96 +89,104 @@ def _do_ecf_reference_data_import(
             ecffile=ecffile,
             ecfdate=ecfdate,
             parent=widget.get_widget(),
-            #datecontrol=widget.ecfdatecontrol.get(),
-            datecontrol=datecontrol, # See --enable-threads comment just above.
-            ),
+            # datecontrol=widget.ecfdatecontrol.get(),
+            datecontrol=datecontrol,  # See --enable-threads comment just above.
+        ),
         use_specification_items=specification_items,
-        )
+    )
 
     return True
 
 
 def copy_ecf_players_post_2020_rules(
-    widget, logwidget=None, ecfdata=None, downloaddate=None):
+    widget, logwidget=None, ecfdata=None, downloaddate=None
+):
     """Import a new ECF player file.
 
     widget - the manager object for the ecf data import tab
 
     """
     return _do_ecf_downloaded_data_import(
-        widget.get_appsys().get_ecfdataimport_module(
-            ).copy_ecf_players_post_2020_rules,
+        widget.get_appsys()
+        .get_ecfdataimport_module()
+        .copy_ecf_players_post_2020_rules,
         widget,
         logwidget=logwidget,
         specification_items={
             filespec.ECFPLAYER_FILE_DEF,
             filespec.MAPECFPLAYER_FILE_DEF,
             filespec.ECFTXN_FILE_DEF,
-            },
+        },
         ecfdata=ecfdata,
         downloaddate=downloaddate,
-        )
+    )
 
 
 def copy_ecf_clubs_post_2020_rules(
-    widget, logwidget=None, ecfdata=None, downloaddate=None):
+    widget, logwidget=None, ecfdata=None, downloaddate=None
+):
     """Import a new ECF club file.
 
     widget - the manager object for the ecf data import tab
 
     """
     return _do_ecf_downloaded_data_import(
-        widget.get_appsys().get_ecfdataimport_module(
-            ).copy_ecf_clubs_post_2020_rules,
+        widget.get_appsys()
+        .get_ecfdataimport_module()
+        .copy_ecf_clubs_post_2020_rules,
         widget,
         logwidget=logwidget,
         specification_items={
             filespec.ECFCLUB_FILE_DEF,
             filespec.ECFTXN_FILE_DEF,
-            },
+        },
         ecfdata=ecfdata,
         downloaddate=downloaddate,
-        )
+    )
 
 
 def copy_ecf_players_post_2011_rules(
-    widget, logwidget=None, ecfdate=None, datecontrol=None):
+    widget, logwidget=None, ecfdate=None, datecontrol=None
+):
     """Import a new ECF player file.
 
     widget - the manager object for the ecf data import tab
 
     """
     return _do_ecf_reference_data_import(
-        widget.get_appsys().get_ecfdataimport_module(
-            ).copy_ecf_players_post_2011_rules,
+        widget.get_appsys()
+        .get_ecfdataimport_module()
+        .copy_ecf_players_post_2011_rules,
         widget,
         logwidget=logwidget,
         specification_items={
             filespec.ECFPLAYER_FILE_DEF,
             filespec.MAPECFPLAYER_FILE_DEF,
             filespec.ECFTXN_FILE_DEF,
-            },
+        },
         ecfdate=ecfdate,
         datecontrol=datecontrol,
-        )
+    )
 
 
 def copy_ecf_clubs_post_2011_rules(
-    widget, logwidget=None, ecfdate=None, datecontrol=None):
+    widget, logwidget=None, ecfdate=None, datecontrol=None
+):
     """Import a new ECF club file.
 
     widget - the manager object for the ecf data import tab
 
     """
     return _do_ecf_reference_data_import(
-        widget.get_appsys().get_ecfdataimport_module(
-            ).copy_ecf_clubs_post_2011_rules,
+        widget.get_appsys()
+        .get_ecfdataimport_module()
+        .copy_ecf_clubs_post_2011_rules,
         widget,
         logwidget=logwidget,
         specification_items={
             filespec.ECFCLUB_FILE_DEF,
             filespec.ECFTXN_FILE_DEF,
-            },
+        },
         ecfdate=ecfdate,
         datecontrol=datecontrol,
-        )
+    )

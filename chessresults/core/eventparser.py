@@ -38,7 +38,7 @@ from .emailextractor import (
     REPORT_TABLE,
     SCHEDULE_TABLE,
     TABLE_DELIMITER,
-    )
+)
 
 from .eventdata import (
     Score,
@@ -46,45 +46,62 @@ from .eventdata import (
     AdaptEventContext,
     Found,
     TableEventData,
-    )
+)
 
 # The competition name used in tabular inputs if no competition name is given.
 # Usually the competition 'All Sections' is but in event's conf file if needed.
-_ALL_SECTIONS = 'all sections'
+_ALL_SECTIONS = "all sections"
 
 # By default results text is split into components by newline.
 # Rules supplied by _FIND_MATCHES use arbitrary criteria to split the text and
 # produce newline delimited components.
 _FIND_MATCHES = (
-    (MATCH_FORMATS,
-     MATCH_BODY,
-     (MATCH_DATE_BODY, TEAMS_BODY, MATCH_DEFAULT,),
-     GAMES_BODY,
-     (DEFAULT, UNFINISHED, FINISHED,),
-     ),
-    (PLAYED_ON_FORMATS,
-     PLAYED_ON_BODY,
-     (MATCH_DATE_PLAYED_ON_BODY, TEAMS_PLAYED_ON_BODY,),
-     GAMES_PLAYED_ON_BODY,
-     (UNFINISHED_PLAYED_ON, FINISHED_PLAYED_ON,),
-     ),
-    (FIXTURE_FORMATS,
-     SCHEDULE_BODY,
-     (FIXTURE_BODY,),
-     None,
-     (),
-     ),
-    )
+    (
+        MATCH_FORMATS,
+        MATCH_BODY,
+        (
+            MATCH_DATE_BODY,
+            TEAMS_BODY,
+            MATCH_DEFAULT,
+        ),
+        GAMES_BODY,
+        (
+            DEFAULT,
+            UNFINISHED,
+            FINISHED,
+        ),
+    ),
+    (
+        PLAYED_ON_FORMATS,
+        PLAYED_ON_BODY,
+        (
+            MATCH_DATE_PLAYED_ON_BODY,
+            TEAMS_PLAYED_ON_BODY,
+        ),
+        GAMES_PLAYED_ON_BODY,
+        (
+            UNFINISHED_PLAYED_ON,
+            FINISHED_PLAYED_ON,
+        ),
+    ),
+    (
+        FIXTURE_FORMATS,
+        SCHEDULE_BODY,
+        (FIXTURE_BODY,),
+        None,
+        (),
+    ),
+)
 
 # Boards look like ' 12 ', ' 1.2 ', ' 1.2.3 '.  Start and end of string is
 # allowed instead of the leading and trailing space respectively.
-BOARD = '(?:(?<=\s)|\A)([1-9][0-9]*(?:\.[1-9][0-9]*)*)(?=\s|\Z)'
-RE_BOARD = re.compile(BOARD, flags=re.IGNORECASE|re.DOTALL)
+BOARD = "(?:(?<=\s)|\A)([1-9][0-9]*(?:\.[1-9][0-9]*)*)(?=\s|\Z)"
+RE_BOARD = re.compile(BOARD, flags=re.IGNORECASE | re.DOTALL)
 
 # Rounds look like ' 1 ', ' 12 ', ' 123 '.  Start and end of string is
 # allowed instead of the leading and trailing space respectively.
-ROUND = '(?:(?<=\s)|\A)([1-9][0-9]*)(?=\s|\Z)'
-RE_ROUND = re.compile(ROUND, flags=re.IGNORECASE|re.DOTALL)
+ROUND = "(?:(?<=\s)|\A)([1-9][0-9]*)(?=\s|\Z)"
+RE_ROUND = re.compile(ROUND, flags=re.IGNORECASE | re.DOTALL)
 
 # Scores look like ' 1 0 ', ' 1-0 ', ' 1 - 0 ', ' draw ', ' void ', or
 # '<name> 1 <name> 0 '. End of line is allowed instead of the final space.
@@ -96,35 +113,38 @@ RE_ROUND = re.compile(ROUND, flags=re.IGNORECASE|re.DOTALL)
 # '-' means any sequence of non-word characters excluding whitespace.
 # ' ' means any sequence of whitespace excluding newline.
 # These rules produce the ' 1 0 ' format from the ' 1-0 ' or ' draw ' formats.
-TOTAL = '[0-9]+(?:\.0|\.5|\xbd)?|\xbd'
+TOTAL = "[0-9]+(?:\.0|\.5|\xbd)?|\xbd"
 
 # Points changed to not use TOTAL because '1.1 Smith 1 0 Jones' is a valid way
 # of describing a result in a match with multiple games per board (rapidplay is
 # a likely example). Neither '1.1 Smith 1-0 Jones' nor '1 Smith 1-0 Jones' work
 # but '1.1 Smith draw Jones' is fine.
 # Points changed to not treat '123456' in 'A Name 123456A' as a number.
-#POINTS = ''.join(('(?:(?<=\s)|\A)', TOTAL, '(?=\s|\Z)'))
-#POINTS = ''.join(('(?:(?<=\s)|\A)',
+# POINTS = ''.join(('(?:(?<=\s)|\A)', TOTAL, '(?=\s|\Z)'))
+# POINTS = ''.join(('(?:(?<=\s)|\A)',
 #                  '[0-9]+(?:\.[0-9]+|\xbd)?|\xbd',
 #                  '(?=\s|\Z)'))
-POINTS = '(?:(?<=\s)|\A)(?:[0-9]+(?:\.[0-9]+|\xbd)?|\xbd)(?=\s|\Z)'
+POINTS = "(?:(?<=\s)|\A)(?:[0-9]+(?:\.[0-9]+|\xbd)?|\xbd)(?=\s|\Z)"
 
-SCORE_SEP = '(?<=[0-9\xbd])\s*[^\s\w\.]+\s*(?=[0-9\xbd])'
-SCORE = ''.join(
-    ('(?:(?<=\s)|\A)',
-     '(?:(?:',
-     TOTAL,
-     ')',
-     SCORE_SEP,
-     '(?:',
-     TOTAL,
-     '))',
-     '(?=\s|\Z)'))
-DRAW = '(?:(?<=\s)|\A)(?:draw|0\.5|\xbd)(?=\s|\Z)'
-RE_POINTS = re.compile(POINTS, flags=re.IGNORECASE|re.DOTALL)
-RE_SCORE_SEP = re.compile(SCORE_SEP, flags=re.IGNORECASE|re.DOTALL)
-RE_SCORE = re.compile(SCORE, flags=re.IGNORECASE|re.DOTALL)
-RE_DRAW = re.compile(DRAW, flags=re.IGNORECASE|re.DOTALL)
+SCORE_SEP = "(?<=[0-9\xbd])\s*[^\s\w\.]+\s*(?=[0-9\xbd])"
+SCORE = "".join(
+    (
+        "(?:(?<=\s)|\A)",
+        "(?:(?:",
+        TOTAL,
+        ")",
+        SCORE_SEP,
+        "(?:",
+        TOTAL,
+        "))",
+        "(?=\s|\Z)",
+    )
+)
+DRAW = "(?:(?<=\s)|\A)(?:draw|0\.5|\xbd)(?=\s|\Z)"
+RE_POINTS = re.compile(POINTS, flags=re.IGNORECASE | re.DOTALL)
+RE_SCORE_SEP = re.compile(SCORE_SEP, flags=re.IGNORECASE | re.DOTALL)
+RE_SCORE = re.compile(SCORE, flags=re.IGNORECASE | re.DOTALL)
+RE_DRAW = re.compile(DRAW, flags=re.IGNORECASE | re.DOTALL)
 
 # Board numbers in matches can be deduced and the match score used as a check
 # on the game results if defaults are spotted.
@@ -139,76 +159,107 @@ RE_DRAW = re.compile(DRAW, flags=re.IGNORECASE|re.DOTALL)
 # a variety of VOID.  But a report is expected to show up eventually.
 # Jones 1 def 0, and similar with the abbreviation of default, are not allowed
 # because it is too tricky to determine that 'def' is not initials in a name.
-VOID = ''.join(
-    ('(?:(?<=\s)|\A)',
-     '(?:',
-     'void|unfinished|',
-     '(?:1\s*-|dbl|double)?default(?:-\s*1)?|', # includes default as a word
-     '1\s*-def|def\s*-1|(?:dbl|double)\s*def|', # def allowed in context
-     'match\s+default',
-     ')',
-     '(?=\s|\Z)',
-     ))
-RE_VOID = re.compile(VOID, flags=re.IGNORECASE|re.DOTALL)
+VOID = "".join(
+    (
+        "(?:(?<=\s)|\A)",
+        "(?:",
+        "void|unfinished|",
+        "(?:1\s*-|dbl|double)?default(?:-\s*1)?|",  # includes default as a word
+        "1\s*-def|def\s*-1|(?:dbl|double)\s*def|",  # def allowed in context
+        "match\s+default",
+        ")",
+        "(?=\s|\Z)",
+    )
+)
+RE_VOID = re.compile(VOID, flags=re.IGNORECASE | re.DOTALL)
 
 # Lines may contain up to two dates.
 # Lines with more than two dates are ignored.
-DAY = '[0-9]{1,2}'
-MONTH_NAMES = ''.join(
-    ('jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|',
-     'jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|',
-     'dec(?:ember)?',
-     ))
-MONTH = ''.join(
-    ('(?:',
-     '[0-9]{1,2}|',
-     MONTH_NAMES.join(('(?:', ')')),
-     ')',
-     ))
-YEAR = '(?:[0-9]{4}|[0-9]{2})'
-DATE_SEP = '\s*\W\s*'
-DATE = ''.join(
-    (DAY, DATE_SEP, MONTH, DATE_SEP, YEAR, '|',
-     MONTH, DATE_SEP, DAY, DATE_SEP, YEAR, '|',
-     YEAR, DATE_SEP, MONTH, DATE_SEP, DAY,
-     ))
+DAY = "[0-9]{1,2}"
+MONTH_NAMES = "".join(
+    (
+        "jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|",
+        "jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|",
+        "dec(?:ember)?",
+    )
+)
+MONTH = "".join(
+    (
+        "(?:",
+        "[0-9]{1,2}|",
+        MONTH_NAMES.join(("(?:", ")")),
+        ")",
+    )
+)
+YEAR = "(?:[0-9]{4}|[0-9]{2})"
+DATE_SEP = "\s*\W\s*"
+DATE = "".join(
+    (
+        DAY,
+        DATE_SEP,
+        MONTH,
+        DATE_SEP,
+        YEAR,
+        "|",
+        MONTH,
+        DATE_SEP,
+        DAY,
+        DATE_SEP,
+        YEAR,
+        "|",
+        YEAR,
+        DATE_SEP,
+        MONTH,
+        DATE_SEP,
+        DAY,
+    )
+)
 RE_DATE = re.compile(
-    DATE.join(('(?:(?<=\s)|\A)(?:', ')(?=\s|\Z)')),
-    flags=re.IGNORECASE|re.DOTALL)
+    DATE.join(("(?:(?<=\s)|\A)(?:", ")(?=\s|\Z)")),
+    flags=re.IGNORECASE | re.DOTALL,
+)
 
 # Get day, date, or day and date, from fixture list.
 # Day and date must be adjacent, in either order, if both are present.
-DAY_NAMES = ''.join(
-    ('wednesday|thursday|saturday|tuesday|sunday|monday|friday|',
-     'thurs|tues|',
-     'sun|mon|tue|wed|thur|fri|sat',
-     ))
+DAY_NAMES = "".join(
+    (
+        "wednesday|thursday|saturday|tuesday|sunday|monday|friday|",
+        "thurs|tues|",
+        "sun|mon|tue|wed|thur|fri|sat",
+    )
+)
 RE_DAY = re.compile(
-    DAY_NAMES.join(('(?:\s|\A)(', ')(?:\s|\Z)')),
-    flags=re.IGNORECASE|re.DOTALL)
-FIXTURE_DATE = '|'.join(
-    (''.join(('(', DAY_NAMES, ')\s+(', DATE, ')')),
-     ''.join(('(', DATE, ')\s+(', DAY_NAMES, ')')),
-     ''.join(('(', DATE, ')')),
-     ))
+    DAY_NAMES.join(("(?:\s|\A)(", ")(?:\s|\Z)")),
+    flags=re.IGNORECASE | re.DOTALL,
+)
+FIXTURE_DATE = "|".join(
+    (
+        "".join(("(", DAY_NAMES, ")\s+(", DATE, ")")),
+        "".join(("(", DATE, ")\s+(", DAY_NAMES, ")")),
+        "".join(("(", DATE, ")")),
+    )
+)
 RE_FIXTURE_DATE = re.compile(
-    FIXTURE_DATE.join(('(?:(?<=\s)|\A)(?:', ')(?=\s|\Z)')),
-    flags=re.IGNORECASE|re.DOTALL)
+    FIXTURE_DATE.join(("(?:(?<=\s)|\A)(?:", ")(?=\s|\Z)")),
+    flags=re.IGNORECASE | re.DOTALL,
+)
 
 # '*', 'bye+', 'bye=', 'def+', 'def-', and entries like 'w34+', 'b3-', and
 # 'w112=', are allowed in the swiss format.
 # 11 July 2017 adjustments:
 # Vega uses '+W34' format and allows '-BYE'.  Result first is a reasonable way
 # of expressing things, and may be better than result last.
-SWISS = ''.join(
-    ('(?:(?<=\s)|\A)',
-     '(?:',
-     '\*|bye[-=\+]|def[-\+]|[wb][0-9]+[-=\+]|',
-     '--|[-=\+]bye|[-\+]def|[-=\+][wb][0-9]+',
-     ')',
-     '(?=\s|\Z)',
-     ))
-RE_SWISS = re.compile(SWISS, flags=re.IGNORECASE|re.DOTALL)
+SWISS = "".join(
+    (
+        "(?:(?<=\s)|\A)",
+        "(?:",
+        "\*|bye[-=\+]|def[-\+]|[wb][0-9]+[-=\+]|",
+        "--|[-=\+]bye|[-\+]def|[-=\+][wb][0-9]+",
+        ")",
+        "(?=\s|\Z)",
+    )
+)
+RE_SWISS = re.compile(SWISS, flags=re.IGNORECASE | re.DOTALL)
 
 # 'w+', 'w-', 'w=', 'b+', 'b-', 'b=', and '~' are allowed in the all-play-all
 # format, with at least one '~' present.
@@ -223,44 +274,53 @@ RE_SWISS = re.compile(SWISS, flags=re.IGNORECASE|re.DOTALL)
 # only ' Jones 1-0 Smith ' would be acceptable (no spaces between numbers and
 # '-') when a separator is used.  Preference given to single game case because
 # it is more frequent.
-ALL_PLAY_ALL = '(?:(?<=\s)|\A)(?:\~|[wb][-=\+])(?=\s|\Z)'
-RE_ALL_PLAY_ALL = re.compile(ALL_PLAY_ALL, flags=re.IGNORECASE|re.DOTALL)
+ALL_PLAY_ALL = "(?:(?<=\s)|\A)(?:\~|[wb][-=\+])(?=\s|\Z)"
+RE_ALL_PLAY_ALL = re.compile(ALL_PLAY_ALL, flags=re.IGNORECASE | re.DOTALL)
 
 # Player table number is common to all-play-all and swiss tables.
-PIN = '(?:(?<=\s)|\A)[0-9]+(?=\s|\Z)'
-RE_PIN = re.compile(PIN, flags=re.IGNORECASE|re.DOTALL)
+PIN = "(?:(?<=\s)|\A)[0-9]+(?=\s|\Z)"
+RE_PIN = re.compile(PIN, flags=re.IGNORECASE | re.DOTALL)
 
 # Pattern of numbers and names may decide which number is board or round.
-NUMBERS = ''.join(('(?:(?<=\s)|\A)', '(', TOTAL, ')', '(?=\s|\Z)'))
-RE_NUMBERS = re.compile(NUMBERS, flags=re.IGNORECASE|re.DOTALL)
+NUMBERS = "".join(("(?:(?<=\s)|\A)", "(", TOTAL, ")", "(?=\s|\Z)"))
+RE_NUMBERS = re.compile(NUMBERS, flags=re.IGNORECASE | re.DOTALL)
 
 # Pattern of points totals including odd number of draws.
-DRAW_MARKER = '[0-9]+(?:\.5|\xbd)+|\xbd'
-DRAW_ITEMS = ''.join(('(?:(?<=\s)|\A)', '(', DRAW_MARKER, ')', '(?=\s|\Z)'))
-RE_DRAW_ITEM = re.compile(DRAW_ITEMS, flags=re.IGNORECASE|re.DOTALL)
+DRAW_MARKER = "[0-9]+(?:\.5|\xbd)+|\xbd"
+DRAW_ITEMS = "".join(("(?:(?<=\s)|\A)", "(", DRAW_MARKER, ")", "(?=\s|\Z)"))
+RE_DRAW_ITEM = re.compile(DRAW_ITEMS, flags=re.IGNORECASE | re.DOTALL)
 
 # Colour may be specified as pieces played by first-named player.
-COLOUR = 'white|black|unknown'
-COLOUR_ITEM = ''.join(('(?:(?<=\s)|\A)', '(', COLOUR, ')', '(?=\s|\Z)'))
-RE_COLOUR = re.compile(COLOUR_ITEM, flags=re.IGNORECASE|re.DOTALL)
+COLOUR = "white|black|unknown"
+COLOUR_ITEM = "".join(("(?:(?<=\s)|\A)", "(", COLOUR, ")", "(?=\s|\Z)"))
+RE_COLOUR = re.compile(COLOUR_ITEM, flags=re.IGNORECASE | re.DOTALL)
 
 # A game result may be recorded for the players but should not count toward
 # totals such as match scores for validation purposes.  Sum of team scores in a
 # match is expected to equal number of games played in match and similar.
-RE_RESULT_ONLY = re.compile('\sresult\s+only\Z', flags=re.IGNORECASE|re.DOTALL)
+RE_RESULT_ONLY = re.compile(
+    "\sresult\s+only\Z", flags=re.IGNORECASE | re.DOTALL
+)
 
 # A line may have the 'played_on' prefix.
-PLAYED_ON = 'played_on'
+PLAYED_ON = "played_on"
 RE_PLAYED_ON = re.compile(
-    PLAYED_ON.join(('\A\s*', '\s+')), flags=re.IGNORECASE|re.DOTALL)
+    PLAYED_ON.join(("\A\s*", "\s+")), flags=re.IGNORECASE | re.DOTALL
+)
 
 # Some regular expressions from conf file may break the re engine on some
 # versions of Python, even though the re compilation succeeded.
-IEIREE = 'internal error in regular expression engine'
+IEIREE = "internal error in regular expression engine"
 
 # The singleton drawn game tokens that may be used in text evaluated using
 # regular expressions.  Translated to 'draw' to keep result parser happy.
-_DRAW_TOKEN = frozenset(('1/2', '0.5', '\xbd',))
+_DRAW_TOKEN = frozenset(
+    (
+        "1/2",
+        "0.5",
+        "\xbd",
+    )
+)
 
 
 class EventParserError(Exception):
@@ -268,7 +328,7 @@ class EventParserError(Exception):
 
 
 class EventParser(object):
-    
+
     """Exctract event schedules and results from text files.
 
     The outputs are used as inputs to the Schedule and Report classes and their
@@ -288,41 +348,49 @@ class EventParser(object):
         for use by the Schedule and Result classes.
 
         """
-        competition_lookup = {c.lower():c for c in competitions}
+        competition_lookup = {c.lower(): c for c in competitions}
         t = sorted([(len(c), c) for c in competitions], reverse=True)
         re_competition = re.compile(
-            '|'.join(
-                ['\s+'.join(c[-1].split())
-                 for c in t]).join(('(', ')')),
-            flags=re.IGNORECASE|re.DOTALL)
+            "|".join(["\s+".join(c[-1].split()) for c in t]).join(("(", ")")),
+            flags=re.IGNORECASE | re.DOTALL,
+        )
         re_sections = []
         re_forwarded = []
         for event in rules:
             t = sorted(
                 [(len(c), c) for c in event[SECTION_NAME].values()],
-                reverse=True)
-            re_sections.append(re.compile(
-                '|'.join(['\s+'.join(s[-1].split())
-                          for s in t]).join(('(', ')')),
-                flags=re.IGNORECASE|re.DOTALL))
+                reverse=True,
+            )
+            re_sections.append(
+                re.compile(
+                    "|".join(["\s+".join(s[-1].split()) for s in t]).join(
+                        ("(", ")")
+                    ),
+                    flags=re.IGNORECASE | re.DOTALL,
+                )
+            )
             re_forwarded.append(None)
             if event[DROP_FORWARDED_MARKERS]:
                 re_forwarded[-1] = re.compile(
-                    event[DROP_FORWARDED_MARKERS].join(('(?<=\n)(?:\s*', ')+')),
-                    flags=re.IGNORECASE|re.DOTALL)
+                    event[DROP_FORWARDED_MARKERS].join(
+                        ("(?<=\n)(?:\s*", ")+")
+                    ),
+                    flags=re.IGNORECASE | re.DOTALL,
+                )
         selected_text = AdaptEventContext()
         for difference_item in self._difference_items:
             found = False
             for e, event in enumerate(rules):
                 if re_forwarded[e]:
-                    text = ''.join(re_forwarded[e].split(
-                        difference_item.edited_text))
+                    text = "".join(
+                        re_forwarded[e].split(difference_item.edited_text)
+                    )
                 else:
                     text = difference_item.edited_text
                 if event[SOURCE].pattern:
                     try:
                         source = event[SOURCE].findall(text)
-                        source = source[0] if source else ''
+                        source = source[0] if source else ""
                     except RuntimeError as eee:
                         if str(eee) == IEIREE:
                             raise_re_error(SOURCE, text)
@@ -336,7 +404,7 @@ class EventParser(object):
                     source,
                     competition_lookup,
                     difference_item.headers,
-                    )
+                )
                 try:
                     est = event[RESULTS_PREFIX].split(text)
                 except RuntimeError as eee:
@@ -344,14 +412,23 @@ class EventParser(object):
                         raise_re_error(RESULTS_PREFIX, text)
                     raise
                 # tracer for fixing regular expressions
-                #print(difference_item.data_tag, len(est)) # tracer
+                # print(difference_item.data_tag, len(est)) # tracer
                 est.pop(0)
                 for rr in est:
-                    kws = event[KEEP_WORD_SPLITTERS].replace(
-                        '\\t', '\t').replace('\\n', '\n')
-                    rr = ''.join(
-                        [s if s.isalnum() or s.isnumeric() or s in kws else ' '
-                         for s in rr if len(s)])
+                    kws = (
+                        event[KEEP_WORD_SPLITTERS]
+                        .replace("\\t", "\t")
+                        .replace("\\n", "\n")
+                    )
+                    rr = "".join(
+                        [
+                            s
+                            if s.isalnum() or s.isnumeric() or s in kws
+                            else " "
+                            for s in rr
+                            if len(s)
+                        ]
+                    )
                     try:
                         sp = event[SECTION_PREFIX].findall(rr)
                     except RuntimeError as eee:
@@ -359,11 +436,12 @@ class EventParser(object):
                             raise_re_error(SECTION_PREFIX, rr)
                         raise
                     for sk, ss in zip(
-                        sp,
-                        [r for r in event[SECTION_BODY].split(rr) if r]):
+                        sp, [r for r in event[SECTION_BODY].split(rr) if r]
+                    ):
                         try:
                             sk = event[SECTION_NAME].get(
-                                ' '.join(sk.lower().split()), sk)
+                                " ".join(sk.lower().split()), sk
+                            )
                         except RuntimeError as eee:
                             if str(eee) == IEIREE:
                                 raise_re_error(SECTION_NAME, sk)
@@ -377,10 +455,10 @@ class EventParser(object):
                                         raise_re_error(mb, ss)
                                     raise
                                 # tracer for fixing regular expressions
-                                #print(mf, repr(sk), len(kd), end='  ') # tracer
+                                # print(mf, repr(sk), len(kd), end='  ') # tracer
                                 for kdi in kd:
                                     # tracer for fixing regular expressions
-                                    #print(repr(kdi[:20]), end='  ') # tracer
+                                    # print(repr(kdi[:20]), end='  ') # tracer
 
                                     # The competition name is included in each
                                     # fixture so is not output here.
@@ -392,7 +470,7 @@ class EventParser(object):
                                         _select_result_line(
                                             result_line_description,
                                             sk,
-                                            )
+                                        )
 
                                     for fv in md:
                                         if fv not in emf:
@@ -410,42 +488,49 @@ class EventParser(object):
                                                 raise_re_error(fv, kdi)
                                             raise
                                         # tracer for fixing regular expressions
-                                        #print(fv, len(t), end='  ') # tracer
+                                        # print(fv, len(t), end='  ') # tracer
                                         if len(t) != 1:
                                             continue
                                         g = t[0].groupdict()
 
                                         # Used only by FIXTURE_BODY fv value.
-                                        if 'competition' not in g:
-                                            g['competition'] = sk
+                                        if "competition" not in g:
+                                            g["competition"] = sk
                                         else:
-                                            g['competition'] = event[
-                                                SECTION_NAME].get(' '.join(
-                                                    g['competition'].lower(
-                                                        ).split()), sk)
+                                            g["competition"] = event[
+                                                SECTION_NAME
+                                            ].get(
+                                                " ".join(
+                                                    g["competition"]
+                                                    .lower()
+                                                    .split()
+                                                ),
+                                                sk,
+                                            )
 
                                         _translate(
-                                            result_line_description,
-                                            fv,
-                                            g)
+                                            result_line_description, fv, g
+                                        )
 
                                     # Fixture formats do not have game detail.
                                     if gb is None:
                                         continue
-                                    
+
                                     # Find the text containing game, or played
                                     # on game, results for each match report.
-                                    vd = [t.strip()
-                                          if isinstance(t, str)
-                                          else ' '.join(t).strip()
-                                          for t in emf[gb].findall(kdi)]
+                                    vd = [
+                                        t.strip()
+                                        if isinstance(t, str)
+                                        else " ".join(t).strip()
+                                        for t in emf[gb].findall(kdi)
+                                    ]
                                     # tracer for fixing regular expressions
-                                    #print(gb, len(vd), end='  ') # tracer
+                                    # print(gb, len(vd), end='  ') # tracer
                                     for vdi in vd:
                                         if not vdi:
                                             continue
                                         # tracer for fixing regular expressions
-                                        #print('.', end='') # tracer
+                                        # print('.', end='') # tracer
                                         for fv in gr:
                                             if fv not in emf:
                                                 continue
@@ -464,18 +549,19 @@ class EventParser(object):
                                             if len(t) != 1:
                                                 continue
                                             # tracer for fixing regexes
-                                            #print(':', end='') # tracer
+                                            # print(':', end='') # tracer
                                             _translate(
                                                 result_line_description,
                                                 fv,
-                                                t[0].groupdict())
+                                                t[0].groupdict(),
+                                            )
                                             break
-                                #print() # tracer for fixing regular expressions
+                                # print() # tracer for fixing regular expressions
                 found |= bool(est)
-                #print() # tracer for fixing regular expressions
+                # print() # tracer for fixing regular expressions
             if not found:
                 # tracer for fixing regular expressions
-                #print(difference_item.data_tag, found, '\n') # tracer
+                # print(difference_item.data_tag, found, '\n') # tracer
 
                 # Call _select_result_line for each line of text.
                 result_line_description = (
@@ -485,16 +571,14 @@ class EventParser(object):
                     difference_item._filename,
                     competition_lookup,
                     difference_item.headers,
-                    )
+                )
                 for t in difference_item.edited_text.splitlines():
                     if len(t):
                         # tracer for fixing regular expressions
-                        #print('|', repr(t)) # tracer
-                        _select_result_line(
-                            result_line_description,
-                            t)
+                        # print('|', repr(t)) # tracer
+                        _select_result_line(result_line_description, t)
                 # tracer for fixing regular expressions
-                #print('') # tracer
+                # print('') # tracer
 
         # This is where next batch of future code to handle tabular input files
         # is needed. The code to populate the EventContext instance _tabular
@@ -524,13 +608,13 @@ def _is_name_and_number_set_a_score(names, numbers):
     drawn game, if the combination has meaning at all.
 
     """
-    if not len(names)in {1, 2}:
+    if not len(names) in {1, 2}:
         return False
     if len(numbers) == 3:
         return True
     if len(numbers) != 2:
         return False
-    if len([n for n in numbers if n.endswith('.5')]) == 1:
+    if len([n for n in numbers if n.endswith(".5")]) == 1:
         return False
     return True
 
@@ -542,11 +626,13 @@ def _board_round_indicator(t):
     other hints such as numbers starting '0' or ending '.5' did not help.
 
     """
-    m = [e+1
-         for e, m in enumerate(
-             [n for n in RE_NUMBERS.split(t)
-              if len(n.strip())])
-         if not RE_NUMBERS.match(m)]
+    m = [
+        e + 1
+        for e, m in enumerate(
+            [n for n in RE_NUMBERS.split(t) if len(n.strip())]
+        )
+        if not RE_NUMBERS.match(m)
+    ]
     m = m[0] * m[-1]
     return 0 if m > 5 else 2 if m < 5 else 1
 
@@ -554,7 +640,13 @@ def _board_round_indicator(t):
 def _select_result_line(result_line_description, text):
     """Return normalized line of event data."""
 
-    (context, data_tag, re_competition, source, competition_lookup, headers
+    (
+        context,
+        data_tag,
+        re_competition,
+        source,
+        competition_lookup,
+        headers,
     ) = result_line_description
 
     # Some lines may have the prefix indicating results of games played-on or
@@ -579,7 +671,8 @@ def _select_result_line(result_line_description, text):
                 teamone=tsc[4],
                 competition=_lookup_competition(
                     competition_lookup,
-                    tsc[0].lower() if tsc[0] else _ALL_SECTIONS),
+                    tsc[0].lower() if tsc[0] else _ALL_SECTIONS,
+                ),
                 competition_round=tsc[3],
                 result_date=tsc[2],
                 teamonescore=tsc[5],
@@ -592,13 +685,14 @@ def _select_result_line(result_line_description, text):
                 colour=tsc[12],
                 source=source,
                 headers=headers,
-                )
+            )
         except:
             return EventData(
                 datatag=data_tag,
                 found=Found.TABLE_FORMAT,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
 
     # text may have results either in all-play-all or in swiss table style.
     # Exactly one number must be present: the player's number in the table.
@@ -614,84 +708,95 @@ def _select_result_line(result_line_description, text):
                 datatag=data_tag,
                 found=Found.SPLIT_SWISS_DATA,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         if len(RE_ALL_PLAY_ALL.findall(swiss[0])):
             return EventData(
                 datatag=data_tag,
                 found=Found.APA_IN_SWISS_DATA,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         pin = RE_PIN.findall(swiss[0])
         if len(pin) == 0:
             return EventData(
                 datatag=data_tag,
                 found=Found.NO_PIN_SWISS,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         tssw = RE_PIN.split(swiss[0])
         if len(tssw) != 2:
             return EventData(
                 datatag=data_tag,
                 found=Found.EXTRA_PIN_SWISS_DATA,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         if len([s for s in tssw if len(s.strip())]) != 1:
             return EventData(
                 datatag=data_tag,
                 found=Found.NAME_SPLIT_BY_PIN_SWISS,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         return EventData(
             datatag=data_tag,
             context=context,
             found=Found.SWISS_PAIRING_CARD,
             pin=pin[0],
-            person=' '.join(' '.join(tssw).split()),
+            person=" ".join(" ".join(tssw).split()),
             swiss=[_convert_result_first(t) for t in RE_SWISS.findall(text)],
             source=source,
-            headers=headers)
+            headers=headers,
+        )
 
     # Check for all-play-all assuming absence of swiss
     ts = RE_ALL_PLAY_ALL.split(text)
     if len(ts) > 1:
         all_play_all = [s for s in ts if len(s.strip())]
         if len(all_play_all) > 1:
-            #print(ts)
-            #print(all_play_all)
+            # print(ts)
+            # print(all_play_all)
             return EventData(
                 datatag=data_tag,
                 found=Found.SPLIT_APA_DATA,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         pin = RE_PIN.findall(all_play_all[0])
         if len(pin) == 0:
             return EventData(
                 datatag=data_tag,
                 found=Found.NO_PIN_APA,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         tsapa = RE_PIN.split(all_play_all[0])
         if len(tsapa) != 2:
             return EventData(
                 datatag=data_tag,
                 found=Found.EXTRA_PIN_APA_DATA,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         if len([s for s in tsapa if len(s.strip())]) != 1:
             return EventData(
                 datatag=data_tag,
                 found=Found.NAME_SPLIT_BY_PIN_APA,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         return EventData(
             datatag=data_tag,
             context=context,
             found=Found.APA_PLAYER_CARD,
             pin=pin[0],
-            person=' '.join(' '.join(tsapa).split()),
+            person=" ".join(" ".join(tsapa).split()),
             allplayall=RE_ALL_PLAY_ALL.findall(text),
             source=source,
-            headers=headers)
+            headers=headers,
+        )
 
     # 'played_on' at the start of a line is removed and a flag set.
     # On lines reporting a match result it means the games included in this
@@ -714,21 +819,25 @@ def _select_result_line(result_line_description, text):
     try:
         tsc = re_competition.split(text, maxsplit=1)
     except ValueError as exc:
-        if re_competition.pattern == '()':
-            raise EventParserError(''.join(
-                ("Attempt to extract competition name \n\n'",
-                 re_competition.pattern[1:-1],
-                 "'\n\nfailed: ",
-                 'it is likely no competition is given in the ',
-                 'configuration file.\n\n',
-                 'The error was described:\n\n',
-                 str(exc),
-                 )))
+        if re_competition.pattern == "()":
+            raise EventParserError(
+                "".join(
+                    (
+                        "Attempt to extract competition name \n\n'",
+                        re_competition.pattern[1:-1],
+                        "'\n\nfailed: ",
+                        "it is likely no competition is given in the ",
+                        "configuration file.\n\n",
+                        "The error was described:\n\n",
+                        str(exc),
+                    )
+                )
+            )
         else:
             raise
     if len(tsc) == 3:
         if len(tsc[0].strip()) == 0:
-            if len(''.join(RE_DATE.split(tsc[2])).strip()) == 0:
+            if len("".join(RE_DATE.split(tsc[2])).strip()) == 0:
                 date = RE_DATE.findall(tsc[2])
                 if len(date) > 1:
                     return EventData(
@@ -736,10 +845,12 @@ def _select_result_line(result_line_description, text):
                         found=Found.COMPETITION_AND_DATES,
                         context=context,
                         competition=_lookup_competition(
-                            competition_lookup, tsc[1].lower()),
+                            competition_lookup, tsc[1].lower()
+                        ),
                         rounddates=date,
                         source=source,
-                        headers=headers)
+                        headers=headers,
+                    )
 
     # text must contain less than three dates.
     # Use tsdate, not ts, to keep for later if text turns out to be fixture.
@@ -749,19 +860,21 @@ def _select_result_line(result_line_description, text):
             datatag=data_tag,
             found=Found.MORE_THAN_TWO_DATES,
             raw=text,
-            headers=headers)
+            headers=headers,
+        )
 
     # Two dates are the start and end dates of an event.
     # One only of the split items must contain some non-whitespace and is
     # the event.
     if len(tsdate) == 3:
-        tsd = [t for t in [' '.join(s.split()) for s in tsdate] if len(t)]
+        tsd = [t for t in [" ".join(s.split()) for s in tsdate] if len(t)]
         if len(tsd) > 1:
             return EventData(
                 datatag=data_tag,
                 found=Found.DATE_SPLITS_EVENT_NAME,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         sd, ed = RE_DATE.findall(text)
         ed_kargs = dict(
             datatag=data_tag,
@@ -770,9 +883,10 @@ def _select_result_line(result_line_description, text):
             startdate=sd,
             enddate=ed,
             source=source,
-            headers=headers)
+            headers=headers,
+        )
         if len(tsd):
-            ed_kargs['eventname'] = tsd[0]
+            ed_kargs["eventname"] = tsd[0]
         return EventData(**ed_kargs)
 
     # One date is the date a match or game was played, or the date in the
@@ -781,9 +895,9 @@ def _select_result_line(result_line_description, text):
     # Overrule date found when looking for all-play-all and swiss round dates.
     if len(tsdate) == 2:
         date = RE_DATE.findall(text)[0]
-        tsnd = ''.join(tsdate)
+        tsnd = "".join(tsdate)
     else:
-        date = ''
+        date = ""
         tsnd = text
 
     # tsnd may contain a competition name like ' Division 1 '.  The '1' is
@@ -793,8 +907,9 @@ def _select_result_line(result_line_description, text):
     tsc = re_competition.split(tsnd, maxsplit=1)
     if len(tsc) == 3:
         competition = _lookup_competition(
-            competition_lookup, ' '.join(tsc[1].split()).lower())
-        tsnd = ' '.join((tsc[0], tsc[2]))
+            competition_lookup, " ".join(tsc[1].split()).lower()
+        )
+        tsnd = " ".join((tsc[0], tsc[2]))
     else:
         competition = None
 
@@ -813,42 +928,46 @@ def _select_result_line(result_line_description, text):
     # Board items cannot be distinguished from some points items, and scores
     # can be written ' 1-0 ' and ' draw ', instead of ' 1 0 ' perhaps separated
     # by a player name ot names.  So look at ' 1-0 ' and similar first.
-    
+
     # First stage checks for void unfinished and defaulted games, allowing for
     # board number to be present.  If a defaulted game is found try to decide
     # who won.
     void = RE_VOID.findall(tsnro)
     if len(void) == 1:
-        void = ''.join(void[0].split()).lower()
-        names = [' '.join(n)
-                 for n in [t.split() for t in RE_VOID.split(tsnro)]
-                 if len(n)]
-        board = ''
+        void = "".join(void[0].split()).lower()
+        names = [
+            " ".join(n)
+            for n in [t.split() for t in RE_VOID.split(tsnro)]
+            if len(n)
+        ]
+        board = ""
         ed_kargs = dict(
             datatag=data_tag,
             context=context,
             result_date=date,
             source=source,
-            headers=headers)
+            headers=headers,
+        )
         if played_on:
-            ed_kargs['played_on'] = PLAYED_ON
+            ed_kargs["played_on"] = PLAYED_ON
         if competition:
-            ed_kargs['competition'] = competition
+            ed_kargs["competition"] = competition
 
         # Interpretation of numbers depends on what matched RE_VOID.
         # Zero or one numbers make sense for matches other than 'default',
         # being the presence or absence of a board number.
         # Up to three numbers make sense when the match is 'default'.
-        numbers = RE_POINTS.findall(' '.join(names))
+        numbers = RE_POINTS.findall(" ".join(names))
         if len(numbers) > 3:
             return EventData(
                 datatag=data_tag,
                 found=Found.EXTRA_SCORE_AND_BOARD_ITEMS,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
 
         # default is the awkward one.
-        if void == 'default':
+        if void == "default":
 
             # number rules for setting board to be added.
             # Valid default lines when three numbers are present, ignoring
@@ -868,13 +987,13 @@ def _select_result_line(result_line_description, text):
                 # Position of 'default' in string decides result
                 vsrc = tsnro.split()
                 if len(vsrc) == 1:
-                    ed_kargs['score'] = Score.default
+                    ed_kargs["score"] = Score.default
                 elif vsrc[0].lower() == void:
-                    ed_kargs['score'] = Score.away_win_default
+                    ed_kargs["score"] = Score.away_win_default
                 elif vsrc[-1].lower() == void:
-                    ed_kargs['score'] = Score.home_win_default
+                    ed_kargs["score"] = Score.home_win_default
                 else:
-                    ed_kargs['score'] = Score.default
+                    ed_kargs["score"] = Score.default
 
             elif len(numbers) == 1:
 
@@ -898,18 +1017,18 @@ def _select_result_line(result_line_description, text):
                 # '0 Jones 1 0 default' to get '0' as board number rather than
                 # the board number deduced from result position.  '1' also.
                 vsrc = tsnro.split()
-                if numbers[0] == '0':
-                    ed_kargs['score'] = Score.bad_score
+                if numbers[0] == "0":
+                    ed_kargs["score"] = Score.bad_score
                 elif vsrc[0].lower() == void and vsrc[1] == numbers[0]:
-                    if numbers[0] != '1':
-                        ed_kargs['numbers'] = [numbers[0]]
-                    ed_kargs['score'] = Score.away_win_default
+                    if numbers[0] != "1":
+                        ed_kargs["numbers"] = [numbers[0]]
+                    ed_kargs["score"] = Score.away_win_default
                 elif vsrc[-1].lower() == void and vsrc[-2] == numbers[0]:
-                    if numbers[0] != '1':
-                        ed_kargs['numbers'] = [numbers[0]]
-                    ed_kargs['score'] = Score.home_win_default
+                    if numbers[0] != "1":
+                        ed_kargs["numbers"] = [numbers[0]]
+                    ed_kargs["score"] = Score.home_win_default
                 else:
-                    ed_kargs['score'] = Score.bad_score
+                    ed_kargs["score"] = Score.bad_score
 
             elif len(numbers) == 2:
 
@@ -925,53 +1044,55 @@ def _select_result_line(result_line_description, text):
                 # for the team either out of strength order or with an effect
                 # on eligibility for other teams.  Use 'Jones 4 def-1' instead.
                 vsrc = tsnro.split()
-                vsrcwinh = [{'1-0':'1'}.get(v, v) for v in vsrc]
-                vsrcwina = [{'0-1':'1'}.get(v, v) for v in vsrc]
-                if '1' not in numbers and '0' in numbers:
-                    ed_kargs['score'] = Score.bad_score
+                vsrcwinh = [{"1-0": "1"}.get(v, v) for v in vsrc]
+                vsrcwina = [{"0-1": "1"}.get(v, v) for v in vsrc]
+                if "1" not in numbers and "0" in numbers:
+                    ed_kargs["score"] = Score.bad_score
                 elif vsrc[0].lower() == void and vsrcwina[1] in numbers:
-                    ed_kargs['score'] = Score.away_win_default
-                    numbers = [n for n in numbers if n != '0']
+                    ed_kargs["score"] = Score.away_win_default
+                    numbers = [n for n in numbers if n != "0"]
                     if len(numbers) == 2:
-                        numbers.remove('1')
-                        ed_kargs['numbers'] = [numbers[0]]
+                        numbers.remove("1")
+                        ed_kargs["numbers"] = [numbers[0]]
                 elif vsrc[-1].lower() == void and vsrcwinh[-2] in numbers:
-                    ed_kargs['score'] = Score.home_win_default
-                    numbers = [n for n in numbers if n != '0']
+                    ed_kargs["score"] = Score.home_win_default
+                    numbers = [n for n in numbers if n != "0"]
                     if len(numbers) == 2:
-                        numbers.remove('1')
-                        ed_kargs['numbers'] = [numbers[0]]
+                        numbers.remove("1")
+                        ed_kargs["numbers"] = [numbers[0]]
                 else:
                     voiditem = [v.lower() for v in vsrc].index(void)
                     if voiditem == 0 and vsrcwina[1] not in numbers:
-                        ed_kargs['score'] = Score.bad_score
+                        ed_kargs["score"] = Score.bad_score
                     elif voiditem == len(vsrc) and vsrcwinh[-2] not in numbers:
-                        ed_kargs['score'] = Score.bad_score
-                    elif (vsrcwina[voiditem + 1] not in numbers or
-                        vsrcwinh[voiditem - 1] not in numbers):
-                        ed_kargs['score'] = Score.bad_score
+                        ed_kargs["score"] = Score.bad_score
+                    elif (
+                        vsrcwina[voiditem + 1] not in numbers
+                        or vsrcwinh[voiditem - 1] not in numbers
+                    ):
+                        ed_kargs["score"] = Score.bad_score
                     else:
-                        numbers = [n for n in numbers if n != '0']
+                        numbers = [n for n in numbers if n != "0"]
                         if len(numbers) == 2:
-                            numbers.remove('1')
+                            numbers.remove("1")
                             if vsrc[-1] == numbers[0]:
-                                ed_kargs['score'] = Score.home_win_default
-                                ed_kargs['numbers'] = [numbers[0]]
+                                ed_kargs["score"] = Score.home_win_default
+                                ed_kargs["numbers"] = [numbers[0]]
                             elif vsrc[0] == numbers[0]:
-                                ed_kargs['score'] = Score.away_win_default
-                                ed_kargs['numbers'] = [numbers[0]]
+                                ed_kargs["score"] = Score.away_win_default
+                                ed_kargs["numbers"] = [numbers[0]]
                             else:
-                                ed_kargs['score'] = Score.bad_score
+                                ed_kargs["score"] = Score.bad_score
                         elif len(numbers) == 1:
-                            if numbers[0] == '1':
-                                if vsrc.index('1') < vsrc.index('0'):
-                                    ed_kargs['score'] = Score.home_win_default
+                            if numbers[0] == "1":
+                                if vsrc.index("1") < vsrc.index("0"):
+                                    ed_kargs["score"] = Score.home_win_default
                                 else:
-                                    ed_kargs['score'] = Score.away_win_default
+                                    ed_kargs["score"] = Score.away_win_default
                             else:
-                                ed_kargs['score'] = Score.bad_score
+                                ed_kargs["score"] = Score.bad_score
                         else:
-                            ed_kargs['score'] = Score.bad_score
+                            ed_kargs["score"] = Score.bad_score
 
             elif len(numbers) == 3:
 
@@ -987,106 +1108,109 @@ def _select_result_line(result_line_description, text):
                 # Use 'DE Jones 1 0 default' instead if the 'def' abbreviation
                 # is allowed.
                 vsrc = tsnro.split()
-                if '1' not in numbers or '0' not in numbers:
-                    ed_kargs['score'] = Score.bad_score
+                if "1" not in numbers or "0" not in numbers:
+                    ed_kargs["score"] = Score.bad_score
                 else:
-                    names = [' '.join(n)
-                             for n in [t.split()
-                                       for t in RE_BOARD.split(tsnro)]]
+                    names = [
+                        " ".join(n)
+                        for n in [t.split() for t in RE_BOARD.split(tsnro)]
+                    ]
                     if len([n for n in names if len(n)]) == 2:
                         names = [n for n in names if len(n)]
-                        nonboard = [n for n in numbers if n in '01']
+                        nonboard = [n for n in numbers if n in "01"]
                         if names[0].lower() == void:
                             if len(nonboard) > 1:
-                                if nonboard[-1] == '1':
-                                    ed_kargs['score'] = (
-                                        Score.away_win_default)
+                                if nonboard[-1] == "1":
+                                    ed_kargs["score"] = Score.away_win_default
                                     if len(nonboard) == 3:
-                                        ed_kargs['numbers'] = ['1']
+                                        ed_kargs["numbers"] = ["1"]
                                     else:
-                                        ed_kargs['numbers'] = [
-                                            [n for n in numbers
-                                             if n not in '01'][0]]
+                                        ed_kargs["numbers"] = [
+                                            [
+                                                n
+                                                for n in numbers
+                                                if n not in "01"
+                                            ][0]
+                                        ]
                                 else:
-                                    ed_kargs['score'] = Score.bad_score
+                                    ed_kargs["score"] = Score.bad_score
                             else:
-                                ed_kargs['score'] = Score.bad_score
+                                ed_kargs["score"] = Score.bad_score
                         elif names[-1].lower() == void:
                             if len(nonboard) > 1:
-                                if nonboard[0] == '1':
-                                    ed_kargs['score'] = (
-                                        Score.home_win_default)
+                                if nonboard[0] == "1":
+                                    ed_kargs["score"] = Score.home_win_default
                                     if len(nonboard) == 3:
-                                        ed_kargs['numbers'] = ['1']
+                                        ed_kargs["numbers"] = ["1"]
                                     else:
-                                        ed_kargs['numbers'] = [
-                                            [n for n in numbers
-                                             if n not in '01'][0]]
+                                        ed_kargs["numbers"] = [
+                                            [
+                                                n
+                                                for n in numbers
+                                                if n not in "01"
+                                            ][0]
+                                        ]
                                 else:
-                                    ed_kargs['score'] = Score.bad_score
+                                    ed_kargs["score"] = Score.bad_score
                             else:
-                                ed_kargs['score'] = Score.bad_score
+                                ed_kargs["score"] = Score.bad_score
                         else:
-                            ed_kargs['score'] = Score.bad_score
+                            ed_kargs["score"] = Score.bad_score
                     elif len([n for n in names if len(n)]) == 1:
-                        if numbers[1] == '0' and numbers[0] == '1':
+                        if numbers[1] == "0" and numbers[0] == "1":
                             if names[0].lower() != void:
-                                ed_kargs['score'] = (
-                                    Score.home_win_default)
+                                ed_kargs["score"] = Score.home_win_default
                             else:
-                                ed_kargs['score'] = Score.bad_score
-                            ed_kargs['numbers'] = [numbers[2]]
-                        elif numbers[1] == '0' and numbers[-1] == '1':
+                                ed_kargs["score"] = Score.bad_score
+                            ed_kargs["numbers"] = [numbers[2]]
+                        elif numbers[1] == "0" and numbers[-1] == "1":
                             if names[-1].lower() != void:
-                                ed_kargs['score'] = (
-                                    Score.away_win_default)
+                                ed_kargs["score"] = Score.away_win_default
                             else:
-                                ed_kargs['score'] = Score.bad_score
-                            ed_kargs['numbers'] = [numbers[0]]
-                        elif numbers[-1] == '0':
+                                ed_kargs["score"] = Score.bad_score
+                            ed_kargs["numbers"] = [numbers[0]]
+                        elif numbers[-1] == "0":
                             names = [n.lower() for n in names]
                             if void not in names:
-                                ed_kargs['score'] = Score.bad_score
+                                ed_kargs["score"] = Score.bad_score
                             elif names.index(void) > 1:
-                                ed_kargs['score'] = (
-                                    Score.home_win_default)
+                                ed_kargs["score"] = Score.home_win_default
                             else:
-                                ed_kargs['score'] = Score.bad_score
-                            if numbers[1] == '1':
-                                ed_kargs['numbers'] = [numbers[0]]
+                                ed_kargs["score"] = Score.bad_score
+                            if numbers[1] == "1":
+                                ed_kargs["numbers"] = [numbers[0]]
                             else:
-                                ed_kargs['numbers'] = [numbers[1]]
-                        elif numbers[0] == '0':
+                                ed_kargs["numbers"] = [numbers[1]]
+                        elif numbers[0] == "0":
                             names = [n.lower() for n in names]
                             if void not in names:
-                                ed_kargs['score'] = Score.bad_score
+                                ed_kargs["score"] = Score.bad_score
                             elif names.index(void) < 2:
-                                ed_kargs['score'] = (
-                                    Score.away_win_default)
+                                ed_kargs["score"] = Score.away_win_default
                             else:
-                                ed_kargs['score'] = Score.bad_score
-                            if numbers[1] == '1':
-                                ed_kargs['numbers'] = [numbers[-1]]
+                                ed_kargs["score"] = Score.bad_score
+                            if numbers[1] == "1":
+                                ed_kargs["numbers"] = [numbers[-1]]
                             else:
-                                ed_kargs['numbers'] = [numbers[1]]
+                                ed_kargs["numbers"] = [numbers[1]]
                     else:
-                        ed_kargs['score'] = Score.bad_score
+                        ed_kargs["score"] = Score.bad_score
 
-            ed_kargs['nameone'] = ''
-            ed_kargs['nametwo'] = ''
-            ed_kargs['found'] = Found.RESULT
-            #print('!', end='') # tracer for fixing regular expressions
+            ed_kargs["nameone"] = ""
+            ed_kargs["nametwo"] = ""
+            ed_kargs["found"] = Found.RESULT
+            # print('!', end='') # tracer for fixing regular expressions
             return EventData(**ed_kargs)
 
-        elif void == 'unfinished':
+        elif void == "unfinished":
             if len(numbers) > 1:
 
                 # State a bad result found rather than ignore.
-                ed_kargs['score'] = Score.bad_score
-                ed_kargs['nameone'] = '' # or just not set at all?
-                ed_kargs['nametwo'] = '' # or just not set at all?
-                ed_kargs['found'] = Found.RESULT
-                #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["score"] = Score.bad_score
+                ed_kargs["nameone"] = ""  # or just not set at all?
+                ed_kargs["nametwo"] = ""  # or just not set at all?
+                ed_kargs["found"] = Found.RESULT
+                # print('!', end='') # tracer for fixing regular expressions
                 return EventData(**ed_kargs)
 
             nbnames = []
@@ -1099,171 +1223,175 @@ def _select_result_line(result_line_description, text):
                         board = b
                     else:
                         nb.append(b.strip())
-                nbnames.append(' '.join(nb).strip())
+                nbnames.append(" ".join(nb).strip())
             names = [n for n in nbnames if len(n)]
-            nbnames = ' '.join(names)
+            nbnames = " ".join(names)
             if len(names) == 2:
-                ed_kargs['nameone'] = names[0]
-                ed_kargs['nametwo'] = names[1]
+                ed_kargs["nameone"] = names[0]
+                ed_kargs["nametwo"] = names[1]
             elif names:
                 names = names[0].split()
                 if len(names) > 2:
-                    ed_kargs['names'] = ' '.join(names)
+                    ed_kargs["names"] = " ".join(names)
                 elif len(names) == 2:
-                    ed_kargs['nameone'] = names[0]
-                    ed_kargs['nametwo'] = names[1]
+                    ed_kargs["nameone"] = names[0]
+                    ed_kargs["nametwo"] = names[1]
                 else:
                     names = None
             else:
                 names = None
             if names is not None:
-                ed_kargs['score'] = Score.unfinished
+                ed_kargs["score"] = Score.unfinished
                 if result_only:
-                    ed_kargs['result_only'] = True
+                    ed_kargs["result_only"] = True
                 if board:
-                    ed_kargs['numbers'] = [board]
-                ed_kargs['found'] = (
-                    Found.RESULT if 'names' in ed_kargs else Found.RESULT_NAMES)
-                #print('!', end='') # tracer for fixing regular expressions
+                    ed_kargs["numbers"] = [board]
+                ed_kargs["found"] = (
+                    Found.RESULT if "names" in ed_kargs else Found.RESULT_NAMES
+                )
+                # print('!', end='') # tracer for fixing regular expressions
                 return EventData(**ed_kargs)
 
-        elif void == 'void':
+        elif void == "void":
             if len(numbers) > 1:
 
                 # State a bad result found rather than ignore.
-                ed_kargs['score'] = Score.bad_score
-                ed_kargs['nameone'] = '' # or just not set at all?
-                ed_kargs['nametwo'] = '' # or just not set at all?
-                ed_kargs['found'] = Found.RESULT
-                #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["score"] = Score.bad_score
+                ed_kargs["nameone"] = ""  # or just not set at all?
+                ed_kargs["nametwo"] = ""  # or just not set at all?
+                ed_kargs["found"] = Found.RESULT
+                # print('!', end='') # tracer for fixing regular expressions
                 return EventData(**ed_kargs)
 
             # Why does commenting these two lines make report.py work right?
             if len(numbers):
-                ed_kargs['numbers'] = [numbers[0]]
-            ed_kargs['score'] = Score.void
-            ed_kargs['nameone'] = ''
-            ed_kargs['nametwo'] = ''
-            ed_kargs['found'] = Found.RESULT
-            #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["numbers"] = [numbers[0]]
+            ed_kargs["score"] = Score.void
+            ed_kargs["nameone"] = ""
+            ed_kargs["nametwo"] = ""
+            ed_kargs["found"] = Found.RESULT
+            # print('!', end='') # tracer for fixing regular expressions
             return EventData(**ed_kargs)
 
-        elif void == 'matchdefault':
+        elif void == "matchdefault":
             if len(numbers):
 
                 # State a bad result found rather than ignore.
-                ed_kargs['score'] = Score.bad_score
-                ed_kargs['nameone'] = '' # or just not set at all?
-                ed_kargs['nametwo'] = '' # or just not set at all?
-                ed_kargs['found'] = Found.RESULT
-                #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["score"] = Score.bad_score
+                ed_kargs["nameone"] = ""  # or just not set at all?
+                ed_kargs["nametwo"] = ""  # or just not set at all?
+                ed_kargs["found"] = Found.RESULT
+                # print('!', end='') # tracer for fixing regular expressions
                 return EventData(**ed_kargs)
 
-            ed_kargs['score'] = Score.match_defaulted
-            ed_kargs['nameone'] = ''
-            ed_kargs['nametwo'] = ''
-            ed_kargs['found'] = Found.RESULT
-            #print('!', end='') # tracer for fixing regular expressions
+            ed_kargs["score"] = Score.match_defaulted
+            ed_kargs["nameone"] = ""
+            ed_kargs["nametwo"] = ""
+            ed_kargs["found"] = Found.RESULT
+            # print('!', end='') # tracer for fixing regular expressions
             return EventData(**ed_kargs)
 
-        elif void.startswith('1'):
-            if len(numbers) > 1 or void.endswith('1'):
+        elif void.startswith("1"):
+            if len(numbers) > 1 or void.endswith("1"):
 
                 # State a bad result found rather than ignore.
-                ed_kargs['score'] = Score.bad_score
-                ed_kargs['nameone'] = '' # or just not set at all?
-                ed_kargs['nametwo'] = '' # or just not set at all?
-                ed_kargs['found'] = Found.RESULT
-                #print('!', end='') # tracer for fixing regular expressions
-                return EventData(**ed_kargs)
-
-            # Why does commenting these two lines make report.py work right?
-            if len(numbers):
-                ed_kargs['numbers'] = [numbers[0]]
-            ed_kargs['score'] = Score.home_win_default
-            ed_kargs['nameone'] = ''
-            ed_kargs['nametwo'] = ''
-            ed_kargs['found'] = Found.RESULT
-            #print('!', end='') # tracer for fixing regular expressions
-            return EventData(**ed_kargs)
-
-        elif void.startswith('double') or void.startswith('dbl'):
-            if len(numbers) > 1 or void.endswith('1'):
-
-                # State a bad result found rather than ignore.
-                ed_kargs['score'] = Score.bad_score
-                ed_kargs['nameone'] = '' # or just not set at all?
-                ed_kargs['nametwo'] = '' # or just not set at all?
-                ed_kargs['found'] = Found.RESULT
-                #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["score"] = Score.bad_score
+                ed_kargs["nameone"] = ""  # or just not set at all?
+                ed_kargs["nametwo"] = ""  # or just not set at all?
+                ed_kargs["found"] = Found.RESULT
+                # print('!', end='') # tracer for fixing regular expressions
                 return EventData(**ed_kargs)
 
             # Why does commenting these two lines make report.py work right?
             if len(numbers):
-                ed_kargs['numbers'] = [numbers[0]]
-            ed_kargs['score'] = Score.double_default
-            ed_kargs['nameone'] = ''
-            ed_kargs['nametwo'] = ''
-            ed_kargs['found'] = Found.RESULT
-            #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["numbers"] = [numbers[0]]
+            ed_kargs["score"] = Score.home_win_default
+            ed_kargs["nameone"] = ""
+            ed_kargs["nametwo"] = ""
+            ed_kargs["found"] = Found.RESULT
+            # print('!', end='') # tracer for fixing regular expressions
             return EventData(**ed_kargs)
 
-        elif void.endswith('1'):
+        elif void.startswith("double") or void.startswith("dbl"):
+            if len(numbers) > 1 or void.endswith("1"):
+
+                # State a bad result found rather than ignore.
+                ed_kargs["score"] = Score.bad_score
+                ed_kargs["nameone"] = ""  # or just not set at all?
+                ed_kargs["nametwo"] = ""  # or just not set at all?
+                ed_kargs["found"] = Found.RESULT
+                # print('!', end='') # tracer for fixing regular expressions
+                return EventData(**ed_kargs)
+
+            # Why does commenting these two lines make report.py work right?
+            if len(numbers):
+                ed_kargs["numbers"] = [numbers[0]]
+            ed_kargs["score"] = Score.double_default
+            ed_kargs["nameone"] = ""
+            ed_kargs["nametwo"] = ""
+            ed_kargs["found"] = Found.RESULT
+            # print('!', end='') # tracer for fixing regular expressions
+            return EventData(**ed_kargs)
+
+        elif void.endswith("1"):
             if len(numbers) > 1:
 
                 # State a bad result found rather than ignore.
-                ed_kargs['score'] = Score.bad_score
-                ed_kargs['nameone'] = '' # or just not set at all?
-                ed_kargs['nametwo'] = '' # or just not set at all?
-                ed_kargs['found'] = Found.RESULT
-                #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["score"] = Score.bad_score
+                ed_kargs["nameone"] = ""  # or just not set at all?
+                ed_kargs["nametwo"] = ""  # or just not set at all?
+                ed_kargs["found"] = Found.RESULT
+                # print('!', end='') # tracer for fixing regular expressions
                 return EventData(**ed_kargs)
 
             # Why does commenting these two lines make report.py work right?
             if len(numbers):
-                ed_kargs['numbers'] = [numbers[0]]
-            ed_kargs['score'] = Score.away_win_default
-            ed_kargs['nameone'] = ''
-            ed_kargs['nametwo'] = ''
-            ed_kargs['found'] = Found.RESULT
-            #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["numbers"] = [numbers[0]]
+            ed_kargs["score"] = Score.away_win_default
+            ed_kargs["nameone"] = ""
+            ed_kargs["nametwo"] = ""
+            ed_kargs["found"] = Found.RESULT
+            # print('!', end='') # tracer for fixing regular expressions
             return EventData(**ed_kargs)
 
         else:
 
             # State an error result found rather than ignore.
-            ed_kargs['score'] = Score.error
-            ed_kargs['nameone'] = ''
-            ed_kargs['nametwo'] = ''
-            ed_kargs['found'] = Found.RESULT
-            #print('!', end='') # tracer for fixing regular expressions
+            ed_kargs["score"] = Score.error
+            ed_kargs["nameone"] = ""
+            ed_kargs["nametwo"] = ""
+            ed_kargs["found"] = Found.RESULT
+            # print('!', end='') # tracer for fixing regular expressions
             return EventData(**ed_kargs)
-    
+
     # Second stage checks for a pair of points items like ' 1 0 ' perhaps
     # separated by one or two player names and allows one board item to be
     # present.  The first points item which could be a board item is chosen as
     # the board item. Board items do not start with '0'.
     numbers = RE_POINTS.findall(tsnro)
-    names = [' '.join(n)
-             for n in [t.split() for t in RE_POINTS.split(tsnro)]
-             if len(n)]
+    names = [
+        " ".join(n)
+        for n in [t.split() for t in RE_POINTS.split(tsnro)]
+        if len(n)
+    ]
     if _is_name_and_number_set_a_score(names, numbers):
-        #print('@@@@') # temporary tracer for fixing regular expressions
-        #print(repr(text.replace('\xbd', '?')),
+        # print('@@@@') # temporary tracer for fixing regular expressions
+        # print(repr(text.replace('\xbd', '?')),
         #      names,
-        #      [n.replace('\xbd', '?') for n in numbers]) # tracer 
+        #      [n.replace('\xbd', '?') for n in numbers]) # tracer
         ed_kargs = dict(
             datatag=data_tag,
             context=context,
             result_date=date,
             source=source,
-            headers=headers)
+            headers=headers,
+        )
         if played_on:
-            ed_kargs['played_on'] = PLAYED_ON
+            ed_kargs["played_on"] = PLAYED_ON
         if competition:
-            ed_kargs['competition'] = competition
+            ed_kargs["competition"] = competition
         if len(numbers) == 2:
-            ed_kargs['score'] = ' '.join((numbers[0], numbers[1]))
+            ed_kargs["score"] = " ".join((numbers[0], numbers[1]))
         elif len(names) == 2:
 
             # If neither all nor none of the items in numbers are draw markers
@@ -1272,21 +1400,24 @@ def _select_result_line(result_line_description, text):
             # wrong too.
             n = [n for n in numbers if RE_DRAW_ITEM.findall(n)]
             if len(n) == 2:
-                ed_kargs['score'] = ' '.join(
-                    (numbers.pop(numbers.index(n[0])),
-                     numbers.pop(numbers.index(n[1]))))
-                ed_kargs['numbers'] = [numbers[0]]
+                ed_kargs["score"] = " ".join(
+                    (
+                        numbers.pop(numbers.index(n[0])),
+                        numbers.pop(numbers.index(n[1])),
+                    )
+                )
+                ed_kargs["numbers"] = [numbers[0]]
             elif len(n) == 1:
-                ed_kargs['numbers'] = [numbers.pop(numbers.index(n[0]))]
-                ed_kargs['score'] = ' '.join((numbers[0], numbers[1]))
+                ed_kargs["numbers"] = [numbers.pop(numbers.index(n[0]))]
+                ed_kargs["score"] = " ".join((numbers[0], numbers[1]))
             else:
 
                 # Assumptions are made using the count of '1' and '0' items.
                 # These can be overruled by expressing scores like '0-1' or
                 # '4-0'.  This might be awkward to arrange for results picked
                 # using regular expressions in the configuration file.
-                zero = [n for n in numbers if n == '0']
-                one = [n for n in numbers if n == '1']
+                zero = [n for n in numbers if n == "0"]
+                one = [n for n in numbers if n == "1"]
 
                 # If one item in numbers is '0' several options exists.
                 if len(zero) == 1:
@@ -1296,33 +1427,36 @@ def _select_result_line(result_line_description, text):
                     # This catches round one match results where one team wins
                     # all games, as well as decisive game results.
                     if len(one) == 1:
-                        ed_kargs['score'] = ' '.join([
-                            n for n in numbers if n in zero + one])
-                        ed_kargs['numbers'] = [
-                            n for n in numbers if n not in zero + one]
+                        ed_kargs["score"] = " ".join(
+                            [n for n in numbers if n in zero + one]
+                        )
+                        ed_kargs["numbers"] = [
+                            n for n in numbers if n not in zero + one
+                        ]
 
                     # If none of the items in numbers is '1' use the first item
                     # as the round or board.
                     elif len(one) == 0:
-                        ed_kargs['numbers'] = [numbers.pop(0)]
-                        ed_kargs['score'] = ' '.join((numbers[0], numbers[1]))
+                        ed_kargs["numbers"] = [numbers.pop(0)]
+                        ed_kargs["score"] = " ".join((numbers[0], numbers[1]))
 
                     # If two of the other items in numbers are '1' use the first
                     # '1' item as the round or board.
                     # The explicit test is used but it should be equivalent to
                     # 'anything else'.
                     elif len(one) == 2:
-                        ed_kargs['numbers'] = [
-                            numbers.pop(numbers.index(one[0]))]
-                        ed_kargs['score'] = ' '.join((numbers[0], numbers[1]))
+                        ed_kargs["numbers"] = [
+                            numbers.pop(numbers.index(one[0]))
+                        ]
+                        ed_kargs["score"] = " ".join((numbers[0], numbers[1]))
 
                 # If two items in numbers are '0' and the other is '1' use the
                 # first '0' item as the round or board.
                 # All choices are probably wrong so maybe these lines should be
                 # ignored rather than picking a valid game result.
                 elif len(zero) == 2 and len(one) == 1:
-                    ed_kargs['numbers'] = [numbers.pop(numbers.index(zero[0]))]
-                    ed_kargs['score'] = ' '.join((numbers[0], numbers[1]))
+                    ed_kargs["numbers"] = [numbers.pop(numbers.index(zero[0]))]
+                    ed_kargs["score"] = " ".join((numbers[0], numbers[1]))
 
                 # Pick the round or board item using adjacency of name and
                 # number items as defined by the _board_round_indicator()
@@ -1332,39 +1466,41 @@ def _select_result_line(result_line_description, text):
                 # numbers like '3.5', from a plausible way of labelling games
                 # in a rapidplay match with multiple games per board.
                 else:
-                    ed_kargs['numbers'] = [
-                        numbers.pop(_board_round_indicator(tsnro))]
-                    ed_kargs['score'] = ' '.join((numbers[0], numbers[1]))
+                    ed_kargs["numbers"] = [
+                        numbers.pop(_board_round_indicator(tsnro))
+                    ]
+                    ed_kargs["score"] = " ".join((numbers[0], numbers[1]))
         else:
 
             # Names are adjacent.  Middle number cannot be the board or round
             # according to _board_round_indicator() call.  Last number is board
             # or round if names in first element.
             if names[0] == RE_NUMBERS.split(tsnro)[0]:
-                ed_kargs['numbers'] = [numbers.pop()]
+                ed_kargs["numbers"] = [numbers.pop()]
             else:
-                ed_kargs['numbers'] = [numbers.pop(0)]
-            ed_kargs['score'] = ' '.join((numbers[0], numbers[1]))
+                ed_kargs["numbers"] = [numbers.pop(0)]
+            ed_kargs["score"] = " ".join((numbers[0], numbers[1]))
         if len(names) == 2:
-            ed_kargs['nameone'] = names[0]
-            ed_kargs['nametwo'] = names[1]
+            ed_kargs["nameone"] = names[0]
+            ed_kargs["nametwo"] = names[1]
         else:
             names = names[0].split()
             if len(names) > 2:
-                ed_kargs['names'] = ' '.join(names)
+                ed_kargs["names"] = " ".join(names)
             elif len(names) == 2:
-                ed_kargs['nameone'] = names[0]
-                ed_kargs['nametwo'] = names[1]
+                ed_kargs["nameone"] = names[0]
+                ed_kargs["nametwo"] = names[1]
             else:
                 names = None
         if names is not None:
             if result_only:
-                ed_kargs['result_only'] = True
-            ed_kargs['found'] = (
-                Found.RESULT if 'names' in ed_kargs else Found.RESULT_NAMES)
-            #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["result_only"] = True
+            ed_kargs["found"] = (
+                Found.RESULT if "names" in ed_kargs else Found.RESULT_NAMES
+            )
+            # print('!', end='') # tracer for fixing regular expressions
             return EventData(**ed_kargs)
-    
+
     # Third stage checks for single items like ' 1-0 ' and allows one board
     # item to be present.  Items like ' draw ' and single ' 0.5 ' meaning a
     # draw are ignored in this stage.
@@ -1374,12 +1510,15 @@ def _select_result_line(result_line_description, text):
             datatag=data_tag,
             found=Found.EXTRA_SCORE_AND_BOARD_ITEMS,
             raw=text,
-            headers=headers)
+            headers=headers,
+        )
     if len(score) == 1:
-        names = [' '.join(n)
-                 for n in [t.split() for t in RE_SCORE.split(tsnro)]
-                 if len(n)]
-        board = ''
+        names = [
+            " ".join(n)
+            for n in [t.split() for t in RE_SCORE.split(tsnro)]
+            if len(n)
+        ]
+        board = ""
         nbnames = []
         for n in names:
             nb = []
@@ -1390,50 +1529,53 @@ def _select_result_line(result_line_description, text):
                     board = b
                 else:
                     nb.append(b.strip())
-            nbnames.append(' '.join(nb).strip())
+            nbnames.append(" ".join(nb).strip())
         names = [n for n in nbnames if len(n)]
-        nbnames = ' '.join(names)
+        nbnames = " ".join(names)
         if len(RE_DRAW.findall(nbnames)):
             return EventData(
                 datatag=data_tag,
                 found=Found.EXTRA_DRAW_ITEMS_SCORE,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         ed_kargs = dict(
             datatag=data_tag,
             context=context,
             result_date=date,
             source=source,
-            headers=headers)
+            headers=headers,
+        )
         if played_on:
-            ed_kargs['played_on'] = PLAYED_ON
+            ed_kargs["played_on"] = PLAYED_ON
         if competition:
-            ed_kargs['competition'] = competition
-        ed_kargs['score'] = ' '.join(RE_SCORE_SEP.split(score[0]))
+            ed_kargs["competition"] = competition
+        ed_kargs["score"] = " ".join(RE_SCORE_SEP.split(score[0]))
         if board:
-            ed_kargs['numbers'] = [board]
+            ed_kargs["numbers"] = [board]
         if len(names) == 2:
-            ed_kargs['nameone'] = names[0]
-            ed_kargs['nametwo'] = names[1]
+            ed_kargs["nameone"] = names[0]
+            ed_kargs["nametwo"] = names[1]
         elif names:
             names = names[0].split()
             if len(names) > 2:
-                ed_kargs['names'] = ' '.join(names)
+                ed_kargs["names"] = " ".join(names)
             elif len(names) == 2:
-                ed_kargs['nameone'] = names[0]
-                ed_kargs['nametwo'] = names[1]
+                ed_kargs["nameone"] = names[0]
+                ed_kargs["nametwo"] = names[1]
             else:
                 names = None
         else:
             names = None
         if names is not None:
             if result_only:
-                ed_kargs['result_only'] = True
-            ed_kargs['found'] = (
-                Found.RESULT if 'names' in ed_kargs else Found.RESULT_NAMES)
-            #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["result_only"] = True
+            ed_kargs["found"] = (
+                Found.RESULT if "names" in ed_kargs else Found.RESULT_NAMES
+            )
+            # print('!', end='') # tracer for fixing regular expressions
             return EventData(**ed_kargs)
-    
+
     # Fourth stage checks for single items like ' draw ' or single ' 0.5 '
     # items and allows one board item to be present.
     # 3 Smith 0.5 Jones is interpreted as a 3-0.5 result rather than a draw
@@ -1441,10 +1583,12 @@ def _select_result_line(result_line_description, text):
     # as a result on board 3.5.  Use ' draw ' instead of ' 0.5 '.
     score = RE_DRAW.findall(tsnro)
     if len(score) == 1:
-        names = [' '.join(n)
-                 for n in [t.split() for t in RE_DRAW.split(tsnro)]
-                 if len(n)]
-        board = ''
+        names = [
+            " ".join(n)
+            for n in [t.split() for t in RE_DRAW.split(tsnro)]
+            if len(n)
+        ]
+        board = ""
         nbnames = []
         for n in names:
             nb = []
@@ -1455,42 +1599,44 @@ def _select_result_line(result_line_description, text):
                     board = b
                 else:
                     nb.append(b.strip())
-            nbnames.append(' '.join(nb).strip())
+            nbnames.append(" ".join(nb).strip())
         names = [n for n in nbnames if len(n)]
-        nbnames = ' '.join(names)
+        nbnames = " ".join(names)
         ed_kargs = dict(
             datatag=data_tag,
             context=context,
             result_date=date,
             source=source,
-            headers=headers)
+            headers=headers,
+        )
         if played_on:
-            ed_kargs['played_on'] = PLAYED_ON
+            ed_kargs["played_on"] = PLAYED_ON
         if competition:
-            ed_kargs['competition'] = competition
-        ed_kargs['score'] = '\xbd \xbd'
+            ed_kargs["competition"] = competition
+        ed_kargs["score"] = "\xbd \xbd"
         if board:
-            ed_kargs['numbers'] = [board]
+            ed_kargs["numbers"] = [board]
         if len(names) == 2:
-            ed_kargs['nameone'] = names[0]
-            ed_kargs['nametwo'] = names[1]
+            ed_kargs["nameone"] = names[0]
+            ed_kargs["nametwo"] = names[1]
         elif names:
             names = names[0].split()
             if len(names) > 2:
-                ed_kargs['names'] = ' '.join(names)
+                ed_kargs["names"] = " ".join(names)
             elif len(names) == 2:
-                ed_kargs['nameone'] = names[0]
-                ed_kargs['nametwo'] = names[1]
+                ed_kargs["nameone"] = names[0]
+                ed_kargs["nametwo"] = names[1]
             else:
                 names = None
         else:
             names = None
         if names is not None:
             if result_only:
-                ed_kargs['result_only'] = True
-            ed_kargs['found'] = (
-                Found.RESULT if 'names' in ed_kargs else Found.RESULT_NAMES)
-            #print('!', end='') # tracer for fixing regular expressions
+                ed_kargs["result_only"] = True
+            ed_kargs["found"] = (
+                Found.RESULT if "names" in ed_kargs else Found.RESULT_NAMES
+            )
+            # print('!', end='') # tracer for fixing regular expressions
             return EventData(**ed_kargs)
 
     # Absence of any kind of score, and presence of date and competition
@@ -1509,19 +1655,19 @@ def _select_result_line(result_line_description, text):
         # Day must be adjacent to date, so 'Thur Final 29 Oct 2012' does not
         # count as giving the day.
         # Refer back to text because date and competition stripped out of tsnd.
-        day = ''
+        day = ""
         ts = RE_FIXTURE_DATE.split(text)
         if len(ts) != 1:
             if ts[1]:
                 day = ts[1]
-                tsnd = ts[-1].replace(competition, '', 1)
+                tsnd = ts[-1].replace(competition, "", 1)
             elif ts[3]:
                 day = ts[3]
-                tsnd = ts[-1].replace(competition, '', 1)
-                    
+                tsnd = ts[-1].replace(competition, "", 1)
+
         ts = RE_ROUND.split(tsnd)
         if len(ts) == 3:
-            teamone, teamtwo = [' '.join(t.split()) for t in (ts[0], ts[2])]
+            teamone, teamtwo = [" ".join(t.split()) for t in (ts[0], ts[2])]
             if len(teamone) and len(teamtwo):
                 return EventData(
                     datatag=data_tag,
@@ -1534,15 +1680,17 @@ def _select_result_line(result_line_description, text):
                     fixture_date=date,
                     fixture_day=day,
                     source=source,
-                    headers=headers)
+                    headers=headers,
+                )
             elif len(teamone) or len(teamtwo):
-                teams = ''.join((teamone, teamtwo))
+                teams = "".join((teamone, teamtwo))
                 if len(teams.split()) == 1:
                     return EventData(
                         datatag=data_tag,
                         found=Found.NOT_TWO_TEAMS,
                         raw=text,
-                        headers=headers)
+                        headers=headers,
+                    )
                 else:
                     return EventData(
                         datatag=data_tag,
@@ -1554,7 +1702,8 @@ def _select_result_line(result_line_description, text):
                         fixture_date=date,
                         fixture_day=day,
                         source=source,
-                        headers=headers)
+                        headers=headers,
+                    )
             else:
                 return EventData(
                     datatag=data_tag,
@@ -1564,13 +1713,15 @@ def _select_result_line(result_line_description, text):
                     competition=competition,
                     result_date=date,
                     source=source,
-                    headers=headers)
+                    headers=headers,
+                )
         elif len(ts) == 1:
-            teams = ' '.join(ts[0].split())
+            teams = " ".join(ts[0].split())
             if len(teams):
                 if len(teams.split()) == 1:
                     return EventData(
-                        datatag=data_tag, found=Found.NOT_TWO_TEAMS, raw=text)
+                        datatag=data_tag, found=Found.NOT_TWO_TEAMS, raw=text
+                    )
                 else:
                     return EventData(
                         datatag=data_tag,
@@ -1581,7 +1732,8 @@ def _select_result_line(result_line_description, text):
                         fixture_date=date,
                         fixture_day=day,
                         source=source,
-                        headers=headers)
+                        headers=headers,
+                    )
             else:
                 return EventData(
                     datatag=data_tag,
@@ -1590,12 +1742,14 @@ def _select_result_line(result_line_description, text):
                     competition=competition,
                     result_date=date,
                     source=source,
-                    headers=headers)
+                    headers=headers,
+                )
         return EventData(
             datatag=data_tag,
             found=Found.EXTRA_ROUNDS_DATE_COMPETITION,
             raw=text,
-            headers=headers)
+            headers=headers,
+        )
 
     # Absence of round and competition, but presence of date makes line the
     # date of following games in competition if rest of line is whitespace.
@@ -1609,17 +1763,20 @@ def _select_result_line(result_line_description, text):
                     context=context,
                     result_date=date,
                     source=source,
-                    headers=headers)
+                    headers=headers,
+                )
             return EventData(
                 datatag=data_tag,
                 found=Found.NOT_DATE_ONLY,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         return EventData(
             datatag=data_tag,
             found=Found.EXTRA_ROUNDS_DATE,
             raw=text,
-            headers=headers)
+            headers=headers,
+        )
 
     # Presence of competition and absence of date makes line the competition
     # name of following games, and also a round header if round is present,
@@ -1627,7 +1784,7 @@ def _select_result_line(result_line_description, text):
     if competition:
         ts = RE_ROUND.split(tsnd)
         if len(ts) == 3:
-            if len(' '.join((ts[0], ts[2])).strip()) == 0:
+            if len(" ".join((ts[0], ts[2])).strip()) == 0:
                 return EventData(
                     datatag=data_tag,
                     found=Found.COMPETITION_ROUND,
@@ -1635,12 +1792,14 @@ def _select_result_line(result_line_description, text):
                     competition_round=RE_ROUND.findall(tsnd)[0],
                     competition=competition,
                     source=source,
-                    headers=headers)
+                    headers=headers,
+                )
             return EventData(
                 datatag=data_tag,
                 found=Found.NOT_COMPETITION_ROUND_ONLY,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         if len(ts) == 1:
             if len(ts[0].strip()) == 0:
                 return EventData(
@@ -1649,33 +1808,37 @@ def _select_result_line(result_line_description, text):
                     context=context,
                     competition=competition,
                     source=source,
-                    headers=headers)
+                    headers=headers,
+                )
             return EventData(
                 datatag=data_tag,
                 found=Found.NOT_COMPETITION_ONLY,
                 raw=text,
-                headers=headers)
+                headers=headers,
+            )
         return EventData(
             datatag=data_tag,
             found=Found.EXTRA_ROUNDS_COMPETITION,
             raw=text,
-            headers=headers)
+            headers=headers,
+        )
 
     # Presence of board, and absence of date and competition makes line the
     # round of following games if rest of line is whitespace.
     ts = RE_ROUND.split(tsnd)
     if len(ts) == 3:
-        if len(' '.join((ts[0], ts[2])).strip()) == 0:
+        if len(" ".join((ts[0], ts[2])).strip()) == 0:
             return EventData(
                 datatag=data_tag,
                 found=Found.ROUND_HEADER,
                 context=context,
                 competition_round=RE_ROUND.findall(tsnd)[0],
                 source=source,
-                headers=headers)
+                headers=headers,
+            )
 
     # Text is the event name if it is followed by line with two dates.
-    en = ' '.join(text.split())
+    en = " ".join(text.split())
     if len(en):
         return EventData(
             datatag=data_tag,
@@ -1683,13 +1846,15 @@ def _select_result_line(result_line_description, text):
             context=context,
             eventname=en,
             source=source,
-            headers=headers)
+            headers=headers,
+        )
     else:
         return EventData(
             datatag=data_tag,
             found=Found.IGNORE,
             context=context,
-            headers=headers)
+            headers=headers,
+        )
 
 
 def _translate(result_line_description, re_name, finditer_list_groupdict):
@@ -1703,110 +1868,117 @@ def _translate(result_line_description, re_name, finditer_list_groupdict):
     g = finditer_list_groupdict
     t = []
     if re_name == FINISHED:
-        #print('f', end='') # tracer for fixing regular expressions
-        if 'scoretwo' in g:
+        # print('f', end='') # tracer for fixing regular expressions
+        if "scoretwo" in g:
             for k in (
-                'board', 'names', 'nameone', 'scoreone', 'scoretwo', 'nametwo'):
+                "board",
+                "names",
+                "nameone",
+                "scoreone",
+                "scoretwo",
+                "nametwo",
+            ):
                 if k in g:
                     t.append(g[k])
         else:
-            for k in (
-                'board', 'names', 'nameone'):
+            for k in ("board", "names", "nameone"):
                 if k in g:
                     t.append(g[k])
-            if g.get('scoreone') in _DRAW_TOKEN:
-                t.append('draw')
-                for k in (
-                    'nametwo',):
+            if g.get("scoreone") in _DRAW_TOKEN:
+                t.append("draw")
+                for k in ("nametwo",):
                     if k in g:
                         t.append(g[k])
             else:
-                for k in (
-                    'scoreone', 'nametwo'):
+                for k in ("scoreone", "nametwo"):
                     if k in g:
                         t.append(g[k])
-        if g.get('result_only'):
-            t.append('result only')
+        if g.get("result_only"):
+            t.append("result only")
     elif re_name == TEAMS_BODY:
-        for k in (
-            'teams', 'teamone', 'scoreone', 'scoretwo', 'teamtwo'):
+        for k in ("teams", "teamone", "scoreone", "scoretwo", "teamtwo"):
             if k in g:
-                t.append(' '.join(g[k].split()))
+                t.append(" ".join(g[k].split()))
     elif re_name == MATCH_DATE_BODY:
-        if 'result_date' in g:
-            t.append(g['result_date'])
+        if "result_date" in g:
+            t.append(g["result_date"])
     elif re_name == UNFINISHED:
-        #print('u', end='') # tracer for fixing regular expressions
-        for k in (
-            'board', 'names', 'nameone'):
+        # print('u', end='') # tracer for fixing regular expressions
+        for k in ("board", "names", "nameone"):
             if k in g:
                 t.append(g[k])
-        t.append('unfinished')
-        if 'nametwo' in g:
-            t.append(g['nametwo'])
-        if g.get('result_only'):
-            t.append('result only')
+        t.append("unfinished")
+        if "nametwo" in g:
+            t.append(g["nametwo"])
+        if g.get("result_only"):
+            t.append("result only")
     elif re_name == FINISHED_PLAYED_ON:
-        #print('p', end='') # tracer for fixing regular expressions
+        # print('p', end='') # tracer for fixing regular expressions
         for k in (
-            'board', 'names', 'nameone', 'scoreone', 'scoretwo', 'nametwo'):
+            "board",
+            "names",
+            "nameone",
+            "scoreone",
+            "scoretwo",
+            "nametwo",
+        ):
             if k in g:
                 t.append(g[k])
-        if g.get('result_only'):
-            t.append('result only')
+        if g.get("result_only"):
+            t.append("result only")
     elif re_name == TEAMS_PLAYED_ON_BODY:
         t.append(PLAYED_ON)
-        for k in (
-            'teams', 'teamone', 'scoreone', 'scoretwo', 'teamtwo'):
+        for k in ("teams", "teamone", "scoreone", "scoretwo", "teamtwo"):
             if k in g:
-                t.append(' '.join(g[k].split()))
+                t.append(" ".join(g[k].split()))
     elif re_name == MATCH_DATE_PLAYED_ON_BODY:
-        if 'result_date' in g:
-            t.append(g['result_date'])
+        if "result_date" in g:
+            t.append(g["result_date"])
     elif re_name == DEFAULT:
-        #print('d', end='') # tracer for fixing regular expressions
-        if 'teamwins' in g:
-            t.append('default')
+        # print('d', end='') # tracer for fixing regular expressions
+        if "teamwins" in g:
+            t.append("default")
         else:
-            if 'board' in g:
-                t.append(g['board'])
-            if g.get('nameone'):
-                t.append('1-default')
-            elif g.get('nametwo'):
-                t.append('default-1')
-            elif g.get('names'):
-                t.append('default')
+            if "board" in g:
+                t.append(g["board"])
+            if g.get("nameone"):
+                t.append("1-default")
+            elif g.get("nametwo"):
+                t.append("default-1")
+            elif g.get("names"):
+                t.append("default")
             else:
-                t.append('doubledefault')
+                t.append("doubledefault")
     elif re_name == UNFINISHED_PLAYED_ON:
-        for k in (
-            'board', 'names', 'nameone'):
+        for k in ("board", "names", "nameone"):
             if k in g:
                 t.append(g[k])
-        t.append('unfinished')
-        if 'nametwo' in g:
-            t.append(g['nametwo'])
-        if g.get('result_only'):
-            t.append('result only')
+        t.append("unfinished")
+        if "nametwo" in g:
+            t.append(g["nametwo"])
+        if g.get("result_only"):
+            t.append("result only")
     elif re_name == MATCH_DEFAULT:
-        #print('m', end='') # tracer for fixing regular expressions
-        if 'matchdefault' in g:
-            t.append('match default')
+        # print('m', end='') # tracer for fixing regular expressions
+        if "matchdefault" in g:
+            t.append("match default")
     elif re_name == FIXTURE_BODY:
-        #print('s  ', end='') # tracer for fixing regular expressions
-        for k in (
-            'dayname', 'day', 'month', 'year', 'teams', 'competition'):
+        # print('s  ', end='') # tracer for fixing regular expressions
+        for k in ("dayname", "day", "month", "year", "teams", "competition"):
             if k not in g:
                 break
         else:
-            t.append(g['dayname'])
-            t.append(('/' if g['month'].isdigit() else ' ').join(
-                (g['day'], g['month'], g['year'])))
-            t.append(g['competition'])
-            t.append(g['teams'])
+            t.append(g["dayname"])
+            t.append(
+                ("/" if g["month"].isdigit() else " ").join(
+                    (g["day"], g["month"], g["year"])
+                )
+            )
+            t.append(g["competition"])
+            t.append(g["teams"])
     if t:
         try:
-            t = ' '.join(t)
+            t = " ".join(t)
         except:
             print(g)
             raise
@@ -1816,7 +1988,7 @@ def _translate(result_line_description, re_name, finditer_list_groupdict):
         # though the instance has been added to the EventContext instance data
         # structures.
         return _select_result_line(result_line_description, t)
-    #print('X', end='') # tracer for fixing regular expressions
+    # print('X', end='') # tracer for fixing regular expressions
 
 
 def _lookup_competition(competition_lookup, key):
@@ -1824,11 +1996,15 @@ def _lookup_competition(competition_lookup, key):
     try:
         return competition_lookup[key]
     except KeyError:
-        raise EventParserError(''.join(
-            ('Lookup proper competition name for\n\n',
-             key,
-             '\n\nfailed: it is likely not listed in configuration file.',
-             )))
+        raise EventParserError(
+            "".join(
+                (
+                    "Lookup proper competition name for\n\n",
+                    key,
+                    "\n\nfailed: it is likely not listed in configuration file.",
+                )
+            )
+        )
 
 
 def _re_error(name, text):
@@ -1842,22 +2018,26 @@ def _re_error(name, text):
 
     """
     if len(text) > 300:
-        text = ''.join((text[:300], '...'))
-    raise EventParserError(''.join((
-        'A regular expression derived from a\n\n',
-        name,
-        '\n\nentry in the event configuration file failed processing\n\n',
-        repr(text).join(('', '.\n\n')),
-        'This is known to depend on the Python version for at least one ',
-        'regular expression.  Try the latest version of Python, or at ',
-        'least a different version (change between 3.3.1 and 3.3.2 for ',
-        'example) before blaming the event configuration file entry or ',
-        'the application.',
-        )))
+        text = "".join((text[:300], "..."))
+    raise EventParserError(
+        "".join(
+            (
+                "A regular expression derived from a\n\n",
+                name,
+                "\n\nentry in the event configuration file failed processing\n\n",
+                repr(text).join(("", ".\n\n")),
+                "This is known to depend on the Python version for at least one ",
+                "regular expression.  Try the latest version of Python, or at ",
+                "least a different version (change between 3.3.1 and 3.3.2 for ",
+                "example) before blaming the event configuration file entry or ",
+                "the application.",
+            )
+        )
+    )
 
 
 def _convert_result_first(r):
-    if r[0] in '-=+':
+    if r[0] in "-=+":
         return (r[1:] + r[0]).lower()
     else:
         return r.lower()

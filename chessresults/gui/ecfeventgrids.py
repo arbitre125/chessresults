@@ -16,14 +16,12 @@ from ..core import filespec
 
 class ECFEventBaseGrid(eventgrids.EventBaseGrid):
 
-    """Base class for grid widgets used on ECF event page.
-    """
+    """Base class for grid widgets used on ECF event page."""
 
 
 class ECFEventGrid(ECFEventBaseGrid):
 
-    """Grid for events to be submitted to ECF for grading.
-    """
+    """Grid for events to be submitted to ECF for grading."""
 
     def __init__(self, panel, **kwargs):
         """Extend and note sibling grids."""
@@ -33,7 +31,9 @@ class ECFEventGrid(ECFEventBaseGrid):
             self.appsyspanel.get_appsys().get_results_database(),
             filespec.EVENT_FILE_DEF,
             filespec.EVENTNAME_FIELD_DEF,
-            ResultsDBrowEvent)
+            ResultsDBrowEvent,
+        )
         self.set_data_source(ds)
         self.appsyspanel.get_appsys().get_data_register().register_in(
-            self, self.on_data_change)
+            self, self.on_data_change
+        )

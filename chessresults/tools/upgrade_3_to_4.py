@@ -9,7 +9,7 @@ Table names are changed and extra databases introduced in segment support.
 """
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     import os
 
@@ -18,4 +18,3 @@ if __name__ == '__main__':
     from ..core.filespec import FileSpec
 
     ui_base_3_to_4.UIBase_3_to_4(FileSpec()).root.mainloop()
-    

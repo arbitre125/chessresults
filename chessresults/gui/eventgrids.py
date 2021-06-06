@@ -18,8 +18,7 @@ from ..core import filespec
 
 class EventBaseGrid(gridbindings.GridBindings, DataGridReadOnly):
 
-    """Base class for grid widgets used on event page.
-    """
+    """Base class for grid widgets used on event page."""
 
     def __init__(self, panel, **kwargs):
         """Extend and bind grid navigation within page commands to events"""
@@ -38,8 +37,7 @@ class EventBaseGrid(gridbindings.GridBindings, DataGridReadOnly):
 
 class EventGrid(EventBaseGrid):
 
-    """Grid for events recorded.
-    """
+    """Grid for events recorded."""
 
     def __init__(self, panel, **kwargs):
         """Extend and note sibling grids."""
@@ -49,7 +47,9 @@ class EventGrid(EventBaseGrid):
             self.appsyspanel.get_appsys().get_results_database(),
             filespec.EVENT_FILE_DEF,
             filespec.EVENTNAME_FIELD_DEF,
-            ResultsDBrowEvent)
+            ResultsDBrowEvent,
+        )
         self.set_data_source(ds)
         self.appsyspanel.get_appsys().get_data_register().register_in(
-            self, self.on_data_change)
+            self, self.on_data_change
+        )

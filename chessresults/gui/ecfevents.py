@@ -23,36 +23,34 @@ from . import ecferrors
 
 
 class ECFEvents(panel.PanelGridSelector):
-    
-    """The ECF Events panel for a Results database.
-    """
 
-    _btn_ecfsubmit = 'ecfevents_submit'
-    _btn_ecfeventdetail = 'ecfevents_detail'
+    """The ECF Events panel for a Results database."""
+
+    _btn_ecfsubmit = "ecfevents_submit"
+    _btn_ecfeventdetail = "ecfevents_detail"
 
     def __init__(self, parent=None, cnf=dict(), **kargs):
         """Extend and define the results database ECF events panel"""
         self.eventgrid = None
-        super(ECFEvents, self).__init__(
-            parent=parent,
-            cnf=cnf,
-            **kargs)
+        super(ECFEvents, self).__init__(parent=parent, cnf=cnf, **kargs)
         self.show_panel_buttons(
-            (self._btn_ecfeventdetail,
-             self._btn_ecfsubmit))
+            (self._btn_ecfeventdetail, self._btn_ecfsubmit)
+        )
         self.create_buttons()
-        (self.eventgrid,) = self.make_grids((
-            dict(
-                grid=ecfeventgrids.ECFEventGrid,
-                gridfocuskey='<KeyPress-F7>',
+        (self.eventgrid,) = self.make_grids(
+            (
+                dict(
+                    grid=ecfeventgrids.ECFEventGrid,
+                    gridfocuskey="<KeyPress-F7>",
                 ),
-            ))
+            )
+        )
 
     def close(self):
         """Close resources prior to destroying this instance.
 
         Used, at least, as callback from AppSysFrame container.
-        
+
         """
         pass
 
@@ -60,25 +58,28 @@ class ECFEvents(panel.PanelGridSelector):
         """Define all action buttons that may appear on ECF events page."""
         self.define_button(
             self._btn_ecfsubmit,
-            text='Submit',
-            tooltip='Prepare a file for ECF containing results for selected events.',
+            text="Submit",
+            tooltip="Prepare a file for ECF containing results for selected events.",
             underline=2,
-            command=self.on_ecf_submit)
+            command=self.on_ecf_submit,
+        )
         self.define_button(
             self._btn_ecfeventdetail,
-            text='Update Event Detail',
-            tooltip='Prepare a file for ECF containing results for selected events.',
+            text="Update Event Detail",
+            tooltip="Prepare a file for ECF containing results for selected events.",
             switchpanel=True,
             underline=0,
-            command=self.on_ecf_event_detail)
+            command=self.on_ecf_event_detail,
+        )
 
     def is_event_selected(self):
         """Return True if events selected.  Otherwise False."""
         if len(self.eventgrid.selection) == 0:
             dlg = tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
-                message='No event selected for amendment of detail',
-                title='Events')
+                message="No event selected for amendment of detail",
+                title="Events",
+            )
             return False
         return True
 
@@ -89,12 +90,12 @@ class ECFEvents(panel.PanelGridSelector):
 
         """
         if not self.is_event_selected():
-            return 'break'
-    
+            return "break"
+
     def on_ecf_submit(self, event=None):
         """Create an ECF Results Submission File."""
         self.write_results_file_for_ecf()
-    
+
     def write_results_file_for_ecf(self):
         """Write results for selected events to ECF submission file.
 
@@ -109,18 +110,22 @@ class ECFEvents(panel.PanelGridSelector):
 
         for e in ebkm:
             submit_events[e[-1]] = resultsrecord.get_event_from_record_value(
-                db.get_primary_record(filespec.EVENT_FILE_DEF, e[-1]))
+                db.get_primary_record(filespec.EVENT_FILE_DEF, e[-1])
+            )
         for e in esel:
             if e not in ebkm:
                 submit_events[
-                    e[-1]] = resultsrecord.get_event_from_record_value(
-                        db.get_primary_record(filespec.EVENT_FILE_DEF, e[-1]))
+                    e[-1]
+                ] = resultsrecord.get_event_from_record_value(
+                    db.get_primary_record(filespec.EVENT_FILE_DEF, e[-1])
+                )
 
         if len(submit_events) == 0:
             dlg = tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
-                message='No events selected for submission of results to ECF',
-                title='Events')
+                message="No events selected for submission of results to ECF",
+                title="Events",
+            )
             return
 
         for s in submit_events:
@@ -135,38 +140,52 @@ class ECFEvents(panel.PanelGridSelector):
                 filespec.ECFEVENT_FILE_DEF,
                 db.database_cursor(
                     filespec.ECFEVENT_FILE_DEF,
-                    filespec.ECFEVENTIDENTITY_FIELD_DEF
-                    ).get_unique_primary_for_index_key(
-                        db.encode_record_number(
-                            reference_event.value.get_event_identity()))))
+                    filespec.ECFEVENTIDENTITY_FIELD_DEF,
+                ).get_unique_primary_for_index_key(
+                    db.encode_record_number(
+                        reference_event.value.get_event_identity()
+                    )
+                ),
+            )
+        )
 
         if ecfeventrecord is None:
             dlg = tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
-                message=' '.join((
-                    'No event details available for inclusion',
-                    'in submission of results to ECF. Click the',
-                    '"Event Details" button to get the form for',
-                    'providing them.')),
-                title='Events')
+                message=" ".join(
+                    (
+                        "No event details available for inclusion",
+                        "in submission of results to ECF. Click the",
+                        '"Event Details" button to get the form for',
+                        "providing them.",
+                    )
+                ),
+                title="Events",
+            )
             return
 
         for s in submit_events:
-            if (startdate != submit_events[s].value.startdate or
-                enddate != submit_events[s].value.enddate or
-                name != submit_events[s].value.name):
+            if (
+                startdate != submit_events[s].value.startdate
+                or enddate != submit_events[s].value.enddate
+                or name != submit_events[s].value.name
+            ):
                 dlg = tkinter.messagebox.showinfo(
                     parent=self.get_widget(),
-                    message=' '.join((
-                        'Cannot submit the selected events to ECF in',
-                        'same file because the start dates end dates',
-                        'and names are not all the same.')),
-                    title='Events')
+                    message=" ".join(
+                        (
+                            "Cannot submit the selected events to ECF in",
+                            "same file because the start dates end dates",
+                            "and names are not all the same.",
+                        )
+                    ),
+                    title="Events",
+                )
                 return
 
         all_events = resultsrecord.get_events_matching_event_identity(
-            db,
-            reference_event.value.get_event_identity())
+            db, reference_event.value.get_event_identity()
+        )
         msg = []
         for ae in all_events:
             if ae not in submit_events:
@@ -175,53 +194,67 @@ class ECFEvents(panel.PanelGridSelector):
         if len(msg):
             resp = tkinter.messagebox.askquestion(
                 parent=self.get_widget(),
-                message=' '.join((
-                    'The following sections in event',
-                    name,
-                    'start date:',
-                    startdate,
-                    'end date:',
-                    enddate,
-                    'will not be included in the submission because',
-                    'their event record(s) are not selected:\n\n',
-                    '; '.join(msg),
-                    '\n\n',
-                    'Click "Yes" to include them all.\n',
-                    'Click "No" to use the selection already made.')),
-                title='Events')
+                message=" ".join(
+                    (
+                        "The following sections in event",
+                        name,
+                        "start date:",
+                        startdate,
+                        "end date:",
+                        enddate,
+                        "will not be included in the submission because",
+                        "their event record(s) are not selected:\n\n",
+                        "; ".join(msg),
+                        "\n\n",
+                        'Click "Yes" to include them all.\n',
+                        'Click "No" to use the selection already made.',
+                    )
+                ),
+                title="Events",
+            )
             if resp == tkinter.messagebox.YES:
                 submit_events.update(all_events)
-                msg = ' '.join((
-                    'A results submission file for ECF will be created',
-                    'for all events with same name and dates as the',
-                    'selected event(s).'))
+                msg = " ".join(
+                    (
+                        "A results submission file for ECF will be created",
+                        "for all events with same name and dates as the",
+                        "selected event(s).",
+                    )
+                )
             elif resp == tkinter.messagebox.NO:
-                msg = ' '.join((
-                    'A results submission file for ECF will be created',
-                    'using the selected event(s) only.'))
+                msg = " ".join(
+                    (
+                        "A results submission file for ECF will be created",
+                        "using the selected event(s) only.",
+                    )
+                )
             else:
                 dlg = tkinter.messagebox.showinfo(
                     parent=self.get_widget(),
-                    message='Creation of submission file for ECF abandoned',
-                    title='Events')
+                    message="Creation of submission file for ECF abandoned",
+                    title="Events",
+                )
                 return
         else:
-            msg = ' '.join((
-                'A results submission file for ECF will be created',
-                'for the selected event(s).'))
+            msg = " ".join(
+                (
+                    "A results submission file for ECF will be created",
+                    "for the selected event(s).",
+                )
+            )
 
         del all_events
 
         if not tkinter.messagebox.askyesno(
-            parent=self.get_widget(),
-            message=msg,
-            title='Events'):
+            parent=self.get_widget(), message=msg, title="Events"
+        ):
             return
 
         games = []
         for se in submit_events:
-            games.extend(resultsrecord.get_games_for_event(
-                db, submit_events[se]))
+            games.extend(
+                resultsrecord.get_games_for_event(db, submit_events[se])
+            )
         for g in games:
             v = g.value
             if v.hometeam and v.awayteam:
@@ -235,18 +268,18 @@ class ECFEvents(panel.PanelGridSelector):
             else:
                 submit_games[ecfsection].append(g)
         aliases = resultsrecord.get_persons(
-                db,
-                resultsrecord.get_aliases_for_games(db, games))
-        submit_players = self._get_ecf_players_for_alias_map(
-            db,
-            aliases)
-        submit_player_clubs = ecfmaprecord.get_player_clubs_for_games(db, games)
+            db, resultsrecord.get_aliases_for_games(db, games)
+        )
+        submit_players = self._get_ecf_players_for_alias_map(db, aliases)
+        submit_player_clubs = ecfmaprecord.get_player_clubs_for_games(
+            db, games
+        )
         submit_clubs = self._get_ecf_clubs_for_alias_map(
-            db,
-            submit_player_clubs)
+            db, submit_player_clubs
+        )
         submit_counties = dict()
         for sc in submit_clubs:
-            #this needs pick relevant txn date I think
+            # this needs pick relevant txn date I think
             v = submit_clubs[sc].value
             if v.ECFcode not in submit_counties:
                 submit_counties[v.ECFcode] = v.ECFcountycode
@@ -255,101 +288,102 @@ class ECFEvents(panel.PanelGridSelector):
 
         list0 = []
         for sp, spc in submit_player_clubs.items():
-            if (spc.value.clubcode is None and
-                spc.value.clubecfcode is None):
+            if spc.value.clubcode is None and spc.value.clubecfcode is None:
                 list0.append(
                     resultsrecord.get_player_name_text_tabs(
-                        db, spc.value.get_unpacked_playername()))
+                        db, spc.value.get_unpacked_playername()
+                    )
+                )
         if len(list0):
-            reports = [(
-                'Player has no ECF club code',
-                list0)]
+            reports = [("Player has no ECF club code", list0)]
             errors = ecferrors.ECFErrorFrame(
-                None,
-                'ECF Errors',
-                'Sample club',
-                reports)
+                None, "ECF Errors", "Sample club", reports
+            )
             return
 
         list1 = []
         list2 = []
         list3 = []
         for sp in submit_players:
-            if isinstance(submit_players[sp], ecfmaprecord.ECFmapDBvaluePlayer):
+            if isinstance(
+                submit_players[sp], ecfmaprecord.ECFmapDBvaluePlayer
+            ):
                 if submit_players[sp].playerecfname is None:
                     list2.append(
                         resultsrecord.get_player_name_text_tabs(
-                            db, submit_players[sp].get_unpacked_playername()))
+                            db, submit_players[sp].get_unpacked_playername()
+                        )
+                    )
                 elif submit_players[sp].playerecfcode is None:
                     list3.append(
                         resultsrecord.get_player_name_text_tabs(
-                            db, submit_players[sp].get_unpacked_playername()))
+                            db, submit_players[sp].get_unpacked_playername()
+                        )
+                    )
             elif submit_players[sp] is None:
                 list1.append(
                     resultsrecord.get_player_name_text_tabs(
-                        db, aliases[sp].value.identity()))
+                        db, aliases[sp].value.identity()
+                    )
+                )
         if len(list1) + len(list2) > 0:
             if len(list3) == 0:
-                msg = ' '.join((
-                    'A number of players in this event do not have',
-                    'an ECF grading code on the Master List or have',
-                    'not been given a name in the style accepted by',
-                    'ECF. The lists will be displayed on closing',
-                    'this message.'))
+                msg = " ".join(
+                    (
+                        "A number of players in this event do not have",
+                        "an ECF grading code on the Master List or have",
+                        "not been given a name in the style accepted by",
+                        "ECF. The lists will be displayed on closing",
+                        "this message.",
+                    )
+                )
             else:
-                msg = ' '.join((
-                    'A number of players in this event do not have',
-                    'an ECF grading code on the Master List or have',
-                    'not been given a name in the style accepted by',
-                    'ECF. The lists will be displayed on closing',
-                    'this message.\n',
-                    'Also included is a list of new players who',
-                    'have not been given an ECF grading code. If,'
-                    'you have got feedback files from the ECF for',
-                    'this event it means you have not edited these',
-                    'records to hold the allocated grading code.'))
+                msg = " ".join(
+                    (
+                        "A number of players in this event do not have",
+                        "an ECF grading code on the Master List or have",
+                        "not been given a name in the style accepted by",
+                        "ECF. The lists will be displayed on closing",
+                        "this message.\n",
+                        "Also included is a list of new players who",
+                        "have not been given an ECF grading code. If,"
+                        "you have got feedback files from the ECF for",
+                        "this event it means you have not edited these",
+                        "records to hold the allocated grading code.",
+                    )
+                )
             dlg = tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message=msg,
-                title='Events')
+                parent=self.get_widget(), message=msg, title="Events"
+            )
             reports = []
             if len(list1):
-                reports.append((
-                    'Player not in event list',
-                    list1))
+                reports.append(("Player not in event list", list1))
             if len(list2):
-                reports.append((
-                    'Player has no ECF name',
-                    list2))
+                reports.append(("Player has no ECF name", list2))
             if len(list3):
-                reports.append((
-                    'Player has no ECF code',
-                    list3))
+                reports.append(("Player has no ECF code", list3))
             errors = ecferrors.ECFErrorFrame(
-                None,
-                'ECF Errors',
-                'Sample',
-                reports)
+                None, "ECF Errors", "Sample", reports
+            )
             return
         if len(list3) > 0:
-            reports = [(
-                'Player has no ECF code',
-                list3)]
+            reports = [("Player has no ECF code", list3)]
             errors = ecferrors.ECFErrorFrame(
-                None,
-                'ECF Grading Code Check',
-                'Sample',
-                reports)
+                None, "ECF Grading Code Check", "Sample", reports
+            )
             if tkinter.messagebox.YES != tkinter.messagebox.askquestion(
                 parent=self.get_widget(),
-                message=' '.join((
-                    'A list of players without an ECF grading code has',
-                    'been displayed.\n\nPlease be sure that submitting these',
-                    'results without ECF grading codes for these players is',
-                    'correct before you do so, to avoid extra work merging any',
-                    'new grading codes allocated.',
-                    )),
-                title='Events - create submission file'):
+                message=" ".join(
+                    (
+                        "A list of players without an ECF grading code has",
+                        "been displayed.\n\nPlease be sure that submitting these",
+                        "results without ECF grading codes for these players is",
+                        "correct before you do so, to avoid extra work merging any",
+                        "new grading codes allocated.",
+                    )
+                ),
+                title="Events - create submission file",
+            ):
                 return
 
         def dcc(ecf_field_name):
@@ -361,11 +395,11 @@ class ECFEvents(panel.PanelGridSelector):
             # translate from utf-8 to ascii, or iso-8859-1 or some other 256
             # code point map while ECF system expects that.
             # Change to str in application code may make this hack redundant.
-            #return ecf_field_name.decode('ascii')
+            # return ecf_field_name.decode('ascii')
             return ecf_field_name
 
         def ecf_line(data):
-            return ''.join(('#', '='.join(data)))
+            return "".join(("#", "=".join(data)))
 
         def pin_convention(pin):
             if pin in pin_to_ecf_code:
@@ -379,69 +413,94 @@ class ECFEvents(panel.PanelGridSelector):
         v = ecfeventrecord.value
         if v.eventcode:
             submission = v.submission + 1
-            subfilename = ''.join((
-                v.eventcode, str(submission).zfill(2), '.txt'))
+            subfilename = "".join(
+                (v.eventcode, str(submission).zfill(2), ".txt")
+            )
         else:
-            subfilename = 'ecf00.txt'
+            subfilename = "ecf00.txt"
             submission = 0
         lines = [ecf_line((dcc(constants.EVENT_DETAILS),))]
         lines.append(ecf_line((dcc(constants.EVENT_CODE), v.eventcode)))
+        lines.append(ecf_line((dcc(constants.EVENT_NAME), v.eventname)))
         lines.append(
-            ecf_line((dcc(constants.EVENT_NAME), v.eventname)))
-        lines.append(
-            ecf_line((dcc(constants.SUBMISSION_INDEX), str(submission))))
-        d = v.eventstartdate.split('-')
+            ecf_line((dcc(constants.SUBMISSION_INDEX), str(submission)))
+        )
+        d = v.eventstartdate.split("-")
         d.reverse()
-        lines.append(ecf_line((dcc(constants.EVENT_DATE), '/'.join(d))))
-        d = v.eventenddate.split('-')
+        lines.append(ecf_line((dcc(constants.EVENT_DATE), "/".join(d))))
+        d = v.eventenddate.split("-")
         d.reverse()
-        lines.append(ecf_line((dcc(constants.FINAL_RESULT_DATE), '/'.join(d))))
+        lines.append(ecf_line((dcc(constants.FINAL_RESULT_DATE), "/".join(d))))
         lines.append(ecf_line((dcc(constants.RESULTS_OFFICER), v.gradername)))
         if len(v.graderemail):
-            lines.append(ecf_line((
-                dcc(constants.RESULTS_OFFICER_ADDRESS), v.graderemail)))
+            lines.append(
+                ecf_line(
+                    (dcc(constants.RESULTS_OFFICER_ADDRESS), v.graderemail)
+                )
+            )
         else:
-            addr = v.graderaddress.split('\n')
+            addr = v.graderaddress.split("\n")
             for a in addr:
                 lines.append(
-                    ecf_line((dcc(constants.RESULTS_OFFICER_ADDRESS), a)))
+                    ecf_line((dcc(constants.RESULTS_OFFICER_ADDRESS), a))
+                )
             if len(v.graderpostcode):
-                lines.append(ecf_line((
-                    dcc(constants.RESULTS_OFFICER_ADDRESS), v.graderpostcode)))
+                lines.append(
+                    ecf_line(
+                        (
+                            dcc(constants.RESULTS_OFFICER_ADDRESS),
+                            v.graderpostcode,
+                        )
+                    )
+                )
         lines.append(ecf_line((dcc(constants.TREASURER), v.treasurername)))
-        addr = v.treasureraddress.split('\n')
+        addr = v.treasureraddress.split("\n")
         for a in addr:
             lines.append(ecf_line((dcc(constants.TREASURER_ADDRESS), a)))
         if len(v.treasurerpostcode):
-            lines.append(ecf_line((
-                dcc(constants.TREASURER_ADDRESS), v.treasurerpostcode)))
+            lines.append(
+                ecf_line(
+                    (dcc(constants.TREASURER_ADDRESS), v.treasurerpostcode)
+                )
+            )
         if len(v.movesfirst):
             lines.append(
-                ecf_line((dcc(constants.MOVES_FIRST_SESSION), v.movesfirst)))
+                ecf_line((dcc(constants.MOVES_FIRST_SESSION), v.movesfirst))
+            )
         if len(v.minutesfirst):
-            lines.append(ecf_line((
-                dcc(constants.MINUTES_FIRST_SESSION), v.minutesfirst)))
+            lines.append(
+                ecf_line(
+                    (dcc(constants.MINUTES_FIRST_SESSION), v.minutesfirst)
+                )
+            )
         if len(v.moveslater):
-            lines.append(ecf_line((
-                dcc(constants.MOVES_SECOND_SESSION), v.moveslater)))
+            lines.append(
+                ecf_line((dcc(constants.MOVES_SECOND_SESSION), v.moveslater))
+            )
         if len(v.minuteslater):
-            lines.append(ecf_line((
-                dcc(constants.MINUTES_SECOND_SESSION), v.minuteslater)))
+            lines.append(
+                ecf_line(
+                    (dcc(constants.MINUTES_SECOND_SESSION), v.minuteslater)
+                )
+            )
         if len(v.minuteslast):
-            lines.append(ecf_line((
-                dcc(constants.MINUTES_REST_OF_GAME), v.minuteslast)))
+            lines.append(
+                ecf_line((dcc(constants.MINUTES_REST_OF_GAME), v.minuteslast))
+            )
         if len(v.minutesonly):
             lines.append(
-                ecf_line((dcc(constants.MINUTES_FOR_GAME), v.minutesonly)))
+                ecf_line((dcc(constants.MINUTES_FOR_GAME), v.minutesonly))
+            )
         if len(v.secondspermove):
-            lines.append(ecf_line((
-                dcc(constants.SECONDS_PER_MOVE), v.secondspermove)))
+            lines.append(
+                ecf_line((dcc(constants.SECONDS_PER_MOVE), v.secondspermove))
+            )
         if v.adjudication == 0:
-            lines.append(ecf_line((dcc(constants.ADJUDICATED), 'Maybe')))
+            lines.append(ecf_line((dcc(constants.ADJUDICATED), "Maybe")))
         elif v.adjudication == 1:
-            lines.append(ecf_line((dcc(constants.ADJUDICATED), 'Yes')))
+            lines.append(ecf_line((dcc(constants.ADJUDICATED), "Yes")))
         elif v.adjudication == 2:
-            lines.append(ecf_line((dcc(constants.ADJUDICATED), 'No')))
+            lines.append(ecf_line((dcc(constants.ADJUDICATED), "No")))
         if v.informgrandprix:
             lines.append(ecf_line((dcc(constants.INFORM_GRAND_PRIX),)))
         if v.informfide:
@@ -449,15 +508,15 @@ class ECFEvents(panel.PanelGridSelector):
         if v.informchessmoves:
             lines.append(ecf_line((dcc(constants.INFORM_CHESSMOVES),)))
         if v.informeast:
-            lines.append(ecf_line((dcc(constants.INFORM_UNION), 'EAST')))
+            lines.append(ecf_line((dcc(constants.INFORM_UNION), "EAST")))
         if v.informmidlands:
-            lines.append(ecf_line((dcc(constants.INFORM_UNION), 'MIDLANDS')))
+            lines.append(ecf_line((dcc(constants.INFORM_UNION), "MIDLANDS")))
         if v.informnorth:
-            lines.append(ecf_line((dcc(constants.INFORM_UNION), 'NORTH')))
+            lines.append(ecf_line((dcc(constants.INFORM_UNION), "NORTH")))
         if v.informsouth:
-            lines.append(ecf_line((dcc(constants.INFORM_UNION), 'SOUTH')))
+            lines.append(ecf_line((dcc(constants.INFORM_UNION), "SOUTH")))
         if v.informwest:
-            lines.append(ecf_line((dcc(constants.INFORM_UNION), 'WEST')))
+            lines.append(ecf_line((dcc(constants.INFORM_UNION), "WEST")))
         if len(submit_players):
             lines.append(ecf_line((dcc(constants.PLAYER_LIST),)))
         # Decorate PLAYER LIST data to sort players by name and grading code.
@@ -476,8 +535,8 @@ class ECFEvents(panel.PanelGridSelector):
         ecf_code_to_pin = dict()
         for pk, pv in submit_players.items():
             if isinstance(pv, ecfmaprecord.ECFmapDBvaluePlayer):
-                ssp_code = dcc(pv.playerecfcode) if pv.playerecfcode else ''
-                ssp_player = pv.playerecfname if pv.playerecfname else ''
+                ssp_code = dcc(pv.playerecfcode) if pv.playerecfcode else ""
+                ssp_player = pv.playerecfname if pv.playerecfname else ""
             elif pv is not None:
                 ssp_code = dcc(pv.value.ECFcode)
                 ssp_player = dcc(pv.value.ECFname)
@@ -491,14 +550,17 @@ class ECFEvents(panel.PanelGridSelector):
                 club_code = None
             if ssp_code:
                 pin_to_ecf_code[pk] = ecf_code_to_pin.setdefault(
-                    (ssp_code, club_code), str(pk))
+                    (ssp_code, club_code), str(pk)
+                )
             sorted_submit_players.append(
-                (ssp_player,
-                 ssp_code,
-                 club_code,
-                 pk,
-                 pv,
-                 ))
+                (
+                    ssp_player,
+                    ssp_code,
+                    club_code,
+                    pk,
+                    pv,
+                )
+            )
         # Original for statement now populates sorted_submit_players.
         # The original no longer generates output in the same order across runs
         # of the program when the data has not changed.
@@ -506,7 +568,7 @@ class ECFEvents(panel.PanelGridSelector):
         # duplicate entries to be ignored.
         # pin_to_person_pin extends the blocking hack done with pin_to_ecf_code
         # and ecf_code_to_pin to players where a grading code is not available.
-        pin_to_person_pin = {None:None}
+        pin_to_person_pin = {None: None}
         prev_sspc = None
         prev_cc = None
         prev_pk = None
@@ -520,47 +582,64 @@ class ECFEvents(panel.PanelGridSelector):
             prev_sspc = sspc
             prev_cc = cc
             prev_pk = pk
-            playerline = [ecf_line((
-                dcc(constants.PIN),
-                pin_convention(pk)))]
+            playerline = [ecf_line((dcc(constants.PIN), pin_convention(pk)))]
             if isinstance(pv, ecfmaprecord.ECFmapDBvaluePlayer):
                 if pv.playerecfcode:
-                    playerline.append(ecf_line((
-                        dcc(constants.BCF_CODE), dcc(pv.playerecfcode))))
+                    playerline.append(
+                        ecf_line(
+                            (dcc(constants.BCF_CODE), dcc(pv.playerecfcode))
+                        )
+                    )
                 if pv.playerecfname:
-                    playerline.append(ecf_line((
-                        dcc(constants.NAME), pv.playerecfname)))
+                    playerline.append(
+                        ecf_line((dcc(constants.NAME), pv.playerecfname))
+                    )
             elif pv is not None:
-                playerline.append(ecf_line((
-                    dcc(constants.BCF_CODE), dcc(pv.value.ECFcode))))
-                playerline.append(ecf_line((
-                    dcc(constants.NAME), dcc(pv.value.ECFname))))
+                playerline.append(
+                    ecf_line((dcc(constants.BCF_CODE), dcc(pv.value.ECFcode)))
+                )
+                playerline.append(
+                    ecf_line((dcc(constants.NAME), dcc(pv.value.ECFname)))
+                )
             else:
                 continue
             if pk in submit_clubs:
                 v = submit_clubs[pk].value
-                playerline.append(ecf_line((
-                    dcc(constants.CLUB), dcc(v.ECFname))))
-                playerline.append(ecf_line((
-                    dcc(constants.CLUB_CODE), dcc(v.ECFcode))))
-                playerline.append(ecf_line((
-                    dcc(constants.CLUB_COUNTY),
-                    dcc(submit_counties[v.ECFcode]))))
+                playerline.append(
+                    ecf_line((dcc(constants.CLUB), dcc(v.ECFname)))
+                )
+                playerline.append(
+                    ecf_line((dcc(constants.CLUB_CODE), dcc(v.ECFcode)))
+                )
+                playerline.append(
+                    ecf_line(
+                        (
+                            dcc(constants.CLUB_COUNTY),
+                            dcc(submit_counties[v.ECFcode]),
+                        )
+                    )
+                )
             elif pk in submit_player_clubs:
                 v = submit_player_clubs[pk].value
-                if (v.clubcode is None and
-                    v.clubecfname is not None and
-                    v.clubecfcode is not None):
-                    playerline.append(ecf_line((
-                        dcc(constants.CLUB), dcc(v.clubecfname))))
-                    playerline.append(ecf_line((
-                        dcc(constants.CLUB_CODE), dcc(v.clubecfcode))))
-            lines.append(''.join(playerline))
+                if (
+                    v.clubcode is None
+                    and v.clubecfname is not None
+                    and v.clubecfcode is not None
+                ):
+                    playerline.append(
+                        ecf_line((dcc(constants.CLUB), dcc(v.clubecfname)))
+                    )
+                    playerline.append(
+                        ecf_line(
+                            (dcc(constants.CLUB_CODE), dcc(v.clubecfcode))
+                        )
+                    )
+            lines.append("".join(playerline))
         del aliases
         del pin_to_person_pin[None]
 
         # Quoted from "Grading Results File Layout"
-        
+
         # BOARD - One may be present if this sequence is in a Match Results
         # part of the results file, otherwise none
         # ROUND - One must be present if this sequence is in a Section Results
@@ -576,13 +655,13 @@ class ECFEvents(panel.PanelGridSelector):
         # RESULTS header; the absence of board and round and presence of
         # GAME DATE means the game can be reported under an OTHER RESULTS
         # header.
-        
+
         # The type and value of section in ResultsDBvalueGame determines
         # which possibility is used. If this is tuple length 2 report under
         # MATCH RESULTS header if possible and OTHER RESULTS header if not.
         # Otherwise report under a SECTION RESULTS header if possible and
         # OTHER RESULTS if not.
-        
+
         # Decorate MATCH RESULTS, SECTION RESULTS, and OTHER RESULTS data to
         # sort sections by name.
         # The objects in submit_games are no longer in the same order across
@@ -590,7 +669,7 @@ class ECFEvents(panel.PanelGridSelector):
         sorted_submit_games = []
         for gs in submit_games:
             if isinstance(gs, tuple):
-                ssgh = ' - '.join([submit_names[n].value.name for n in gs])
+                ssgh = " - ".join([submit_names[n].value.name for n in gs])
             else:
                 ssgh = dcc(submit_names[gs].value.name)
             sorted_submit_games.append((ssgh, gs))
@@ -602,7 +681,7 @@ class ECFEvents(panel.PanelGridSelector):
             match = False
             other = False
             if isinstance(gs, tuple):
-                header = ' - '.join([submit_names[n].value.name for n in gs])
+                header = " - ".join([submit_names[n].value.name for n in gs])
                 if len(gs) == 2:
                     match = True
             else:
@@ -636,12 +715,15 @@ class ECFEvents(panel.PanelGridSelector):
                 # for ECF publishing match details on Online Grading Database.
                 # Board identifiers are integers usually so give priority to
                 # length of board string in the sort.
-                header_games.append((
-                    v.section,
-                    v.round if v.round else '',
-                    v.date if v.date else '',
-                    (len(v.board), v.board) if v.board else (),
-                    v))
+                header_games.append(
+                    (
+                        v.section,
+                        v.round if v.round else "",
+                        v.date if v.date else "",
+                        (len(v.board), v.board) if v.board else (),
+                        v,
+                    )
+                )
             header_games.sort()
             prev_game_header = (None,)
             for g in header_games:
@@ -655,69 +737,95 @@ class ECFEvents(panel.PanelGridSelector):
                 if match:
                     if prev_game_header != g[:-2]:
                         lines.append(
-                            ecf_line((dcc(constants.MATCH_RESULTS), header)))
+                            ecf_line((dcc(constants.MATCH_RESULTS), header))
+                        )
                         lines.append(
-                            ecf_line((dcc(constants.WHITE_ON), 'Unknown')))
+                            ecf_line((dcc(constants.WHITE_ON), "Unknown"))
+                        )
                 elif section:
                     if prev_game_header[:-2] != g[:-4]:
-                        lines.append(ecf_line((
-                            dcc(constants.SECTION_RESULTS), header)))
                         lines.append(
-                            ecf_line((dcc(constants.WHITE_ON), 'Unknown')))
+                            ecf_line((dcc(constants.SECTION_RESULTS), header))
+                        )
+                        lines.append(
+                            ecf_line((dcc(constants.WHITE_ON), "Unknown"))
+                        )
                 elif other:
                     if prev_game_header[:-2] != g[:-4]:
                         lines.append(
-                            ecf_line((dcc(constants.OTHER_RESULTS), header)))
+                            ecf_line((dcc(constants.OTHER_RESULTS), header))
+                        )
                         lines.append(
-                            ecf_line((dcc(constants.WHITE_ON), 'Unknown')))
+                            ecf_line((dcc(constants.WHITE_ON), "Unknown"))
+                        )
                 prev_game_header = g[:-2]
                 score = gameresults.ecfresult.get(v.result)
                 if score is not None:
-                    gameline = [ecf_line((
-                        dcc(constants.PIN1),
-                        pin_convention(pin_to_person_pin.get(
-                            v.homeplayer, v.homeplayer))))]
+                    gameline = [
+                        ecf_line(
+                            (
+                                dcc(constants.PIN1),
+                                pin_convention(
+                                    pin_to_person_pin.get(
+                                        v.homeplayer, v.homeplayer
+                                    )
+                                ),
+                            )
+                        )
+                    ]
                     gameline.append(ecf_line((dcc(constants.SCORE), score)))
-                    gameline.append(ecf_line((
-                        dcc(constants.PIN2),
-                        pin_convention(pin_to_person_pin.get(
-                            v.awayplayer, v.awayplayer)))))
+                    gameline.append(
+                        ecf_line(
+                            (
+                                dcc(constants.PIN2),
+                                pin_convention(
+                                    pin_to_person_pin.get(
+                                        v.awayplayer, v.awayplayer
+                                    )
+                                ),
+                            )
+                        )
+                    )
                     if section:
                         gameline.append(
                             ecf_line(
-                                (dcc(constants.ROUND),
-                                 str(int(dcc(v.round))))))
-                    d = v.date.split('-')
+                                (dcc(constants.ROUND), str(int(dcc(v.round))))
+                            )
+                        )
+                    d = v.date.split("-")
                     d.reverse()
-                    gameline.append(ecf_line((
-                        dcc(constants.GAME_DATE),
-                        '/'.join(d))))
+                    gameline.append(
+                        ecf_line((dcc(constants.GAME_DATE), "/".join(d)))
+                    )
                     if match:
                         if v.board is not None:
-                            gameline.append(ecf_line((
-                                dcc(constants.BOARD),
-                                str(v.board))))
+                            gameline.append(
+                                ecf_line((dcc(constants.BOARD), str(v.board)))
+                            )
                     colour = v.homeplayerwhite
                     if colour == True:
                         gameline.append(
-                            ecf_line((dcc(constants.COLOUR), 'WHITE')))
+                            ecf_line((dcc(constants.COLOUR), "WHITE"))
+                        )
                     elif colour == False:
                         gameline.append(
-                            ecf_line((dcc(constants.COLOUR), 'BLACK')))
-                    lines.append(''.join(gameline))
-                
+                            ecf_line((dcc(constants.COLOUR), "BLACK"))
+                        )
+                    lines.append("".join(gameline))
+
         lines.append(ecf_line((dcc(constants.FINISH),)))
 
         dlg = tkinter.filedialog.asksaveasfilename(
             parent=self.get_widget(),
-            title='Save ECF Results submission file',
-            initialfile=subfilename)
+            title="Save ECF Results submission file",
+            initialfile=subfilename,
+        )
         if not dlg:
             return
         filepath = dlg
 
-        of = open(filepath, 'wb')
-        of.write(os.linesep.join(lines).encode('ascii'))
+        of = open(filepath, "wb")
+        of.write(os.linesep.join(lines).encode("ascii"))
         of.close()
 
         newrecord = ecfeventrecord.clone()
@@ -728,7 +836,8 @@ class ECFEvents(panel.PanelGridSelector):
             db,
             filespec.ECFEVENT_FILE_DEF,
             filespec.ECFEVENT_FIELD_DEF,
-            newrecord)
+            newrecord,
+        )
         db.commit()
 
     def _get_ecf_clubs_for_alias_map(self, database, aliasmap):
@@ -740,10 +849,10 @@ class ECFEvents(panel.PanelGridSelector):
             if clubcode:
                 if clubcode not in codes:
                     codes[clubcode] = ecfrecord.get_ecf_club_for_club_code(
-                        database,
-                        clubcode)
+                        database, clubcode
+                    )
                 if codes[clubcode] is not None:
-                    ecfclubs[a] = codes[clubcode]      
+                    ecfclubs[a] = codes[clubcode]
         return ecfclubs
 
     def _get_ecf_players_for_alias_map(self, database, aliasmap):
@@ -754,7 +863,8 @@ class ECFEvents(panel.PanelGridSelector):
         get_ecf = ecfrecord.get_ecf_player_for_grading_code
 
         cursorid = database.database_cursor(
-            filespec.MAPECFPLAYER_FILE_DEF, filespec.PERSONID_FIELD_DEF)
+            filespec.MAPECFPLAYER_FILE_DEF, filespec.PERSONID_FIELD_DEF
+        )
         try:
             for a in aliasmap:
                 gc = None

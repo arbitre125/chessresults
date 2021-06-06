@@ -8,34 +8,42 @@
 from html.parser import HTMLParser
 import re
 
-_whitespace_at_end_re = re.compile(r'.*\s+\Z', flags=re.DOTALL)
-_whitespace_at_start_re = re.compile(r'\A\s+.*', flags=re.DOTALL)
+_whitespace_at_end_re = re.compile(r".*\s+\Z", flags=re.DOTALL)
+_whitespace_at_start_re = re.compile(r"\A\s+.*", flags=re.DOTALL)
 _feedback_player_list_re = re.compile(
-    r''.join((r'\s+Submitted\s+Players\s+',
-              r'(.*?)',
-              r'\s+Submitted\s+Games\s+',
-              )),
-    flags=re.DOTALL)
+    r"".join(
+        (
+            r"\s+Submitted\s+Players\s+",
+            r"(.*?)",
+            r"\s+Submitted\s+Games\s+",
+        )
+    ),
+    flags=re.DOTALL,
+)
 _submission_player_list_re = re.compile(
-    r''.join((r'\s*#\s*PlayerList\s*',
-              r'(#\s*.*?)',
-              r'\s*#\s*',
-              r'(?:SectionResults|OtherResults|MatchResults)',
-              r'\s*=\s*',
-              )),
-    flags=re.DOTALL)
-_feedback_number_re = re.compile(r'\s+\d+\.\s+', flags=re.DOTALL)
-_submission_pin_re = re.compile(r'#PIN=\d+', flags=re.DOTALL)
+    r"".join(
+        (
+            r"\s*#\s*PlayerList\s*",
+            r"(#\s*.*?)",
+            r"\s*#\s*",
+            r"(?:SectionResults|OtherResults|MatchResults)",
+            r"\s*=\s*",
+        )
+    ),
+    flags=re.DOTALL,
+)
+_feedback_number_re = re.compile(r"\s+\d+\.\s+", flags=re.DOTALL)
+_submission_pin_re = re.compile(r"#PIN=\d+", flags=re.DOTALL)
 
 
 class FeedbackHTML(HTMLParser):
 
-    """Parse a feedback file.
-    """
+    """Parse a feedback file."""
+
     def __init__(self, *a, **k):
         super().__init__(*a, **k)
         self.feedbackdata = []
-        self.feedbackstring = ''
+        self.feedbackstring = ""
         self.feedbacknumbers = None
         self.feedbackplayers = None
         self.submissionpins = None
@@ -46,11 +54,13 @@ class FeedbackHTML(HTMLParser):
 
     def insert_whitespace(self):
         fbd = self.feedbackdata
-        for i in range(len(fbd)-1, 0, -1):
-            if (_whitespace_at_start_re.match(fbd[i]) is None and
-                _whitespace_at_end_re.match(fbd[i-1]) is None):
-                fbd.insert(i, ' ')
-        self.feedbackstring = ''.join(fbd)
+        for i in range(len(fbd) - 1, 0, -1):
+            if (
+                _whitespace_at_start_re.match(fbd[i]) is None
+                and _whitespace_at_end_re.match(fbd[i - 1]) is None
+            ):
+                fbd.insert(i, " ")
+        self.feedbackstring = "".join(fbd)
 
     def find_player_lists(self):
         fbpl = _feedback_player_list_re.search(self.feedbackstring)

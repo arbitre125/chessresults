@@ -14,7 +14,7 @@ Accurracy is essential.  Compare and contrast with the matchteams module.
 
 """
 
-        
+
 class Names(object):
     """All pairs of phrases with first word in one phrase and last in other.
 
@@ -22,35 +22,35 @@ class Names(object):
     the empty set, of adjacent words containing neither 'a' nor 'f' from the
     original string.  Samples are (a, f) (a b, e f) (a, d e f).  But never
     reversing word order or using a word more than once in a pair.
-    
+
     """
 
-    def __init__(self, string='', split=True):
-        """"""
+    def __init__(self, string="", split=True):
+        """ """
         super().__init__()
         self._namephrases = None
         if not isinstance(string, str):
             if not isinstance(string, (list, tuple)):
-                sentence = ('',)
+                sentence = ("",)
                 split = False
             else:
                 sentence = tuple(string)
         else:
             sentence = string.split()
-        self.string = ' '.join(sentence)
+        self.string = " ".join(sentence)
         if not split:
             if not self.string:
                 self.namepairs = []
             else:
-                self.namepairs = [(self.string, '')]
+                self.namepairs = [(self.string, "")]
             return
         position = set()
         for i in range(1, len(sentence)):
-            position.add((' '.join(sentence[:i]), 0, i))
+            position.add((" ".join(sentence[:i]), 0, i))
             for j in range(i, len(sentence)):
-                position.add((' '.join(sentence[j:]), j, len(sentence)-j))
+                position.add((" ".join(sentence[j:]), j, len(sentence) - j))
         if len(sentence) == 1:
-            self.namepairs = [(self.string, '')]
+            self.namepairs = [(self.string, "")]
         else:
             namepairs = []
             for s1, p1, len1 in position:
@@ -62,12 +62,12 @@ class Names(object):
 
     @property
     def namephrases(self):
-        """"""
+        """ """
         if self._namephrases is None:
             namephrases = set()
             for p in self.namepairs:
                 namephrases.update(p)
-            namephrases.discard('')
+            namephrases.discard("")
             self._namephrases = namephrases
         return self._namephrases
 
@@ -85,8 +85,8 @@ class Names(object):
         gets the extra odd word if necessary.
 
         """
-        starts_with = ''
-        ends_with = ''
+        starts_with = ""
+        ends_with = ""
         string = self.string
         for k in known_names:
             if string.startswith(k):
@@ -96,11 +96,11 @@ class Names(object):
                 if len(k) > len(ends_with):
                     ends_with = k
         if starts_with:
-            ends_with = string.replace(starts_with, '').strip()
+            ends_with = string.replace(starts_with, "").strip()
         elif ends_with:
-            starts_with = string.replace(ends_with, '').strip()
+            starts_with = string.replace(ends_with, "").strip()
         else:
             s = string.split()
-            starts_with = ' '.join(s[:(1+len(s))//2])
-            ends_with = ' '.join(s[(1+len(s))//2:])
+            starts_with = " ".join(s[: (1 + len(s)) // 2])
+            ends_with = " ".join(s[(1 + len(s)) // 2 :])
         self.namepairs = ((starts_with, ends_with),)

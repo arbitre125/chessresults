@@ -41,12 +41,12 @@ def find_player_names_in_other_editions_of_event(db, event):
         if not (vv.merge is None and not vv.alias):
             continue
         names.add((vv.name, vv.event, vv.section, vv.pin, vv.affiliation))
-    sections = [resultsrecord.get_name(db, es)
-                for es in event.value.sections]
+    sections = [resultsrecord.get_name(db, es) for es in event.value.sections]
     event_editions = resultsrecord.get_events_matching_event_name(
         db,
         {(event.value.name, event.value.startdate, event.value.enddate)},
-        {v.value.name for v in sections})
+        {v.value.name for v in sections},
+    )
     event_key = event.key.recno
     editions_for_aliases = {}
     persons_for_aliases = {}
@@ -58,8 +58,9 @@ def find_player_names_in_other_editions_of_event(db, event):
             if name in names:
                 person = resultsrecord.get_person_from_alias(db, afe[1])
                 if person is not None:
-                    persons_for_aliases.setdefault(name, set()
-                                                   ).add(person.key.recno)
+                    persons_for_aliases.setdefault(name, set()).add(
+                        person.key.recno
+                    )
                 else:
                     persons_for_aliases.setdefault(name, set()).add(None)
                 editions_for_aliases.setdefault(name, set()).add(evkey)
@@ -69,5 +70,7 @@ def find_player_names_in_other_editions_of_event(db, event):
                 del editions_for_aliases[afe]
             elif len(persons_for_aliases[afe]) > 1:
                 del editions_for_aliases[afe]
-    return {alias_map[efa]:(efa, persons_for_aliases[efa].pop())
-            for efa in editions_for_aliases}
+    return {
+        alias_map[efa]: (efa, persons_for_aliases[efa].pop())
+        for efa in editions_for_aliases
+    }

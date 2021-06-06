@@ -18,16 +18,12 @@ from ..core import ecfogdrecord
 from ..basecore.ecfogddataimport import (
     _validate_ecf_ogd_players_post_2006_rules,
     _copy_ecf_ogd_players_post_2006_rules,
-    )
+)
 
 
 def copy_ecf_ogd_players_post_2006_rules(
-    results,
-    logwidget=None,
-    ecffile=None,
-    parent=None,
-    **kwargs
-    ):
+    results, logwidget=None, ecffile=None, parent=None, **kwargs
+):
     """Import a new ECF downloadable OGD player file.
 
     widget - the manager object for the ecf data import tab
@@ -39,19 +35,24 @@ def copy_ecf_ogd_players_post_2006_rules(
 
     # Ensure ECFOGDPLAYER_FILE_DEF file is large enough for any extra records.
     if logwidget:
-        logwidget.append_text('', timestamp=False)
-        logwidget.append_text(''.join(
-            ('Ensure ',
-             filespec.ECFOGDPLAYER_FILE_DEF,
-             ' is large enough for any extra records on Master player file.',
-             )))
+        logwidget.append_text("", timestamp=False)
+        logwidget.append_text(
+            "".join(
+                (
+                    "Ensure ",
+                    filespec.ECFOGDPLAYER_FILE_DEF,
+                    " is large enough for any extra records on Master player file.",
+                )
+            )
+        )
     oldrefs = set()
     bothrefs = set()
     newrefs = set(gcodes)
     ecfcursor = results.database_cursor(
-        filespec.ECFOGDPLAYER_FILE_DEF, filespec.ECFOGDPLAYER_FIELD_DEF)
+        filespec.ECFOGDPLAYER_FILE_DEF, filespec.ECFOGDPLAYER_FIELD_DEF
+    )
     ecfrec = ecfogdrecord.ECFrefOGDrecordPlayer()
-    
+
     # Go through existing records for equivalents to OGD records.
     r = ecfcursor.first()
     while r:
@@ -59,7 +60,8 @@ def copy_ecf_ogd_players_post_2006_rules(
             results,
             filespec.ECFOGDPLAYER_FILE_DEF,
             filespec.ECFOGDPLAYER_FIELD_DEF,
-            r)
+            r,
+        )
         ref = ecfrec.value.ECFOGDcode
         if ref in newrefs:
             bothrefs.add(ref)
@@ -68,14 +70,16 @@ def copy_ecf_ogd_players_post_2006_rules(
             oldrefs.add(ref)
         r = ecfcursor.next()
     extra_records = max(len(newrefs) - len(oldrefs), 0)
-    
+
     # Close record sets, cursors, etc, to allow increase_database_size.
     ecfcursor.close()
 
     # Increase file size if necessary.
     results.increase_database_size(
-        {filespec.ECFOGDPLAYER_FILE_DEF: (extra_records, extra_records)})
+        {filespec.ECFOGDPLAYER_FILE_DEF: (extra_records, extra_records)}
+    )
 
     # Import data.
     return _copy_ecf_ogd_players_post_2006_rules(
-        results, logwidget, ecffile, gcodes)
+        results, logwidget, ecffile, gcodes
+    )

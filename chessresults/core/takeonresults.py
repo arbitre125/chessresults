@@ -25,9 +25,8 @@ from . import constants as cc
 
 
 class TakeonResults(object):
-    """Class for importing results data.
-    """
-    
+    """Class for importing results data."""
+
     def __init__(self, folder):
         super(TakeonResults, self).__init__()
         self.folder = folder
@@ -41,10 +40,7 @@ class TakeonResults(object):
         self.textlines[:] = []
         return False
 
-    def translate_results_format(
-        self,
-        keymap=None,
-        tidyup=None):
+    def translate_results_format(self, keymap=None, tidyup=None):
         """Extract results into a common format.
 
         Provide rules in context and keymap arguments.
@@ -56,7 +52,7 @@ class TakeonResults(object):
 
         data = dict()
         for t in self.get_lines():
-            ts = t.split('=', 1)
+            ts = t.split("=", 1)
             key, value = ts[0], ts[-1]
             if key not in keymap:
                 self.textlines.append(t)
@@ -77,7 +73,7 @@ class TakeonResults(object):
                 self.files.add(fn)
             elif os.path.isdir(fn):
                 self.get_folder_contents(fn)
-                
+
     def get_lines(self):
         """Return lines of text from file.
 
@@ -88,19 +84,18 @@ class TakeonResults(object):
         self.get_folder_contents(self.folder)
         text = []
         for f in sorted(self.files):
-            ofile = open(f, 'r')
+            ofile = open(f, "r")
             text.extend([t.rstrip() for t in ofile.readlines()])
             ofile.close()
         return text
-                
+
     def get_lines_for_difference_file(self):
         """Return lines of text formatted for results difference file."""
         return [t for t in self.textlines]
 
 
 class TakeonSubmissionFile(TakeonResults):
-    """Import data from file formatted as ECF results submission file.
-    """
+    """Import data from file formatted as ECF results submission file."""
 
     def get_folder_contents(self, folder):
         """Get files in folder and subdirectories expected to hold ecf data."""
@@ -117,7 +112,7 @@ class TakeonSubmissionFile(TakeonResults):
         if guard_found:
             if datafile:
                 self.files.add(datafile)
-                
+
     def get_lines(self):
         """Delimiter is # optionally preceded by newline sequence."""
         columns = []
@@ -125,9 +120,10 @@ class TakeonSubmissionFile(TakeonResults):
         table = False
         text = []
 
-        for t in ''.join(
-            super(TakeonSubmissionFile, self).get_lines()).split('#'):
-            ts = t.split('=', 1)
+        for t in "".join(super(TakeonSubmissionFile, self).get_lines()).split(
+            "#"
+        ):
+            ts = t.split("=", 1)
             key, value = ts[0], ts[-1]
             if key == cc.TABLE_END:
                 if len(row):
@@ -142,33 +138,34 @@ class TakeonSubmissionFile(TakeonResults):
             elif table:
                 if len(row) == 0:
                     row = columns[:]
-                text.append('='.join((row.pop(0), t)))
+                text.append("=".join((row.pop(0), t)))
             elif key == cc.COLUMN:
                 columns.append(value)
             elif key is value:
                 if len(t):
                     text.append(key)
             else:
-                text.append('='.join((key, value)))
+                text.append("=".join((key, value)))
         return text
 
     def translate_results_format(self):
-
         def set_match(data, key, value):
-            field = '_'.join((
-                cc.TAKEON_MATCH,
-                str(len(self.matchnames) + 1),
-                ))
-            self.matchnames.append('='.join((field, value)))
-            self.textlines.append('='.join((key, field)))
+            field = "_".join(
+                (
+                    cc.TAKEON_MATCH,
+                    str(len(self.matchnames) + 1),
+                )
+            )
+            self.matchnames.append("=".join((field, value)))
+            self.textlines.append("=".join((key, field)))
 
         keymap = {
             cc.MATCH_RESULTS: set_match,
-            }
+        }
 
         extract = super(TakeonSubmissionFile, self).translate_results_format(
-            keymap=keymap,
-            tidyup=None)
+            keymap=keymap, tidyup=None
+        )
 
         if not extract:
             return False
@@ -183,40 +180,37 @@ class TakeonSubmissionFile(TakeonResults):
             cc.SECTION_RESULTS,
             cc.MATCH_RESULTS,
             cc.OTHER_RESULTS,
-            cc.FINISH}
-        start_group = {
-            cc.EVENT_CODE,
-            cc.PIN,
-            cc.PIN1}
+            cc.FINISH,
+        }
+        start_group = {cc.EVENT_CODE, cc.PIN, cc.PIN1}
         filetext = []
         linetext = []
         group = False
         for t in self.textlines:
-            k = t.split('=', 1)[0]
+            k = t.split("=", 1)[0]
             if k in start_group:
                 if linetext:
-                    filetext.append(''.join(linetext))
-                linetext = [''.join(('#', t))]
+                    filetext.append("".join(linetext))
+                linetext = ["".join(("#", t))]
                 group = True
             elif k in end_group:
                 if linetext:
-                    filetext.append(''.join(linetext))
+                    filetext.append("".join(linetext))
                 linetext = []
-                filetext.append(''.join(('#', t)))
+                filetext.append("".join(("#", t)))
                 group = False
             elif group:
-                linetext.append(''.join(('#', t)))
+                linetext.append("".join(("#", t)))
             else:
-                filetext.append(''.join(('#', t)))
+                filetext.append("".join(("#", t)))
         if linetext:
-            filetext.append(''.join(linetext))
+            filetext.append("".join(linetext))
 
         return filetext
 
 
 class TakeonLeagueDumpFile(TakeonResults):
-    """Import data from dump of League program database.
-    """
+    """Import data from dump of League program database."""
 
     def get_folder_contents(self, folder):
         """Add the league database data file in folder to self.files."""
@@ -225,9 +219,8 @@ class TakeonLeagueDumpFile(TakeonResults):
                 fn = os.path.join(folder, f)
                 if os.path.isfile(fn):
                     self.files.add(fn)
-                
-    def translate_results_format(self):
 
+    def translate_results_format(self):
         def get_match(data, key, value):
             data[key] = value
 
@@ -239,25 +232,30 @@ class TakeonLeagueDumpFile(TakeonResults):
             if cc.MNAME in data:
                 if cc.MTYPE in data:
                     if data[cc.MTYPE] == cc.LEAGUE_MATCH_TYPE:
-                        field = '_'.join((
-                            cc.TAKEON_MATCH,
-                            str(len(self.matchnames) + 1),
-                            ))
+                        field = "_".join(
+                            (
+                                cc.TAKEON_MATCH,
+                                str(len(self.matchnames) + 1),
+                            )
+                        )
                         self.matchnames.append(
-                            '='.join((field, data[cc.MNAME])))
+                            "=".join((field, data[cc.MNAME]))
+                        )
                         self.textlines.append(
-                            '='.join((cc.MTYPE, data[cc.MTYPE])))
-                        self.textlines.append(
-                            '='.join((cc.MNAME, field)))
+                            "=".join((cc.MTYPE, data[cc.MTYPE]))
+                        )
+                        self.textlines.append("=".join((cc.MNAME, field)))
                     else:
                         self.textlines.append(
-                            '='.join((cc.MTYPE, data[cc.MTYPE])))
+                            "=".join((cc.MTYPE, data[cc.MTYPE]))
+                        )
                         self.textlines.append(
-                            '='.join((cc.MNAME, data[cc.MNAME])))
+                            "=".join((cc.MNAME, data[cc.MNAME]))
+                        )
                 else:
-                    self.textlines.append('='.join((cc.MNAME, data[cc.MNAME])))
+                    self.textlines.append("=".join((cc.MNAME, data[cc.MNAME])))
             elif cc.MTYPE in data:
-                self.textlines.append('='.join((cc.MTYPE, data[cc.MTYPE])))
+                self.textlines.append("=".join((cc.MTYPE, data[cc.MTYPE])))
             data.clear()
 
         keymap = {
@@ -268,11 +266,11 @@ class TakeonLeagueDumpFile(TakeonResults):
             cc.match: set_match,
             cc.MNAME: get_match,
             cc.MTYPE: get_match,
-            }
+        }
 
         extract = super(TakeonLeagueDumpFile, self).translate_results_format(
-            keymap=keymap,
-            tidyup=tidyup)
+            keymap=keymap, tidyup=tidyup
+        )
 
         if not extract:
             return False

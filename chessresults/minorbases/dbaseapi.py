@@ -16,44 +16,49 @@ import os.path
 import io
 import threading
 
-#from ..api.database import DatabaseError, Database
-#from ..api import cursor
-#from ..api.constants import PRIMARY, SECONDARY, FILE, FOLDER, FIELDS
+# from ..api.database import DatabaseError, Database
+# from ..api import cursor
+# from ..api.constants import PRIMARY, SECONDARY, FILE, FOLDER, FIELDS
 from solentware_base.core.constants import (
-    PRIMARY, SECONDARY, FILE, FOLDER, FIELDS)
+    PRIMARY,
+    SECONDARY,
+    FILE,
+    FOLDER,
+    FIELDS,
+)
 
 # dBaseIII specific items are not yet worth putting in api.constants
 # because the definition is provided to support data import only
-START = 'start'
-LENGTH = 'length'
-TYPE = 'type'
+START = "start"
+LENGTH = "length"
+TYPE = "type"
 DBASE_FIELDATTS = {
     START: int,
     LENGTH: int,
     TYPE: bytes,
-    }
-_VERSIONMAP = {'\x03':'dBase III'}
-C, N, L, D, F = b'C', b'N', b'L', b'D', b'F'
+}
+_VERSIONMAP = {"\x03": "dBase III"}
+C, N, L, D, F = b"C", b"N", b"L", b"D", b"F"
 _FIELDTYPE = {
-    C: 'Character',
-    N: 'Numeric',
-    L: 'Boolean',
-    D: 'Date',
-    F: 'Float',
-    }
-_DELETED = 42 # compared with data[n] where type(data) is bytes
-_EXISTS = 32 # as _DELETED
-_PRESENT = {_DELETED:None, _EXISTS:None}
+    C: "Character",
+    N: "Numeric",
+    L: "Boolean",
+    D: "Date",
+    F: "Float",
+}
+_DELETED = 42  # compared with data[n] where type(data) is bytes
+_EXISTS = 32  # as _DELETED
+_PRESENT = {_DELETED: None, _EXISTS: None}
 
 
-class dBaseapiError(Exception):#DatabaseError):
+class dBaseapiError(Exception):  # DatabaseError):
     pass
 
 
-class dBaseapi:#(Database):
-    
+class dBaseapi:  # (Database):
+
     """Define a dBaseIII database structure.
-    
+
     The database is read only.
     dBaseIII databases consist of one or more files each of which has zero
     or more fields defined. File names are unique and field names are
@@ -64,12 +69,12 @@ class dBaseapi:#(Database):
     Applications are expected to store instances of one class on a file.
     Each instance is a dictionary containing a subset of the fields
     defined for the file.
-    
+
     """
 
     def __init__(self, dBasefiles, dBasefolder):
         """Define database structure.
-        
+
         dBasefiles = {
             file:{
                 folder:name,
@@ -86,7 +91,7 @@ class dBaseapi:#(Database):
         """
         # The database definition from dBasefiles after validation
         self.dBasefiles = None
-        
+
         # The folder from dBasefolder after validation
         self.dBasefolder = None
 
@@ -98,43 +103,53 @@ class dBaseapi:#(Database):
             try:
                 dBasefolder = os.path.abspath(dBasefolder)
             except:
-                msg = ' '.join(['Main folder name', str(dBasefolder),
-                                'is not valid'])
+                msg = " ".join(
+                    ["Main folder name", str(dBasefolder), "is not valid"]
+                )
                 raise dBaseapiError(msg)
-        
+
         for dd in dBasefiles:
             try:
                 folder = dBasefiles[dd].get(FOLDER, None)
             except:
-                msg = ' '.join(['dBase file definition for', repr(dd),
-                                'must be a dictionary'])
+                msg = " ".join(
+                    [
+                        "dBase file definition for",
+                        repr(dd),
+                        "must be a dictionary",
+                    ]
+                )
                 raise dBaseapiError(msg)
-            
+
             if folder == None:
                 folder = dBasefolder
             if dBasefolder is not False:
                 try:
                     folder = os.path.abspath(folder)
-                    fname = os.path.join(folder,
-                                         dBasefiles[dd].get(FILE, None))
+                    fname = os.path.join(
+                        folder, dBasefiles[dd].get(FILE, None)
+                    )
                 except:
-                    msg = ' '.join(['File name for', dd, 'is invalid'])
+                    msg = " ".join(["File name for", dd, "is invalid"])
                     raise dBaseapiError(msg)
             else:
                 fname = dBasefiles[dd].get(FILE, None)
-            
+
             if fname in pathnames:
-                msg = ' '.join(['File name', str(fname),
-                                'linked to', pathnames[fname],
-                                'cannot link to', dd])
+                msg = " ".join(
+                    [
+                        "File name",
+                        str(fname),
+                        "linked to",
+                        pathnames[fname],
+                        "cannot link to",
+                        dd,
+                    ]
+                )
                 raise dBaseapiError(msg)
-            
+
             pathnames[fname] = dd
-            files[dd] = self.make_root(
-                dd,
-                fname,
-                dBasefiles[dd],
-                sfi)
+            files[dd] = self.make_root(dd, fname, dBasefiles[dd], sfi)
             sfi += 1
 
         self.dBasefiles = files
@@ -155,15 +170,13 @@ class dBaseapi:#(Database):
 
     def database_cursor(self, dbname, indexname, keyrange=None):
         """Create a cursor on indexname in dbname.
-        
-        keyrange is an addition for DPT. It may yet be removed.
-        
-        """
-        return self.dBasefiles[dbname].make_cursor(
-            indexname,
-            keyrange)
 
-    #def get_database(self, dbset, dbname):
+        keyrange is an addition for DPT. It may yet be removed.
+
+        """
+        return self.dBasefiles[dbname].make_cursor(indexname, keyrange)
+
+    # def get_database(self, dbset, dbname):
     def get_table_connection(self, dbname):
         """Return file for dbname.
 
@@ -229,18 +242,18 @@ class dBaseapi:#(Database):
 
 
 class dBaseIII:
-    
+
     """Emulate Berkeley DB file and record structure for dBase III files.
-    
+
     The first, last, nearest, next, prior, and Set methods return the
     pickled value for compatibility with the bsddb and DPT interfaces.
     This is despite the data already being available as a dictionary
     of values keyed by field name.
-    
+
     """
 
     def __init__(self, filename):
-        
+
         self._localdata = threading.local()
         self._lock_dBaseIII = threading.Lock()
         self._lock_dBaseIII.acquire()
@@ -251,7 +264,7 @@ class dBaseIII:
             self._lock_dBaseIII.release()
 
     def __del__(self):
-        
+
         self.close()
 
     def close(self):
@@ -280,9 +293,9 @@ class dBaseIII:
         ls = 4 - len(s)
         if ls > 0:
             s.extend([chr(0)] * ls)
-        elif  ls < 0:
-            return ''.join(s[:4])
-        return ''.join(s)
+        elif ls < 0:
+            return "".join(s[:4])
+        return "".join(s)
 
     def make_cursor(self):
         """Create and return a record cursor on the dBaseIII file."""
@@ -337,7 +350,7 @@ class dBaseIII:
             value = self._next_record()
 
     def open_dbf(self):
-        
+
         self._lock_dBaseIII.acquire()
         try:
             try:
@@ -345,34 +358,34 @@ class dBaseIII:
                 if isinstance(self.filename, io.BytesIO):
                     self._table_link = self.filename
                 else:
-                    self._table_link = open(self.filename, 'rb')
+                    self._table_link = open(self.filename, "rb")
                 header = self._table_link.read(32)
                 self.file_header.append(header)
                 self.version = header[0]
                 self.record_count = self._decode_number(header[4:8])
                 self.first_record_seek = self._decode_number(header[8:10])
                 self.record_length = self._decode_number(header[10:12])
-                #field definitions are 32 bytes
-                #field definition trailer is 1 byte \r
+                # field definitions are 32 bytes
+                # field definition trailer is 1 byte \r
                 fieldnames = []
                 self.fields = {}
                 fieldstart = 1
                 fielddef = self._table_link.read(32)
                 terminator = fielddef[0]
-                while terminator != b'\r'[0]:
+                while terminator != b"\r"[0]:
                     if len(fielddef) != 32:
                         self._table_link = self.close()
                         break
                     self.file_header.append(fielddef)
-                    nullbyte = fielddef.find(b'\x00', 0)
+                    nullbyte = fielddef.find(b"\x00", 0)
                     if nullbyte == -1:
                         nullbyte = 11
                     elif nullbyte > 10:
                         nullbyte = 11
                     # callers work with fieldnames as class instance attributes
-                    #fieldname = fielddef[:nullbyte]
-                    fieldname = fielddef[:nullbyte].decode('iso-8859-1')
-                    ftype = fielddef[11:12] # fielddef[11] gives int not bytes
+                    # fieldname = fielddef[:nullbyte]
+                    fieldname = fielddef[:nullbyte].decode("iso-8859-1")
+                    ftype = fielddef[11:12]  # fielddef[11] gives int not bytes
                     fieldlength = fielddef[16]
                     if ftype in _FIELDTYPE:
                         fieldnames.append(fieldname)
@@ -414,7 +427,7 @@ class dBaseIII:
                 return (self._localdata.record_select, repr(value))
 
     def _set_closed_state(self):
-        
+
         self._table_link = None
         self.version = None
         self.record_count = None
@@ -424,11 +437,11 @@ class dBaseIII:
         self._localdata.record_number = None
         self._localdata.record_select = None
         self._localdata.record_control = None
-        self._localdata.record_data = None # most recent _get_record() return
-        self.file_header = [] # 1 header + n field definitions each 32 bytes
+        self._localdata.record_data = None  # most recent _get_record() return
+        self.file_header = []  # 1 header + n field definitions each 32 bytes
         self.fieldnames = None
         self.sortedfieldnames = None
-        
+
     def _first_record(self):
         """Position at and return first record."""
         self._select_first()
@@ -436,9 +449,9 @@ class dBaseIII:
 
     def _get_record(self):
         """Return selected record.
-        
+
         Copy record deleted/exists marker to self.record_control.
-        
+
         """
         self._lock_dBaseIII.acquire()
         try:
@@ -452,23 +465,28 @@ class dBaseIII:
                 return None
             self._localdata.record_number = self._localdata.record_select
             seek = (
-                self.first_record_seek +
-                self._localdata.record_number *
-                self.record_length)
+                self.first_record_seek
+                + self._localdata.record_number * self.record_length
+            )
             tell = self._table_link.tell()
             if seek != tell:
                 self._table_link.seek(seek - tell, 1)
             self._localdata.record_data = self._table_link.read(
-                self.record_length)
+                self.record_length
+            )
             self._localdata.record_control = self._localdata.record_data[0]
             if self._localdata.record_control in _PRESENT:
                 result = {}
                 for fieldname in self.fieldnames:
                     s = self.fields[fieldname][START]
-                    f = (self.fields[fieldname][START] +
-                         self.fields[fieldname][LENGTH])
+                    f = (
+                        self.fields[fieldname][START]
+                        + self.fields[fieldname][LENGTH]
+                    )
                     # Do not decode bytes because caller knows codec to use
-                    result[fieldname] = self._localdata.record_data[s:f].strip()
+                    result[fieldname] = self._localdata.record_data[
+                        s:f
+                    ].strip()
                 return result
             else:
                 return None
@@ -534,15 +552,15 @@ class dBaseIII:
 
 
 class CursordBaseIII:
-    
+
     """Define a dBase III file cursor.
 
     Wrap the dBaseIII methods in corresponding cursor method names.
-    
+
     """
 
     def __init__(self, dbobject):
-        #super().__init__(dbobject)
+        # super().__init__(dbobject)
         super().__init__()
         if isinstance(dbobject, dBaseIII):
             self._dbobject = dbobject
@@ -552,7 +570,7 @@ class CursordBaseIII:
             self._current = None
 
     def __del__(self):
-        
+
         self.close()
 
     def close(self):
@@ -606,21 +624,21 @@ class CursordBaseIII:
 
 
 class _dBaseapiRoot:
-    
+
     """Provide file level access to a dBaseIII file.
 
     This class containing methods to open and close dBase files.
     Record level access is the responsibility of subclasses.
-    
+
     """
 
     def __init__(self, dd, fname, dptdesc):
         """Define a dBaseIII file.
-        
+
         dd = file description name
         fname = path to data file (.dbf) for dd
         dptdesc = field description for data file
-        
+
         """
         self._ddname = dd
         self._fields = None
@@ -639,22 +657,34 @@ class _dBaseapiRoot:
 
         fields = dptdesc.get(FIELDS, dict())
         if not isinstance(fields, dict):
-            msg = ' '.join(['Field description of file', repr(dd),
-                            'must be a dictionary'])
+            msg = " ".join(
+                ["Field description of file", repr(dd), "must be a dictionary"]
+            )
             raise dBaseapiError(msg)
 
         sequence = dict()
         for fieldname in fields:
             if not isinstance(fieldname, str):
-                msg = ' '.join(['Field name must be string not',
-                                repr(fieldname),
-                                'in file', dd,])
+                msg = " ".join(
+                    [
+                        "Field name must be string not",
+                        repr(fieldname),
+                        "in file",
+                        dd,
+                    ]
+                )
                 raise dBaseapiError(msg)
-            
+
             if not fieldname.isupper():
-                msg = ' '.join(['Field name', fieldname,
-                                'in file', dd,
-                                'must be upper case'])
+                msg = " ".join(
+                    [
+                        "Field name",
+                        fieldname,
+                        "in file",
+                        dd,
+                        "must be upper case",
+                    ]
+                )
                 raise dBaseapiError(msg)
 
             attributes = fields[fieldname]
@@ -662,42 +692,74 @@ class _dBaseapiRoot:
                 attributes = dict()
                 fields[fieldname] = attributes
             if not isinstance(attributes, dict):
-                msg = ' '.join(['Attributes for field', fieldname,
-                                'in file', repr(dd),
-                                'must be a dictionary or "None"'])
+                msg = " ".join(
+                    [
+                        "Attributes for field",
+                        fieldname,
+                        "in file",
+                        repr(dd),
+                        'must be a dictionary or "None"',
+                    ]
+                )
                 raise dBaseapiError(msg)
-            
+
             for a in attributes:
                 if a not in DBASE_FIELDATTS:
-                    msg = ' '.join(['Attribute', repr(a),
-                                    'for field', fieldname,
-                                    'in file', dd,
-                                    'is not allowed'])
+                    msg = " ".join(
+                        [
+                            "Attribute",
+                            repr(a),
+                            "for field",
+                            fieldname,
+                            "in file",
+                            dd,
+                            "is not allowed",
+                        ]
+                    )
                     raise dBaseapiError(msg)
-                
+
                 if not isinstance(attributes[a], DBASE_FIELDATTS[a]):
-                    msg = ' '.join([a,
-                                    'for field', fieldname,
-                                    'in file', dd,
-                                    'is wrong type'])
+                    msg = " ".join(
+                        [
+                            a,
+                            "for field",
+                            fieldname,
+                            "in file",
+                            dd,
+                            "is wrong type",
+                        ]
+                    )
                     raise dBaseapiError(msg)
 
                 if a == TYPE:
                     if attributes[a] not in _FIELDTYPE:
-                        msg = ' '.join(['Type for field', fieldname,
-                                        'in file', dd,
-                                        'must be one of',
-                                        str(list(_FIELDTYPE.keys()))])
+                        msg = " ".join(
+                            [
+                                "Type for field",
+                                fieldname,
+                                "in file",
+                                dd,
+                                "must be one of",
+                                str(list(_FIELDTYPE.keys())),
+                            ]
+                        )
                         raise dBaseapiError(msg)
 
             if START in attributes:
                 if attributes[START] in sequence:
-                    msg = ' '.join(['Field', fieldname,
-                                    'in file', dd,
-                                    'starts at', str(attributes[START]),
-                                    'duplicating field',
-                                    sequence[attibutes[start]],
-                                    'start'])
+                    msg = " ".join(
+                        [
+                            "Field",
+                            fieldname,
+                            "in file",
+                            dd,
+                            "starts at",
+                            str(attributes[START]),
+                            "duplicating field",
+                            sequence[attibutes[start]],
+                            "start",
+                        ]
+                    )
                     raise dBaseapiError(msg)
 
                 sequence[attributes[START]] = fieldname
@@ -709,25 +771,42 @@ class _dBaseapiRoot:
                 sp, fp = sequence[-1]
                 if LENGTH in fields[fp]:
                     if sp + fields[fp][LENGTH] > s:
-                        msg = ' '.join(['Field', fp,
-                                        'starting at', str(sp),
-                                        'length', str(fields[fp][LENGTH]),
-                                        'overlaps field', f,
-                                        'starting at', str(s),
-                                        'in file', dd])
+                        msg = " ".join(
+                            [
+                                "Field",
+                                fp,
+                                "starting at",
+                                str(sp),
+                                "length",
+                                str(fields[fp][LENGTH]),
+                                "overlaps field",
+                                f,
+                                "starting at",
+                                str(s),
+                                "in file",
+                                dd,
+                            ]
+                        )
                         raise dBaseapiError(msg)
-                
+
         primary = dptdesc.get(PRIMARY, dict())
         if not isinstance(primary, dict):
-            msg = ' '.join(['Field mapping of file', repr(dd),
-                            'must be a dictionary'])
+            msg = " ".join(
+                ["Field mapping of file", repr(dd), "must be a dictionary"]
+            )
             raise dBaseapiError(msg)
 
         for p in primary:
             if not isinstance(p, str):
-                msg = ' '.join(['Primary field name', str(p),
-                                'for', dd,
-                                'must be a string'])
+                msg = " ".join(
+                    [
+                        "Primary field name",
+                        str(p),
+                        "for",
+                        dd,
+                        "must be a string",
+                    ]
+                )
                 raise dBaseapiError(msg)
 
             f = primary[p]
@@ -735,30 +814,45 @@ class _dBaseapiRoot:
                 f = p.upper()
                 primary[p] = f
             elif not isinstance(f, str):
-                msg = ' '.join(['Field', str(f),
-                                'for primary field name', p,
-                                'in file', dd,
-                                'must be a string'])
+                msg = " ".join(
+                    [
+                        "Field",
+                        str(f),
+                        "for primary field name",
+                        p,
+                        "in file",
+                        dd,
+                        "must be a string",
+                    ]
+                )
                 raise dBaseapiError(msg)
 
             if f not in fields:
-                msg = ' '.join(['Field', f,
-                                'for primary field name', p,
-                                'in file', dd,
-                                'must have a field description'])
+                msg = " ".join(
+                    [
+                        "Field",
+                        f,
+                        "for primary field name",
+                        p,
+                        "in file",
+                        dd,
+                        "must have a field description",
+                    ]
+                )
                 raise dBaseapiError(msg)
 
         secondary = dptdesc.get(SECONDARY, dict())
         if not isinstance(secondary, dict):
-            msg = ' '.join(['Index definition of file', repr(dd),
-                            'must be a dictionary'])
+            msg = " ".join(
+                ["Index definition of file", repr(dd), "must be a dictionary"]
+            )
             raise dBaseapiError(msg)
-        
+
         for s in secondary:
             if not isinstance(s, str):
-                msg = ' '.join(['Index name', str(s),
-                                'for', dd,
-                                'must be a string'])
+                msg = " ".join(
+                    ["Index name", str(s), "for", dd, "must be a string"]
+                )
                 raise dBaseapiError(msg)
 
             i = secondary[s]
@@ -766,25 +860,46 @@ class _dBaseapiRoot:
                 i = (s.upper(),)
                 secondary[s] = i
             elif not isinstance(i, tuple):
-                msg = ' '.join(['Index definition', str(i),
-                                'in field', s,
-                                'in file', dd,
-                                'must be a tuple of strings'])
+                msg = " ".join(
+                    [
+                        "Index definition",
+                        str(i),
+                        "in field",
+                        s,
+                        "in file",
+                        dd,
+                        "must be a tuple of strings",
+                    ]
+                )
                 raise dBaseapiError(msg)
 
             for f in i:
                 if not isinstance(f, str):
-                    msg = ' '.join(['Field name', str(f),
-                                    'in index definition for', s,
-                                    'in file', dd,
-                                    'must be a string'])
+                    msg = " ".join(
+                        [
+                            "Field name",
+                            str(f),
+                            "in index definition for",
+                            s,
+                            "in file",
+                            dd,
+                            "must be a string",
+                        ]
+                    )
                     raise dBaseapiError(msg)
 
                 if f not in fields:
-                    msg = ' '.join(['Field', f,
-                                    'for index definition', s,
-                                    'in file', dd,
-                                    'must have a field description'])
+                    msg = " ".join(
+                        [
+                            "Field",
+                            f,
+                            "for index definition",
+                            s,
+                            "in file",
+                            dd,
+                            "must have a field description",
+                        ]
+                    )
                     raise dBaseapiError(msg)
 
         self._fields = fields
@@ -810,18 +925,24 @@ class _dBaseapiRoot:
             opendb.open_dbf()
             for f in self._fields:
                 if f not in opendb.fields:
-                    raise dBaseapiError(' '.join((
-                        'Field', f, 'not in file', self._ddname)))
+                    raise dBaseapiError(
+                        " ".join(("Field", f, "not in file", self._ddname))
+                    )
                 else:
                     for a in self._fields[f]:
                         if self._fields[f][a] != opendb.fields[f][a]:
-                            raise dBaseapiError(' '.join((
-                                'Declared field attribute',
-                                a,
-                                'for field',
-                                f,
-                                'does not match value on file',
-                                self._ddname)))
+                            raise dBaseapiError(
+                                " ".join(
+                                    (
+                                        "Declared field attribute",
+                                        a,
+                                        "for field",
+                                        f,
+                                        "does not match value on file",
+                                        self._ddname,
+                                    )
+                                )
+                            )
             for f in opendb.fields:
                 if f not in self._fields:
                     self._primary[f] = f
@@ -831,24 +952,22 @@ class _dBaseapiRoot:
                         self._fields[f][a] = opendb.fields[f][a]
             self._dbaseobject = opendb
         elif self._dbaseobject == False:
-            raise dBaseapiError('Create dBase file not supported')
-            
-            
+            raise dBaseapiError("Create dBase file not supported")
+
+
 class dBaseapiRoot(_dBaseapiRoot):
 
-    """Provide record level access to a dBaseIII file.
-    
-    """
+    """Provide record level access to a dBaseIII file."""
 
     def __init__(self, dd, fname, dptdesc, sfi):
         """Define a dBaseIII file.
-        
+
         See base class for argument descriptions.
         sfi - for compatibility with bsddb
-        
+
         """
         super().__init__(dd, fname, dptdesc)
-        
+
         # All active Cursor objects opened by database_cursor
         self._clientcursors = dict()
 
@@ -859,7 +978,6 @@ class dBaseapiRoot(_dBaseapiRoot):
         self._clientcursors.clear()
 
         super().close()
-        
 
     def get_database(self):
         """Return the open file."""
@@ -868,13 +986,13 @@ class dBaseapiRoot(_dBaseapiRoot):
     def make_cursor(self, indexname, keyrange=None):
         """Create a cursor on the dBaseIII file."""
         if indexname not in self._secondary:
-            #c = self._dbaseobject.Cursor()
+            # c = self._dbaseobject.Cursor()
             c = Cursor(self._dbaseobject, keyrange=keyrange)
             if c:
                 self._clientcursors[c] = True
             return c
         else:
-            raise dBaseapiError('Indexes not supported')
+            raise dBaseapiError("Indexes not supported")
 
     def _get_deferable_update_files(self, defer, dd):
         """Return a dictionary of empty lists for the dBaseIII files.
@@ -882,7 +1000,7 @@ class dBaseapiRoot(_dBaseapiRoot):
         Provided for compatibility with DPT
 
         """
-        defer[dd] = {self._ddname : []} # _file rather than _ddname?
+        defer[dd] = {self._ddname: []}  # _file rather than _ddname?
 
     def get_primary_record(self, dbname, key):
         """Return None.  Deny existence of primary record.
@@ -890,8 +1008,7 @@ class dBaseapiRoot(_dBaseapiRoot):
         Provided for compatibility with DPT.
 
         """
-        return None # return the pickled dictionary of field values
-
+        return None  # return the pickled dictionary of field values
 
     def open_root(self):
         """Open dBaseIII file."""
@@ -902,28 +1019,28 @@ class dBaseapiRoot(_dBaseapiRoot):
             foldername, filename = os.path.split(pathname)
             if os.path.exists(foldername):
                 if not os.path.isdir(foldername):
-                    msg = ' '.join([foldername, 'exists but is not a folder'])
+                    msg = " ".join([foldername, "exists but is not a folder"])
                     raise dBaseapiError(msg)
-                
+
             else:
                 os.makedirs(foldername)
             if os.path.exists(pathname):
                 if not os.path.isfile(pathname):
-                    msg = ' '.join([pathname, 'exists but is not a file'])
+                    msg = " ".join([pathname, "exists but is not a file"])
                     raise dBaseapiError(msg)
 
                 if self._dbaseobject == None:
                     self._dbaseobject = True
             elif self._dbaseobject == None:
                 self._dbaseobject = False
-            
-        super().open_root()
-            
 
-class Cursor(CursordBaseIII):#, cursor.Cursor):
-    
+        super().open_root()
+
+
+class Cursor(CursordBaseIII):  # , cursor.Cursor):
+
     """Define a dBaseIII cursor.
-    
+
     Clearly not finished.  So notes left as found.  Changed just enough to
     get scrollbar working (Jan 2012).
 
@@ -936,7 +1053,7 @@ class Cursor(CursordBaseIII):#, cursor.Cursor):
     set_partial_key is absent. May be better to follow dbapi.Cursor and
     dptbase.Cursor classes and make the CursordBaseIII instance an
     attibute of this Cursor class. dBaseIII.Cursor() supports this.
-    
+
     """
 
     def __init__(self, dbasedb, keyrange=None, **kargs):

@@ -17,7 +17,8 @@ from . import filespec
 
 
 def _do_ecf_ogd_data_import(
-    import_method, widget, logwidget=None, specification_items=None):
+    import_method, widget, logwidget=None, specification_items=None
+):
     """Import a new ECF club file.
 
     widget - the manager object for the ecf data import tab
@@ -25,10 +26,12 @@ def _do_ecf_ogd_data_import(
     """
     ecffile = widget.datagrid.get_data_source().dbhome
 
-    if not ecffile: return False
+    if not ecffile:
+        return False
 
     results = widget.get_appsys().get_results_database()
-    if not results: return False
+    if not results:
+        return False
 
     results.do_database_task(
         import_method,
@@ -36,9 +39,9 @@ def _do_ecf_ogd_data_import(
         taskmethodargs=dict(
             ecffile=ecffile,
             parent=widget.get_widget(),
-            ),
+        ),
         use_specification_items=specification_items,
-        )
+    )
 
     return True
 
@@ -50,12 +53,13 @@ def copy_ecf_ogd_players_post_2006_rules(widget, logwidget=None):
 
     """
     return _do_ecf_ogd_data_import(
-        widget.get_appsys().get_ecfogddataimport_module(
-            ).copy_ecf_ogd_players_post_2006_rules,
+        widget.get_appsys()
+        .get_ecfogddataimport_module()
+        .copy_ecf_ogd_players_post_2006_rules,
         widget,
         logwidget=logwidget,
         specification_items={
             filespec.ECFOGDPLAYER_FILE_DEF,
             filespec.MAPECFOGDPLAYER_FILE_DEF,
-            },
-        )
+        },
+    )

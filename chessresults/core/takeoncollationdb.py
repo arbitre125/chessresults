@@ -20,8 +20,7 @@ from . import resultsrecord
 
 class TakeonCollationDB(collationdb.CollationDB):
 
-    """Results extracted from a file of imported games.
-    """
+    """Results extracted from a file of imported games."""
 
     def __init__(self, collation, database):
 
@@ -43,7 +42,7 @@ class TakeonCollationDB(collationdb.CollationDB):
         namemanager = collationdb.NameManager(self._database)
         affiliations = dict()
         for s, gms in self._games.items():
-            if s[0] == 'Event Matches':
+            if s[0] == "Event Matches":
                 for g in gms.games:
                     for p in g.homeplayer, g.awayplayer:
                         if p._identity not in affiliations:
@@ -69,11 +68,15 @@ class TakeonCollationDB(collationdb.CollationDB):
                     ip = player
                     ips = section
                     ipg = gamecount
-                elif (ips == constants._event_matches and
-                      section != constants._event_matches):
+                elif (
+                    ips == constants._event_matches
+                    and section != constants._event_matches
+                ):
                     ap[player] = None
-                elif (ips != constants._event_matches and
-                      section == constants._event_matches):
+                elif (
+                    ips != constants._event_matches
+                    and section == constants._event_matches
+                ):
                     ap[ip] = None
                     ip = player
                     ips = section
@@ -86,23 +89,27 @@ class TakeonCollationDB(collationdb.CollationDB):
                 else:
                     ap[player] = None
             ipr = resultsrecord.get_alias_for_player_takeon(
-                self._database, ip, lookupevent=lookup)
+                self._database, ip, lookupevent=lookup
+            )
             newipr = ipr.clone()
             if newipr.value.merge is None:
                 newipr.value.merge = False
             for p in ap:
                 ap[p] = resultsrecord.get_alias_for_player_takeon(
-                    self._database, p)
+                    self._database, p
+                )
                 newap = ap[p].clone()
                 newipr.value.alias.append(newap.key.recno)
                 newap.value.merge = newipr.key.recno
                 newap.value.alias = newipr.value.merge
                 if duplicates:
                     if p[:-1] in duplicates:
-                        newap.value.name = ' '.join(
-                            (newap.value.name,
-                             str(newap.value.pin).join(('(', ')')),
-                             ))
+                        newap.value.name = " ".join(
+                            (
+                                newap.value.name,
+                                str(newap.value.pin).join(("(", ")")),
+                            )
+                        )
                 if p[4] == constants._event_matches:
                     namemanager.unset_name(newap.value.section)
                     namemanager.set_name(affiliations[p])
@@ -112,13 +119,16 @@ class TakeonCollationDB(collationdb.CollationDB):
                     self._database,
                     filespec.PLAYER_FILE_DEF,
                     filespec.PLAYER_FIELD_DEF,
-                    newap)
+                    newap,
+                )
             if duplicates:
                 if ip[:-1] in duplicates:
-                    newipr.value.name = ' '.join(
-                        (newipr.value.name,
-                         str(newipr.value.pin).join(('(', ')')),
-                         ))
+                    newipr.value.name = " ".join(
+                        (
+                            newipr.value.name,
+                            str(newipr.value.pin).join(("(", ")")),
+                        )
+                    )
             if ips == constants._event_matches:
                 namemanager.unset_name(newipr.value.section)
                 namemanager.set_name(affiliations[ip])
@@ -128,5 +138,6 @@ class TakeonCollationDB(collationdb.CollationDB):
                 self._database,
                 filespec.PLAYER_FILE_DEF,
                 filespec.PLAYER_FIELD_DEF,
-                newipr)
+                newipr,
+            )
         namemanager.update_names()

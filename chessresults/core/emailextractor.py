@@ -23,19 +23,19 @@ from emailextract.core.emailextractor import (
     ExtractEmail,
     ExtractText,
     Parser,
-    )
+)
 
 # File containing typed-in results
-TEXTENTRY = 'textentry'
+TEXTENTRY = "textentry"
 
 # Schedule files may be spreadsheet, csv, or txt files.
 # The column names can be provided in the following conf file entries
-_SCHED_DATE = 'sched_date'
-_SCHED_DAY = 'sched_day'
-_SCHED_SECTION = 'sched_section'
-_SCHED_HOME_TEAM = 'sched_home_team'
-_SCHED_AWAY_TEAM = 'sched_away_team'
-_SCHED_DATA_COLUMNS = 'sched_data_columns'
+_SCHED_DATE = "sched_date"
+_SCHED_DAY = "sched_day"
+_SCHED_SECTION = "sched_section"
+_SCHED_HOME_TEAM = "sched_home_team"
+_SCHED_AWAY_TEAM = "sched_away_team"
+_SCHED_DATA_COLUMNS = "sched_data_columns"
 
 # The column name order is chosen to be compatible with the result table order.
 # _SCHED_DAY must not be present if _SCHED_DATE is not present.
@@ -46,7 +46,7 @@ SCHEDULE_TABLE = (
     _SCHED_HOME_TEAM,
     _SCHED_AWAY_TEAM,
     _SCHED_DATA_COLUMNS,
-    )
+)
 
 # Report files may be spreadsheet, csv, or txt files.
 # The column names can be provided in the following conf file entries.
@@ -62,21 +62,21 @@ SCHEDULE_TABLE = (
 # The win bonus in points for grading is a constant: the concept of winning 2-0
 # rather than 1-0 is not used.
 # _REPORT_DAY must not be present if _REPORT_DATE is not present.
-_REPORT_DATE = 'report_date'
-_REPORT_DAY = 'report_day'
-_REPORT_SECTION = 'report_section'
-_REPORT_HOME_TEAM = 'report_home_team'
-_REPORT_AWAY_TEAM = 'report_away_team'
-_REPORT_HOME_PLAYER = 'report_home_player'
-_REPORT_AWAY_PLAYER = 'report_away_player'
-_REPORT_RESULT = 'report_result'
-_REPORT_BOARD = 'report_board'
-_REPORT_ROUND = 'report_round'
-_REPORT_HOME_PLAYER_COLOUR = 'report_home_player_colour'
-_REPORT_DATA_COLUMNS = 'report_data_columns'
-_REPORT_AWAY_TEAM_SCORE = 'report_away_team_score'
-_REPORT_HOME_TEAM_SCORE = 'report_home_team_score'
-_REPORT_EVENT = 'report_event'
+_REPORT_DATE = "report_date"
+_REPORT_DAY = "report_day"
+_REPORT_SECTION = "report_section"
+_REPORT_HOME_TEAM = "report_home_team"
+_REPORT_AWAY_TEAM = "report_away_team"
+_REPORT_HOME_PLAYER = "report_home_player"
+_REPORT_AWAY_PLAYER = "report_away_player"
+_REPORT_RESULT = "report_result"
+_REPORT_BOARD = "report_board"
+_REPORT_ROUND = "report_round"
+_REPORT_HOME_PLAYER_COLOUR = "report_home_player_colour"
+_REPORT_DATA_COLUMNS = "report_data_columns"
+_REPORT_AWAY_TEAM_SCORE = "report_away_team_score"
+_REPORT_HOME_TEAM_SCORE = "report_home_team_score"
+_REPORT_EVENT = "report_event"
 
 # The column names are arranged in order in the table definition such that the
 # common cases have a unique signature in terms of digit and alpha items.
@@ -98,64 +98,64 @@ REPORT_TABLE = (
     _REPORT_HOME_PLAYER_COLOUR,
     _REPORT_EVENT,
     _REPORT_DATA_COLUMNS,
-    )
+)
 
 # Rows from spreadsheet sheets or csv files can be converted to tab delimited
 # text for processing is a table with '' entries for SCHEDULE_TABLE and
 # REPORT_TABLE not taken from the row.  The sheet or csv file names to be
 # not treated this way are named in the following conf file entries: space is
 # used as the delimiter when concatenating elements from a row.
-TEXT_FROM_ROWS = 'text_from_rows'
-TABLE_DELIMITER = '\t'
+TEXT_FROM_ROWS = "text_from_rows"
+TABLE_DELIMITER = "\t"
 
 # Identify a spreadsheet sheet name or csv file name to be included in the
-# extracted data.  Schedule and report names are listed separately 
-_SCHEDULE_CSV_DATA_NAME = 'sched_csv_data_name'
-_REPORT_CSV_DATA_NAME = 'report_csv_data_name'
+# extracted data.  Schedule and report names are listed separately
+_SCHEDULE_CSV_DATA_NAME = "sched_csv_data_name"
+_REPORT_CSV_DATA_NAME = "report_csv_data_name"
 
 # Name the rules to transform input lines for inclusion in difference file
 # Added to guide transformation of game per row csv files to match report style.
 # Absence means no transformation.
-_REPLACE = 'replace'
-_PARTIAL_REPLACE = 'partial_replace'
+_REPLACE = "replace"
+_PARTIAL_REPLACE = "partial_replace"
 
 # The regular expressions which look for relevant items in the extracted text.
 # By default items are expected in a newline separated format.
 # Sometimes a set of regular expressions can be defined to transform extracted
 # text into the expected newline separated format.
-# The *_PREFIX' names are used as regular expression split() arguments 
+# The *_PREFIX' names are used as regular expression split() arguments
 # The *_BODY' names are used as regular expression findall() arguments
 # Usually SECTION_PREFIX and SECTION_BODY will be different, as will be the
 # *PLAYED_ON* versions from their roots.
-RESULTS_PREFIX = 'results_prefix'
-SECTION_PREFIX = 'section_prefix'
-SECTION_BODY = 'section_body'
-MATCH_BODY = 'match_body'
-TEAMS_BODY = 'teams_body'
-GAMES_BODY = 'games_body'
-FINISHED = 'finished'
-UNFINISHED = 'unfinished'
-DEFAULT = 'default'
-MATCH_DEFAULT = 'match_default'
-MATCH_DATE_BODY = 'match_date_body'
-PLAYED_ON_BODY = 'played_on_body'
-TEAMS_PLAYED_ON_BODY = 'teams_played_on_body'
-GAMES_PLAYED_ON_BODY = 'games_played_on_body'
-FINISHED_PLAYED_ON = 'finished_played_on'
-UNFINISHED_PLAYED_ON = 'unfinished_played_on'
-MATCH_DATE_PLAYED_ON_BODY = 'match_date_played_on_body'
-SCHEDULE_BODY = 'schedule_body'
-FIXTURE_BODY = 'fixture_body'
-KEEP_WORD_SPLITTERS = 'keep_word_splitters'
-SOURCE = 'source'
-DROP_FORWARDED_MARKERS = 'drop_forwarded_markers'
+RESULTS_PREFIX = "results_prefix"
+SECTION_PREFIX = "section_prefix"
+SECTION_BODY = "section_body"
+MATCH_BODY = "match_body"
+TEAMS_BODY = "teams_body"
+GAMES_BODY = "games_body"
+FINISHED = "finished"
+UNFINISHED = "unfinished"
+DEFAULT = "default"
+MATCH_DEFAULT = "match_default"
+MATCH_DATE_BODY = "match_date_body"
+PLAYED_ON_BODY = "played_on_body"
+TEAMS_PLAYED_ON_BODY = "teams_played_on_body"
+GAMES_PLAYED_ON_BODY = "games_played_on_body"
+FINISHED_PLAYED_ON = "finished_played_on"
+UNFINISHED_PLAYED_ON = "unfinished_played_on"
+MATCH_DATE_PLAYED_ON_BODY = "match_date_played_on_body"
+SCHEDULE_BODY = "schedule_body"
+FIXTURE_BODY = "fixture_body"
+KEEP_WORD_SPLITTERS = "keep_word_splitters"
+SOURCE = "source"
+DROP_FORWARDED_MARKERS = "drop_forwarded_markers"
 
 # Names of lists of dictionaries of rules to apply to extracted text.
 # The dictionaries will have the *_BODY names as keys, excluding SECTION_BODY.
 # A section body is associated with one each of the two lists.
-MATCH_FORMATS = 'match_formats'
-PLAYED_ON_FORMATS = 'played_on_formats'
-FIXTURE_FORMATS = 'fixture_formats'
+MATCH_FORMATS = "match_formats"
+PLAYED_ON_FORMATS = "played_on_formats"
+FIXTURE_FORMATS = "fixture_formats"
 
 # Word splitters which are not translated to ' ' by default.  That's '\x20'.
 # These are the common ones used when expressing names, numbers, and results.
@@ -163,7 +163,7 @@ DEFAULT_KEEP_WORD_SPLITTERS = "+=-,.'"
 
 # Name of competition as supplied in text extracted from a format defined in a
 # RESULTS_PREFIX sequence, and it's translation.
-SECTION_NAME = 'section_name'
+SECTION_NAME = "section_name"
 
 # Name of competition expected in text outside defined formats.
 # Must be on it's own line or at start of line containing valid data.
@@ -171,116 +171,120 @@ SECTION_NAME = 'section_name'
 # containing two dates or the text on the previous non-empty line if none.
 # These values allow any line which does not look like a fixture, game, or
 # match result to be ignored by the event parser.
-COMPETITION = 'competition'
+COMPETITION = "competition"
 
 # Team name translation to align names on fixture list with names in match
 # result reports.  At least one league emphasises where a team plays in the
 # fixture list, but emphasises the rank of the team within the club in result
 # reports, by using different names.  In the case I know both names are 12
 # characters but only first 3 characters are the same.
-TEAM_NAME = 'team_name'
+TEAM_NAME = "team_name"
 
 # Email headers relevant to authorizing results, matches in particular, for
 # grading.
 
 # Delay, in days, since date of sending or receipt, before it is assumed the
 # results in the email can be graded.
-AUTHORIZATION_DELAY = 'authorization_delay'
+AUTHORIZATION_DELAY = "authorization_delay"
 DEFAULT_IF_DELAY_NOT_VALID = 5
 
 
 class EmailExtractor(EmailExtractor):
-
-    def __init__(self,
-                 folder,
-                 configuration=None,
-                 parser=None,
-                 extractemail=None,
-                 parent=None):
+    def __init__(
+        self,
+        folder,
+        configuration=None,
+        parser=None,
+        extractemail=None,
+        parent=None,
+    ):
         """Define the email extraction rules from configuration.
 
         folder - the directory containing the event's data
         configuration - the rules for extracting emails
-        
+
         """
         if parser is None:
             parser = Parser
         if extractemail is None:
             extractemail = ExtractEmail
-        super().__init__(folder,
-                         configuration=configuration,
-                         parser=parser,
-                         extractemail=extractemail)
+        super().__init__(
+            folder,
+            configuration=configuration,
+            parser=parser,
+            extractemail=extractemail,
+        )
 
 
 class Parser(Parser):
-    
-    """Parse configuration file.
-    """
+
+    """Parse configuration file."""
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.keyword_rules.update({
-            TEXTENTRY:self.assign_value,
-            _SCHED_DATE:self.csv_schedule_columns,
-            _SCHED_DAY:self.csv_schedule_columns,
-            _SCHED_SECTION:self.csv_schedule_columns,
-            _SCHED_HOME_TEAM:self.csv_schedule_columns,
-            _SCHED_AWAY_TEAM:self.csv_schedule_columns,
-            _SCHED_DATA_COLUMNS:self.csv_schedule_columns,
-            _REPORT_DATE:self.csv_report_columns,
-            _REPORT_DAY:self.csv_report_columns,
-            _REPORT_SECTION:self.csv_report_columns,
-            _REPORT_HOME_TEAM:self.csv_report_columns,
-            _REPORT_AWAY_TEAM:self.csv_report_columns,
-            _REPORT_HOME_TEAM_SCORE:self.csv_report_columns,
-            _REPORT_AWAY_TEAM_SCORE:self.csv_report_columns,
-            _REPORT_HOME_PLAYER:self.csv_report_columns,
-            _REPORT_AWAY_PLAYER:self.csv_report_columns,
-            _REPORT_RESULT:self.csv_report_columns,
-            _REPORT_BOARD:self.csv_report_columns,
-            _REPORT_ROUND:self.csv_report_columns,
-            _REPORT_HOME_PLAYER_COLOUR:self.csv_report_columns,
-            _REPORT_EVENT:self.csv_report_columns,
-            _REPORT_DATA_COLUMNS:self.csv_report_columns,
-            _SCHEDULE_CSV_DATA_NAME:self.csv_data_name,
-            _REPORT_CSV_DATA_NAME:self.csv_data_name,
-            _REPLACE:self.csv_value_replace,
-            _PARTIAL_REPLACE:self.csv_value_partial_replace,
-            TEXT_FROM_ROWS:self.add_value_to_set,
-            RESULTS_PREFIX:self.add_event_re,
-            SECTION_PREFIX:self.add_re,
-            SECTION_BODY:self.add_re,
-            MATCH_BODY:self.add_match_format_re,
-            TEAMS_BODY:self.add_match_item_re,
-            GAMES_BODY:self.add_match_item_re,
-            FINISHED:self.add_match_item_re,
-            UNFINISHED:self.add_match_item_re,
-            DEFAULT:self.add_match_item_re,
-            MATCH_DEFAULT:self.add_match_item_re,
-            MATCH_DATE_BODY:self.add_match_item_re,
-            PLAYED_ON_BODY:self.add_played_on_format_re,
-            TEAMS_PLAYED_ON_BODY:self.add_played_on_item_re,
-            GAMES_PLAYED_ON_BODY:self.add_played_on_item_re,
-            FINISHED_PLAYED_ON:self.add_played_on_item_re,
-            UNFINISHED_PLAYED_ON:self.add_played_on_item_re,
-            MATCH_DATE_PLAYED_ON_BODY:self.add_played_on_item_re,
-            SCHEDULE_BODY:self.add_fixture_format_re,
-            FIXTURE_BODY:self.add_fixture_item_re,
-            KEEP_WORD_SPLITTERS:self.assign_event_value,
-            SECTION_NAME:self.add_section_name,
-            COMPETITION:self.add_value_to_set,#add_defaulted_value_to_lookup,
-            SOURCE:self.add_re,
-            DROP_FORWARDED_MARKERS:self.assign_event_value,
-            TEAM_NAME:self.add_value_to_lookup,
-            AUTHORIZATION_DELAY:self.assign_value,
-            })
-        self.context_keys = {
-            _REPLACE:[None, None, None],
+        self.keyword_rules.update(
+            {
+                TEXTENTRY: self.assign_value,
+                _SCHED_DATE: self.csv_schedule_columns,
+                _SCHED_DAY: self.csv_schedule_columns,
+                _SCHED_SECTION: self.csv_schedule_columns,
+                _SCHED_HOME_TEAM: self.csv_schedule_columns,
+                _SCHED_AWAY_TEAM: self.csv_schedule_columns,
+                _SCHED_DATA_COLUMNS: self.csv_schedule_columns,
+                _REPORT_DATE: self.csv_report_columns,
+                _REPORT_DAY: self.csv_report_columns,
+                _REPORT_SECTION: self.csv_report_columns,
+                _REPORT_HOME_TEAM: self.csv_report_columns,
+                _REPORT_AWAY_TEAM: self.csv_report_columns,
+                _REPORT_HOME_TEAM_SCORE: self.csv_report_columns,
+                _REPORT_AWAY_TEAM_SCORE: self.csv_report_columns,
+                _REPORT_HOME_PLAYER: self.csv_report_columns,
+                _REPORT_AWAY_PLAYER: self.csv_report_columns,
+                _REPORT_RESULT: self.csv_report_columns,
+                _REPORT_BOARD: self.csv_report_columns,
+                _REPORT_ROUND: self.csv_report_columns,
+                _REPORT_HOME_PLAYER_COLOUR: self.csv_report_columns,
+                _REPORT_EVENT: self.csv_report_columns,
+                _REPORT_DATA_COLUMNS: self.csv_report_columns,
+                _SCHEDULE_CSV_DATA_NAME: self.csv_data_name,
+                _REPORT_CSV_DATA_NAME: self.csv_data_name,
+                _REPLACE: self.csv_value_replace,
+                _PARTIAL_REPLACE: self.csv_value_partial_replace,
+                TEXT_FROM_ROWS: self.add_value_to_set,
+                RESULTS_PREFIX: self.add_event_re,
+                SECTION_PREFIX: self.add_re,
+                SECTION_BODY: self.add_re,
+                MATCH_BODY: self.add_match_format_re,
+                TEAMS_BODY: self.add_match_item_re,
+                GAMES_BODY: self.add_match_item_re,
+                FINISHED: self.add_match_item_re,
+                UNFINISHED: self.add_match_item_re,
+                DEFAULT: self.add_match_item_re,
+                MATCH_DEFAULT: self.add_match_item_re,
+                MATCH_DATE_BODY: self.add_match_item_re,
+                PLAYED_ON_BODY: self.add_played_on_format_re,
+                TEAMS_PLAYED_ON_BODY: self.add_played_on_item_re,
+                GAMES_PLAYED_ON_BODY: self.add_played_on_item_re,
+                FINISHED_PLAYED_ON: self.add_played_on_item_re,
+                UNFINISHED_PLAYED_ON: self.add_played_on_item_re,
+                MATCH_DATE_PLAYED_ON_BODY: self.add_played_on_item_re,
+                SCHEDULE_BODY: self.add_fixture_format_re,
+                FIXTURE_BODY: self.add_fixture_item_re,
+                KEEP_WORD_SPLITTERS: self.assign_event_value,
+                SECTION_NAME: self.add_section_name,
+                COMPETITION: self.add_value_to_set,  # add_defaulted_value_to_lookup,
+                SOURCE: self.add_re,
+                DROP_FORWARDED_MARKERS: self.assign_event_value,
+                TEAM_NAME: self.add_value_to_lookup,
+                AUTHORIZATION_DELAY: self.assign_value,
             }
+        )
+        self.context_keys = {
+            _REPLACE: [None, None, None],
+        }
 
     def re_from_value(self, v):
-        return re.compile(v, flags=re.IGNORECASE|re.DOTALL)
+        return re.compile(v, flags=re.IGNORECASE | re.DOTALL)
 
     def add_value_to_lookup(self, v, args, args_key):
         v, r = v.split(sep=v[0], maxsplit=2)[1:]
@@ -301,20 +305,24 @@ class Parser(Parser):
         args[args_key][v[0]] = v[-1]
 
     def csv_data_name(self, v, args, args_key):
-        elements = v.split(sep=' ')
+        elements = v.split(sep=" ")
         csv_name = elements.pop(0)
         args.setdefault(args_key, []).append((csv_name, elements, {}))
 
     def csv_columns(self, kt, v, args, args_key):
         elements = EmailExtractor.replace_value_columns.split(v)
-        sep = ['']
+        sep = [""]
         sep.extend(
-            [' ' if s == '+' else ''
-             for s in EmailExtractor.replace_value_columns.findall(v)])
+            [
+                " " if s == "+" else ""
+                for s in EmailExtractor.replace_value_columns.findall(v)
+            ]
+        )
         args[kt][-1][-1][args_key] = (
             elements,
-            {e:sep[i] for i, e in enumerate(elements)},
-            {e:{} for e in elements})
+            {e: sep[i] for i, e in enumerate(elements)},
+            {e: {} for e in elements},
+        )
         self.context_keys[_REPLACE][0] = kt
         self.context_keys[_REPLACE][1] = args_key
         self.context_keys[_REPLACE][2] = v
@@ -329,8 +337,7 @@ class Parser(Parser):
         pvc, v, r = v.split(sep=v[0], maxsplit=3)[1:]
         cdn, dt, c = self.context_keys[_REPLACE]
         if pvc not in EmailExtractor.replace_value_columns.split(c):
-            raise EmailExtractorError(
-                ' '.join((pvc, 'is not included in', c)))
+            raise EmailExtractorError(" ".join((pvc, "is not included in", c)))
         args[cdn][-1][-1][dt][-1][pvc][v] = r
 
     def csv_value_replace(self, v, args, args_key):
@@ -342,24 +349,25 @@ class Parser(Parser):
         if args_key not in args:
             args[args_key] = list()
         args[args_key].append(
-            {args_key:self.re_from_value(v),
-             SECTION_PREFIX:self.re_from_value(''),
-             SECTION_BODY:self.re_from_value(''),
-             MATCH_FORMATS:[],
-             PLAYED_ON_FORMATS:[],
-             FIXTURE_FORMATS:[],
-             KEEP_WORD_SPLITTERS:DEFAULT_KEEP_WORD_SPLITTERS,
-             SECTION_NAME:{},
-             SOURCE:self.re_from_value(''),
-             DROP_FORWARDED_MARKERS:'',
-             },
-            )
+            {
+                args_key: self.re_from_value(v),
+                SECTION_PREFIX: self.re_from_value(""),
+                SECTION_BODY: self.re_from_value(""),
+                MATCH_FORMATS: [],
+                PLAYED_ON_FORMATS: [],
+                FIXTURE_FORMATS: [],
+                KEEP_WORD_SPLITTERS: DEFAULT_KEEP_WORD_SPLITTERS,
+                SECTION_NAME: {},
+                SOURCE: self.re_from_value(""),
+                DROP_FORWARDED_MARKERS: "",
+            },
+        )
 
     def add_re(self, v, args, args_key):
         args[RESULTS_PREFIX][-1][args_key] = self.re_from_value(v)
 
     def add_format_re(self, fi, v, args, args_key):
-        args[RESULTS_PREFIX][-1][fi].append({args_key:self.re_from_value(v)})
+        args[RESULTS_PREFIX][-1][fi].append({args_key: self.re_from_value(v)})
 
     def add_match_format_re(self, *a):
         self.add_format_re(MATCH_FORMATS, *a)
@@ -388,15 +396,14 @@ class Parser(Parser):
     def add_format_replace(self, fi, v, args, args_key):
         v, r = v.split(sep=v[0], maxsplit=2)[1:]
         args[RESULTS_PREFIX][-1][fi][v] = r
-        
+
     def add_section_name(self, *a):
         self.add_format_replace(SECTION_NAME, *a)
 
 
 class ExtractEmail(ExtractEmail):
-    
-    """Extract emails matching selection criteria from email store.
-    """
+
+    """Extract emails matching selection criteria from email store."""
 
     def __init__(
         self,
@@ -404,7 +411,8 @@ class ExtractEmail(ExtractEmail):
         sched_csv_data_name=None,
         report_csv_data_name=None,
         text_from_rows=None,
-        **soak):
+        **soak
+    ):
         """Define the email extraction rules from configuration.
 
         mailstore - the directory containing the email files
@@ -441,11 +449,11 @@ class ExtractText(ExtractText):
     """Repreresent the stages in processing an email."""
 
     def get_spreadsheet_text(self, *a):
-        """Return (sheetname, text) filtered by schedule and report data names.
-        """
+        """Return (sheetname, text) filtered by schedule and report data names."""
         ems = self._emailstore
         fs = set([n[0] for n in ems._sched_csv_data_name]).union(
-            [n[0] for n in ems._report_csv_data_name])
+            [n[0] for n in ems._report_csv_data_name]
+        )
         return [t for t in super().get_spreadsheet_text(*a) if t[0] in fs]
 
     def extract_text_from_csv(self, text, sheet=None, filename=None):
@@ -470,7 +478,7 @@ class ExtractText(ExtractText):
             # I think "not in" version was intended to turn the tabular code
             # off until the "batch of future code" cited at end of build_event
             # in EventParser class is ready.
-            #tabular = cdn[0] not in ems._text_from_rows
+            # tabular = cdn[0] not in ems._text_from_rows
             tabular = cdn[0] in ems._text_from_rows
 
             if not tabular:
@@ -482,7 +490,7 @@ class ExtractText(ExtractText):
                 else:
                     all_columns = ()
             elif len(cdn[-1]) == 1:
-                delimiter = ''
+                delimiter = ""
             else:
                 delimiter = TABLE_DELIMITER
             csv_text = []
@@ -510,7 +518,7 @@ class ExtractText(ExtractText):
                 if column_names:
                     r = row
                 else:
-                    r = {str(e):v for e, v in enumerate(row)}
+                    r = {str(e): v for e, v in enumerate(row)}
                     sr = set(r)
                     if column_identities != sr.intersection(column_identities):
                         csv_text.clear()
@@ -523,7 +531,7 @@ class ExtractText(ExtractText):
                     for e in all_columns:
                         acf = cdn[-1].get(e)
                         if acf is None:
-                            ev.append('')
+                            ev.append("")
                         else:
                             prefix = acf[1]
                             acev = []
@@ -531,10 +539,10 @@ class ExtractText(ExtractText):
                                 if prefix[c]:
                                     acev.append(prefix[c])
                                 acev.append(r[c])
-                            ev.append(' '.join(acev))
+                            ev.append(" ".join(acev))
                 else:
                     for e in cdn[1]:
-                        
+
                         # This test requires all the relevant columns to be
                         # named in the format's report_csv_data_name line in
                         # the event conf file, including those not used.
@@ -542,7 +550,7 @@ class ExtractText(ExtractText):
                         # set(cdn[0]) == set(cdn[-1]) when this style of report
                         # is not used.
                         if e in cdn[-1]:
-                            
+
                             prefix = cdn[-1][e][1]
                             acev = []
                             for c in cdn[-1][e][0]:
@@ -550,9 +558,9 @@ class ExtractText(ExtractText):
                                     acev.append(prefix[c])
                                 acev.append(r[c])
                             if acev:
-                                ev.append(' '.join(acev))
+                                ev.append(" ".join(acev))
                         else:
-                            ev.append('')
+                            ev.append("")
                 csv_text.append(delimiter.join(ev))
 
                 # Left over from Hampshire website database interface where
@@ -560,11 +568,11 @@ class ExtractText(ExtractText):
                 # be sent in same CSV file. The selector was used to pick rows
                 # for the appropriate event.
                 # _REPORT_EVENT allows this feature to be implemented if needed.
-                #if len(selector):
+                # if len(selector):
                 #    if selector not in row:
                 #        continue
                 #    if row[selector] != value:
                 #        continue
-                    
-            all_text.append('\n'.join(csv_text))
-        return '\n\n'.join(all_text)
+
+            all_text.append("\n".join(csv_text))
+        return "\n\n".join(all_text)

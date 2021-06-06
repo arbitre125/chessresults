@@ -17,29 +17,29 @@ from ..core import filespec
 
 class ECFOGDPlayerGrid(playergrids.PlayerGrid):
 
-    """Base class for grid widgets used on ECF grading code page.
-    """
+    """Base class for grid widgets used on ECF grading code page."""
 
 
 class OGDPersonGrid(ECFOGDPlayerGrid):
 
-    """Grid for players linked to ECF grading code on Online Grading Database.
-    """
+    """Grid for players linked to ECF grading code on Online Grading Database."""
 
     def __init__(self, panel, **kwargs):
         """Extend, customise record selection widget, and note sibling grids."""
-        super(OGDPersonGrid, self).__init__(
-            panel,
-            **kwargs)
-        self.make_header(ecfgcodemaprow.ECFmapOGDrowPlayer.header_specification)
+        super(OGDPersonGrid, self).__init__(panel, **kwargs)
+        self.make_header(
+            ecfgcodemaprow.ECFmapOGDrowPlayer.header_specification
+        )
         ds = dataclient.DataSource(
             self.appsyspanel.get_appsys().get_results_database(),
             filespec.PLAYER_FILE_DEF,
             filespec.PLAYERIDENTITY_FIELD_DEF,
-            ecfgcodemaprow.ECFmapOGDrowPlayer)
+            ecfgcodemaprow.ECFmapOGDrowPlayer,
+        )
         self.set_data_source(ds)
         self.appsyspanel.get_appsys().get_data_register().register_in(
-            self, self.on_data_change)
+            self, self.on_data_change
+        )
 
     def encode_navigate_grid_key(self, key):
         """Return key after formatting and delegating encoding to superclass.
@@ -52,25 +52,24 @@ class OGDPersonGrid(ECFOGDPlayerGrid):
 
         """
         k = repr((key,))
-        return super().encode_navigate_grid_key(k[:k.index(key)+len(key)])
+        return super().encode_navigate_grid_key(k[: k.index(key) + len(key)])
 
 
 class ECFOGDPersonGrid(ECFOGDPlayerGrid):
 
-    """Grid for players on Online Grading Database with ECF grading codes.
-    """
+    """Grid for players on Online Grading Database with ECF grading codes."""
 
     def __init__(self, panel, **kwargs):
         """Extend, customise record selection widget, and note sibling grids."""
-        super(ECFOGDPersonGrid, self).__init__(
-            panel,
-            **kwargs)
+        super(ECFOGDPersonGrid, self).__init__(panel, **kwargs)
         self.make_header(ecfogdrow.ECFrefOGDrowPlayer.header_specification)
         ds = dataclient.DataSource(
             self.appsyspanel.get_appsys().get_results_database(),
             filespec.ECFOGDPLAYER_FILE_DEF,
             filespec.OGDPLAYERNAME_FIELD_DEF,
-            ecfogdrow.ECFrefOGDrowPlayer)
+            ecfogdrow.ECFrefOGDrowPlayer,
+        )
         self.set_data_source(ds)
         self.appsyspanel.get_appsys().get_data_register().register_in(
-            self, self.on_data_change)
+            self, self.on_data_change
+        )

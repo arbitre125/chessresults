@@ -19,16 +19,14 @@ from ..core import filespec
 
 class PlayerGrid(gridbindings.SelectorGridBindings, DataGridReadOnly):
 
-    """Base class for grid widgets used on new player and player pages.
-    """
+    """Base class for grid widgets used on new player and player pages."""
 
     def __init__(self, panel, focus_selector=None, **kwargs):
         """Extend and bind grid navigation within page commands to events."""
         DataGridReadOnly.__init__(self, panel)
         gridbindings.SelectorGridBindings.__init__(
-            self,
-            focus_selector=focus_selector,
-            **kwargs)
+            self, focus_selector=focus_selector, **kwargs
+        )
         self.bindings(function=self.on_focus_in)
 
     def show_popup_menu_no_row(self, event=None):
@@ -42,84 +40,76 @@ class PlayerGrid(gridbindings.SelectorGridBindings, DataGridReadOnly):
 
 class AliasGrid(PlayerGrid):
 
-    """Grid for all players.
-    """
+    """Grid for all players."""
 
     def __init__(self, panel, **kwargs):
         """Custom PlayerGrid for the playeralias index."""
-        super(AliasGrid, self).__init__(
-            panel,
-            **kwargs)
+        super(AliasGrid, self).__init__(panel, **kwargs)
         dr = self.appsyspanel.get_appsys().get_data_register()
         self.make_header(resultsrow.ResultsDBrowAlias.header_specification)
         ds = dataclient.DataSource(
             self.appsyspanel.get_appsys().get_results_database(),
             filespec.PLAYER_FILE_DEF,
             filespec.PLAYERNAME_FIELD_DEF,
-            newrow=resultsrow.ResultsDBrowAlias)
+            newrow=resultsrow.ResultsDBrowAlias,
+        )
         self.set_data_source(ds)
         dr.register_in(self, self.on_data_change)
 
 
 class AliasLinkGrid(PlayerGrid):
 
-    """Grid for all players with grading code link.
-    """
+    """Grid for all players with grading code link."""
 
     def __init__(self, panel, **kwargs):
         """Custom PlayerGrid for the playeralias index."""
-        super(AliasLinkGrid, self).__init__(
-            panel,
-            **kwargs)
+        super(AliasLinkGrid, self).__init__(panel, **kwargs)
         dr = self.appsyspanel.get_appsys().get_data_register()
         self.make_header(resultsrow.ResultsDBrowAliasLink.header_specification)
         ds = dataclient.DataSource(
             self.appsyspanel.get_appsys().get_results_database(),
             filespec.PLAYER_FILE_DEF,
             filespec.PLAYERNAME_FIELD_DEF,
-            newrow=resultsrow.ResultsDBrowAliasLink)
+            newrow=resultsrow.ResultsDBrowAliasLink,
+        )
         self.set_data_source(ds)
         dr.register_in(self, self.on_data_change)
 
 
 class IdentityGrid(PlayerGrid):
 
-    """Grid for identified players.
-    """
+    """Grid for identified players."""
 
     def __init__(self, panel, **kwargs):
         """Custom PlayerGrid for the playeridentity index."""
-        super(IdentityGrid, self).__init__(
-            panel,
-            **kwargs)
+        super(IdentityGrid, self).__init__(panel, **kwargs)
         dr = self.appsyspanel.get_appsys().get_data_register()
         self.make_header(resultsrow.ResultsDBrowIdentity.header_specification)
         ds = dataclient.DataSource(
             self.appsyspanel.get_appsys().get_results_database(),
             filespec.PLAYER_FILE_DEF,
             filespec.PLAYERNAMEIDENTITY_FIELD_DEF,
-            newrow=resultsrow.ResultsDBrowIdentity)
+            newrow=resultsrow.ResultsDBrowIdentity,
+        )
         self.set_data_source(ds)
         dr.register_in(self, self.on_data_change)
 
 
 class NewGrid(PlayerGrid):
 
-    """Grid for new players.
-    """
+    """Grid for new players."""
 
     def __init__(self, panel, **kwargs):
         """Custom PlayerGrid for the playernew index."""
-        super(NewGrid, self).__init__(
-            panel,
-            **kwargs)
+        super(NewGrid, self).__init__(panel, **kwargs)
         dr = self.appsyspanel.get_appsys().get_data_register()
         self.make_header(resultsrow.ResultsDBrowNewPlayer.header_specification)
         ds = dataclient.DataSource(
             self.appsyspanel.get_appsys().get_results_database(),
             filespec.PLAYER_FILE_DEF,
             filespec.PLAYERPARTIALNEW_FIELD_DEF,
-            newrow=resultsrow.ResultsDBrowNewPlayer)
+            newrow=resultsrow.ResultsDBrowNewPlayer,
+        )
         self.set_data_source(ds)
         dr.register_in(self, self.on_data_change)
 
@@ -127,10 +117,10 @@ class NewGrid(PlayerGrid):
         """Extend to adjust Identified grid."""
         super(NewGrid, self).bookmark_down()
         # not implemented
-        #self.appsyspanel.playergrid.display_identified_players_for_selection()
+        # self.appsyspanel.playergrid.display_identified_players_for_selection()
 
     def bookmark_up(self):
         """Extend to adjust Identified grid."""
         super(NewGrid, self).bookmark_up()
         # not implemented
-        #self.appsyspanel.playergrid.display_identified_players_for_selection()
+        # self.appsyspanel.playergrid.display_identified_players_for_selection()

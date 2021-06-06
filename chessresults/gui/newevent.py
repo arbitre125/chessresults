@@ -17,274 +17,245 @@ from ..core import filespec
 
 class NewEvent(panel.PlainPanel):
 
-    """The NewEvent panel for a Results database.
-    """
-    
-    _btn_ok = 'newevent_ok'
-    _btn_refresh = 'newevent_refresh'
-    _btn_cancel = 'newevent_cancel'
+    """The NewEvent panel for a Results database."""
+
+    _btn_ok = "newevent_ok"
+    _btn_refresh = "newevent_refresh"
+    _btn_cancel = "newevent_cancel"
 
     def __init__(self, parent=None, cnf=dict(), **kargs):
         """Extend and define the results database new event panel."""
-        super(NewEvent, self).__init__(
-            parent=parent,
-            cnf=cnf,
-            **kargs)
+        super(NewEvent, self).__init__(parent=parent, cnf=cnf, **kargs)
         self.show_panel_buttons(
-            (self._btn_ok,
-             self._btn_refresh,
-             self._btn_cancel))
+            (self._btn_ok, self._btn_refresh, self._btn_cancel)
+        )
         self.create_buttons()
-        
+
         self.newevent = tkinter.Frame(master=self.get_widget())
         self.newevent.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=True)
 
-        self.newevent.grid_columnconfigure(0, uniform='col', weight=3)
-        self.newevent.grid_columnconfigure(1, uniform='col', weight=3)
-        self.newevent.grid_columnconfigure(2, uniform='col', weight=1)
-        self.newevent.grid_rowconfigure(0, uniform='row', weight=1)
-        self.newevent.grid_rowconfigure(1, uniform='row', weight=1)
-        self.newevent.grid_rowconfigure(2, uniform='row', weight=1)
-        self.newevent.grid_rowconfigure(3, uniform='row', weight=1)
-        self.newevent.grid_rowconfigure(4, uniform='row', weight=1)
+        self.newevent.grid_columnconfigure(0, uniform="col", weight=3)
+        self.newevent.grid_columnconfigure(1, uniform="col", weight=3)
+        self.newevent.grid_columnconfigure(2, uniform="col", weight=1)
+        self.newevent.grid_rowconfigure(0, uniform="row", weight=1)
+        self.newevent.grid_rowconfigure(1, uniform="row", weight=1)
+        self.newevent.grid_rowconfigure(2, uniform="row", weight=1)
+        self.newevent.grid_rowconfigure(3, uniform="row", weight=1)
+        self.newevent.grid_rowconfigure(4, uniform="row", weight=1)
 
-        self.event = tkinter.LabelFrame(
-            master=self.newevent,
-            text='Event')
+        self.event = tkinter.LabelFrame(master=self.newevent, text="Event")
         self.gradingofficer = tkinter.LabelFrame(
-            master=self.newevent,
-            text='Grading Officer')
+            master=self.newevent, text="Grading Officer"
+        )
         self.gamefeeinvoice = tkinter.LabelFrame(
-            master=self.newevent,
-            text='Send Game Fee Invoice to')
-        self.colour = tkinter.LabelFrame(
-            master=self.newevent,
-            text='Colour')
+            master=self.newevent, text="Send Game Fee Invoice to"
+        )
+        self.colour = tkinter.LabelFrame(master=self.newevent, text="Colour")
         self.rateofplay = tkinter.LabelFrame(
-            master=self.newevent,
-            text='Rate of Play')
-        self.inform = tkinter.LabelFrame(
-            master=self.newevent,
-            text='Inform')
+            master=self.newevent, text="Rate of Play"
+        )
+        self.inform = tkinter.LabelFrame(master=self.newevent, text="Inform")
         self.adjudicate = tkinter.LabelFrame(
-            master=self.newevent,
-            text='Adjudicate')
+            master=self.newevent, text="Adjudicate"
+        )
 
-        self.event.grid(
-            row=0, column=0, columnspan=3, sticky=tkinter.NSEW)
+        self.event.grid(row=0, column=0, columnspan=3, sticky=tkinter.NSEW)
         self.gradingofficer.grid(
-            row=1, column=0, rowspan=2, sticky=tkinter.NSEW)
+            row=1, column=0, rowspan=2, sticky=tkinter.NSEW
+        )
         self.gamefeeinvoice.grid(
-            row=3, column=0, rowspan=2, sticky=tkinter.NSEW)
-        self.colour.grid(
-            row=1, column=1, rowspan=1, sticky=tkinter.NSEW)
-        self.rateofplay.grid(
-            row=2, column=1, rowspan=2, sticky=tkinter.NSEW)
-        self.adjudicate.grid(
-            row=4, column=1, rowspan=1, sticky=tkinter.NSEW)
-        self.inform.grid(
-            row=1, column=2, rowspan=4, sticky=tkinter.NSEW)
+            row=3, column=0, rowspan=2, sticky=tkinter.NSEW
+        )
+        self.colour.grid(row=1, column=1, rowspan=1, sticky=tkinter.NSEW)
+        self.rateofplay.grid(row=2, column=1, rowspan=2, sticky=tkinter.NSEW)
+        self.adjudicate.grid(row=4, column=1, rowspan=1, sticky=tkinter.NSEW)
+        self.inform.grid(row=1, column=2, rowspan=4, sticky=tkinter.NSEW)
 
-        self.event.grid_columnconfigure(0, uniform='cole', weight=3)
-        self.event.grid_columnconfigure(1, uniform='cole', weight=1)
-        self.event.grid_columnconfigure(2, uniform='cole', weight=1)
-        self.event.grid_columnconfigure(3, uniform='cole', weight=1)
-        self.event.grid_rowconfigure(0, uniform='rowe', weight=1)
-        self.event.grid_rowconfigure(1, uniform='rowe', weight=1)
+        self.event.grid_columnconfigure(0, uniform="cole", weight=3)
+        self.event.grid_columnconfigure(1, uniform="cole", weight=1)
+        self.event.grid_columnconfigure(2, uniform="cole", weight=1)
+        self.event.grid_columnconfigure(3, uniform="cole", weight=1)
+        self.event.grid_rowconfigure(0, uniform="rowe", weight=1)
+        self.event.grid_rowconfigure(1, uniform="rowe", weight=1)
 
         self.eventname = tkinter.Entry(
-            master=self.event,
-            state='readonly',
-            takefocus=0)
+            master=self.event, state="readonly", takefocus=0
+        )
         self.eventstartdate = tkinter.Entry(
-            master=self.event,
-            state='readonly',
-            takefocus=0)
+            master=self.event, state="readonly", takefocus=0
+        )
         self.eventenddate = tkinter.Entry(
-            master=self.event,
-            state='readonly',
-            takefocus=0)
+            master=self.event, state="readonly", takefocus=0
+        )
         self.eventcode = tkinter.Entry(master=self.event)
 
-        self.eventname.grid(
-            row=1, column=0, sticky=tkinter.EW)
-        self.eventstartdate.grid(
-            row=1, column=1, sticky=tkinter.EW)
-        self.eventenddate.grid(
-            row=1, column=2, sticky=tkinter.EW)
-        self.eventcode.grid(
-            row=1, column=3, sticky=tkinter.EW)
+        self.eventname.grid(row=1, column=0, sticky=tkinter.EW)
+        self.eventstartdate.grid(row=1, column=1, sticky=tkinter.EW)
+        self.eventenddate.grid(row=1, column=2, sticky=tkinter.EW)
+        self.eventcode.grid(row=1, column=3, sticky=tkinter.EW)
 
-        label = tkinter.Label(master=self.event, text='Name')
-        label.grid(
-            row=0, column=0, sticky=tkinter.W)
-        label = tkinter.Label(master=self.event, text='Start Date')
-        label.grid(
-            row=0, column=1, sticky=tkinter.W)
-        label = tkinter.Label(master=self.event, text='End Date')
-        label.grid(
-            row=0, column=2, sticky=tkinter.W)
-        label = tkinter.Label(master=self.event, text='ECF Code')
-        label.grid(
-            row=0, column=3, sticky=tkinter.W)
+        label = tkinter.Label(master=self.event, text="Name")
+        label.grid(row=0, column=0, sticky=tkinter.W)
+        label = tkinter.Label(master=self.event, text="Start Date")
+        label.grid(row=0, column=1, sticky=tkinter.W)
+        label = tkinter.Label(master=self.event, text="End Date")
+        label.grid(row=0, column=2, sticky=tkinter.W)
+        label = tkinter.Label(master=self.event, text="ECF Code")
+        label.grid(row=0, column=3, sticky=tkinter.W)
 
-        self.gradingofficer.grid_columnconfigure(0, uniform='colg', weight=1)
-        self.gradingofficer.grid_rowconfigure(0, uniform='rowg', weight=1)
-        self.gradingofficer.grid_rowconfigure(1, uniform='rowg', weight=1)
-        self.gradingofficer.grid_rowconfigure(2, uniform='rowg', weight=1)
-        self.gradingofficer.grid_rowconfigure(3, uniform='rowg', weight=1)
-        self.gradingofficer.grid_rowconfigure(4, uniform='rowg', weight=1)
-        self.gradingofficer.grid_rowconfigure(5, uniform='rowg', weight=2)
-        self.gradingofficer.grid_rowconfigure(6, uniform='rowg', weight=1)
-        self.gradingofficer.grid_rowconfigure(7, uniform='rowg', weight=1)
+        self.gradingofficer.grid_columnconfigure(0, uniform="colg", weight=1)
+        self.gradingofficer.grid_rowconfigure(0, uniform="rowg", weight=1)
+        self.gradingofficer.grid_rowconfigure(1, uniform="rowg", weight=1)
+        self.gradingofficer.grid_rowconfigure(2, uniform="rowg", weight=1)
+        self.gradingofficer.grid_rowconfigure(3, uniform="rowg", weight=1)
+        self.gradingofficer.grid_rowconfigure(4, uniform="rowg", weight=1)
+        self.gradingofficer.grid_rowconfigure(5, uniform="rowg", weight=2)
+        self.gradingofficer.grid_rowconfigure(6, uniform="rowg", weight=1)
+        self.gradingofficer.grid_rowconfigure(7, uniform="rowg", weight=1)
 
         self.gradername = tkinter.Entry(master=self.gradingofficer)
         self.graderemail = tkinter.Entry(master=self.gradingofficer)
-        self.graderaddress = tkinter.Text(
-            master=self.gradingofficer, height=2)
+        self.graderaddress = tkinter.Text(master=self.gradingofficer, height=2)
         self.graderpostcode = tkinter.Entry(master=self.gradingofficer)
 
-        self.gradername.grid(
-            row=1, column=0, sticky=tkinter.EW)
-        self.graderemail.grid(
-            row=3, column=0, sticky=tkinter.EW)
-        self.graderaddress.grid(
-            row=5, column=0, sticky=tkinter.NSEW)
-        self.graderpostcode.grid(
-            row=7, column=0, sticky=tkinter.EW)
+        self.gradername.grid(row=1, column=0, sticky=tkinter.EW)
+        self.graderemail.grid(row=3, column=0, sticky=tkinter.EW)
+        self.graderaddress.grid(row=5, column=0, sticky=tkinter.NSEW)
+        self.graderpostcode.grid(row=7, column=0, sticky=tkinter.EW)
 
-        label = tkinter.Label(master=self.gradingofficer, text='Name')
-        label.grid(
-            row=0, column=0, sticky=tkinter.SW)
-        label = tkinter.Label(master=self.gradingofficer, text='email')
-        label.grid(
-            row=2, column=0, sticky=tkinter.SW)
-        label = tkinter.Label(master=self.gradingofficer, text='Address')
-        label.grid(
-            row=4, column=0, sticky=tkinter.SW)
-        label = tkinter.Label(master=self.gradingofficer, text='Post Code')
-        label.grid(
-            row=6, column=0, sticky=tkinter.SW)
+        label = tkinter.Label(master=self.gradingofficer, text="Name")
+        label.grid(row=0, column=0, sticky=tkinter.SW)
+        label = tkinter.Label(master=self.gradingofficer, text="email")
+        label.grid(row=2, column=0, sticky=tkinter.SW)
+        label = tkinter.Label(master=self.gradingofficer, text="Address")
+        label.grid(row=4, column=0, sticky=tkinter.SW)
+        label = tkinter.Label(master=self.gradingofficer, text="Post Code")
+        label.grid(row=6, column=0, sticky=tkinter.SW)
 
-        self.gamefeeinvoice.grid_columnconfigure(0, uniform='colg', weight=1)
-        self.gamefeeinvoice.grid_rowconfigure(0, uniform='rowg', weight=1)
-        self.gamefeeinvoice.grid_rowconfigure(1, uniform='rowg', weight=1)
-        self.gamefeeinvoice.grid_rowconfigure(2, uniform='rowg', weight=1)
-        self.gamefeeinvoice.grid_rowconfigure(3, uniform='rowg', weight=2)
-        self.gamefeeinvoice.grid_rowconfigure(4, uniform='rowg', weight=1)
-        self.gamefeeinvoice.grid_rowconfigure(5, uniform='rowg', weight=1)
+        self.gamefeeinvoice.grid_columnconfigure(0, uniform="colg", weight=1)
+        self.gamefeeinvoice.grid_rowconfigure(0, uniform="rowg", weight=1)
+        self.gamefeeinvoice.grid_rowconfigure(1, uniform="rowg", weight=1)
+        self.gamefeeinvoice.grid_rowconfigure(2, uniform="rowg", weight=1)
+        self.gamefeeinvoice.grid_rowconfigure(3, uniform="rowg", weight=2)
+        self.gamefeeinvoice.grid_rowconfigure(4, uniform="rowg", weight=1)
+        self.gamefeeinvoice.grid_rowconfigure(5, uniform="rowg", weight=1)
 
         self.treasurername = tkinter.Entry(master=self.gamefeeinvoice)
         self.treasureraddress = tkinter.Text(
-            master=self.gamefeeinvoice, height=2)
+            master=self.gamefeeinvoice, height=2
+        )
         self.treasurerpostcode = tkinter.Entry(master=self.gamefeeinvoice)
 
-        self.treasurername.grid(
-            row=1, column=0, sticky=tkinter.EW)
-        self.treasureraddress.grid(
-            row=3, column=0, sticky=tkinter.NSEW)
-        self.treasurerpostcode.grid(
-            row=5, column=0, sticky=tkinter.EW)
+        self.treasurername.grid(row=1, column=0, sticky=tkinter.EW)
+        self.treasureraddress.grid(row=3, column=0, sticky=tkinter.NSEW)
+        self.treasurerpostcode.grid(row=5, column=0, sticky=tkinter.EW)
 
-        label = tkinter.Label(master=self.gamefeeinvoice, text='Name')
-        label.grid(
-            row=0, column=0, sticky=tkinter.SW)
-        label = tkinter.Label(master=self.gamefeeinvoice, text='Address')
-        label.grid(
-            row=2, column=0, sticky=tkinter.SW)
-        label = tkinter.Label(master=self.gamefeeinvoice, text='Post Code')
-        label.grid(
-            row=4, column=0, sticky=tkinter.SW)
+        label = tkinter.Label(master=self.gamefeeinvoice, text="Name")
+        label.grid(row=0, column=0, sticky=tkinter.SW)
+        label = tkinter.Label(master=self.gamefeeinvoice, text="Address")
+        label.grid(row=2, column=0, sticky=tkinter.SW)
+        label = tkinter.Label(master=self.gamefeeinvoice, text="Post Code")
+        label.grid(row=4, column=0, sticky=tkinter.SW)
 
-        self.colour.grid_columnconfigure(0, uniform='colc', weight=1)
-        self.colour.grid_columnconfigure(1, uniform='colc', weight=1)
-        self.colour.grid_columnconfigure(2, uniform='colc', weight=1)
-        self.colour.grid_rowconfigure(0, uniform='rowc', weight=1)
-        self.colour.grid_rowconfigure(1, uniform='rowc', weight=1)
+        self.colour.grid_columnconfigure(0, uniform="colc", weight=1)
+        self.colour.grid_columnconfigure(1, uniform="colc", weight=1)
+        self.colour.grid_columnconfigure(2, uniform="colc", weight=1)
+        self.colour.grid_rowconfigure(0, uniform="rowc", weight=1)
+        self.colour.grid_rowconfigure(1, uniform="rowc", weight=1)
 
         self.defaultcolour = tkinter.IntVar()
 
         radiobutton = tkinter.Radiobutton(
             master=self.colour,
-            text='Unset',
+            text="Unset",
             variable=self.defaultcolour,
-            value=0)
+            value=0,
+        )
         radiobutton.grid(row=0, column=0, sticky=tkinter.NSEW)
         radiobutton = tkinter.Radiobutton(
             master=self.colour,
-            text='Black on All',
+            text="Black on All",
             variable=self.defaultcolour,
-            value=1)
+            value=1,
+        )
         radiobutton.grid(row=0, column=1, sticky=tkinter.NSEW)
         radiobutton = tkinter.Radiobutton(
             master=self.colour,
-            text='Black on Odd',
+            text="Black on Odd",
             variable=self.defaultcolour,
-            value=2)
+            value=2,
+        )
         radiobutton.grid(row=0, column=2, sticky=tkinter.NSEW)
         radiobutton = tkinter.Radiobutton(
             master=self.colour,
-            text='None',
+            text="None",
             variable=self.defaultcolour,
-            value=3)
+            value=3,
+        )
         radiobutton.grid(row=1, column=0, sticky=tkinter.NSEW)
         radiobutton = tkinter.Radiobutton(
             master=self.colour,
-            text='White on All',
+            text="White on All",
             variable=self.defaultcolour,
-            value=4)
+            value=4,
+        )
         radiobutton.grid(row=1, column=1, sticky=tkinter.NSEW)
         radiobutton = tkinter.Radiobutton(
             master=self.colour,
-            text='White on Odd',
+            text="White on Odd",
             variable=self.defaultcolour,
-            value=5)
+            value=5,
+        )
         radiobutton.grid(row=1, column=2, sticky=tkinter.NSEW)
-        
-        self.adjudicate.grid_columnconfigure(0, uniform='cola', weight=1)
-        self.adjudicate.grid_columnconfigure(1, uniform='cola', weight=1)
-        self.adjudicate.grid_columnconfigure(2, uniform='cola', weight=1)
-        self.adjudicate.grid_columnconfigure(3, uniform='cola', weight=1)
-        self.adjudicate.grid_rowconfigure(0, uniform='rowa', weight=1)
+
+        self.adjudicate.grid_columnconfigure(0, uniform="cola", weight=1)
+        self.adjudicate.grid_columnconfigure(1, uniform="cola", weight=1)
+        self.adjudicate.grid_columnconfigure(2, uniform="cola", weight=1)
+        self.adjudicate.grid_columnconfigure(3, uniform="cola", weight=1)
+        self.adjudicate.grid_rowconfigure(0, uniform="rowa", weight=1)
 
         self.adjudication = tkinter.IntVar()
 
         radiobutton = tkinter.Radiobutton(
             master=self.adjudicate,
-            text='Unset',
+            text="Unset",
             variable=self.adjudication,
-            value=0)
+            value=0,
+        )
         radiobutton.grid(row=0, column=0, sticky=tkinter.NSEW)
         radiobutton = tkinter.Radiobutton(
             master=self.adjudicate,
-            text='Maybe',
+            text="Maybe",
             variable=self.adjudication,
-            value=1)
+            value=1,
+        )
         radiobutton.grid(row=0, column=1, sticky=tkinter.NSEW)
         radiobutton = tkinter.Radiobutton(
             master=self.adjudicate,
-            text='No',
+            text="No",
             variable=self.adjudication,
-            value=2)
+            value=2,
+        )
         radiobutton.grid(row=0, column=2, sticky=tkinter.NSEW)
         radiobutton = tkinter.Radiobutton(
             master=self.adjudicate,
-            text='Yes',
+            text="Yes",
             variable=self.adjudication,
-            value=3)
+            value=3,
+        )
         radiobutton.grid(row=0, column=3, sticky=tkinter.NSEW)
-        
-        self.inform.grid_columnconfigure(0, uniform='coli', weight=1)
-        self.inform.grid_rowconfigure(0, uniform='rowi', weight=1)
-        self.inform.grid_rowconfigure(1, uniform='rowi', weight=1)
-        self.inform.grid_rowconfigure(2, uniform='rowi', weight=1)
-        self.inform.grid_rowconfigure(3, uniform='rowi', weight=1)
-        self.inform.grid_rowconfigure(4, uniform='rowi', weight=1)
-        self.inform.grid_rowconfigure(5, uniform='rowi', weight=1)
-        self.inform.grid_rowconfigure(6, uniform='rowi', weight=1)
-        self.inform.grid_rowconfigure(7, uniform='rowi', weight=1)
-        self.inform.grid_rowconfigure(8, uniform='rowi', weight=1)
-        self.inform.grid_rowconfigure(9, uniform='rowi', weight=1)
+
+        self.inform.grid_columnconfigure(0, uniform="coli", weight=1)
+        self.inform.grid_rowconfigure(0, uniform="rowi", weight=1)
+        self.inform.grid_rowconfigure(1, uniform="rowi", weight=1)
+        self.inform.grid_rowconfigure(2, uniform="rowi", weight=1)
+        self.inform.grid_rowconfigure(3, uniform="rowi", weight=1)
+        self.inform.grid_rowconfigure(4, uniform="rowi", weight=1)
+        self.inform.grid_rowconfigure(5, uniform="rowi", weight=1)
+        self.inform.grid_rowconfigure(6, uniform="rowi", weight=1)
+        self.inform.grid_rowconfigure(7, uniform="rowi", weight=1)
+        self.inform.grid_rowconfigure(8, uniform="rowi", weight=1)
+        self.inform.grid_rowconfigure(9, uniform="rowi", weight=1)
 
         self.informchessmoves = tkinter.IntVar()
         self.informfide = tkinter.IntVar()
@@ -297,57 +268,53 @@ class NewEvent(panel.PlainPanel):
 
         checkbutton = tkinter.Checkbutton(
             master=self.inform,
-            text='ChessMoves',
-            variable=self.informchessmoves)
+            text="ChessMoves",
+            variable=self.informchessmoves,
+        )
         checkbutton.grid(row=0, column=0, sticky=tkinter.W)
         checkbutton = tkinter.Checkbutton(
-            master=self.inform,
-            text='FIDE',
-            variable=self.informfide)
+            master=self.inform, text="FIDE", variable=self.informfide
+        )
         checkbutton.grid(row=1, column=0, sticky=tkinter.W)
         checkbutton = tkinter.Checkbutton(
             master=self.inform,
-            text='Grand Prix',
-            variable=self.informgrandprix)
+            text="Grand Prix",
+            variable=self.informgrandprix,
+        )
         checkbutton.grid(row=2, column=0, sticky=tkinter.W)
         checkbutton = tkinter.Checkbutton(
-            master=self.inform,
-            text='East',
-            variable=self.informeast)
+            master=self.inform, text="East", variable=self.informeast
+        )
         checkbutton.grid(row=5, column=0, sticky=tkinter.W)
         checkbutton = tkinter.Checkbutton(
-            master=self.inform,
-            text='Midlands',
-            variable=self.informmidlands)
+            master=self.inform, text="Midlands", variable=self.informmidlands
+        )
         checkbutton.grid(row=6, column=0, sticky=tkinter.W)
         checkbutton = tkinter.Checkbutton(
-            master=self.inform,
-            text='North',
-            variable=self.informnorth)
+            master=self.inform, text="North", variable=self.informnorth
+        )
         checkbutton.grid(row=7, column=0, sticky=tkinter.W)
         checkbutton = tkinter.Checkbutton(
-            master=self.inform,
-            text='South',
-            variable=self.informsouth)
+            master=self.inform, text="South", variable=self.informsouth
+        )
         checkbutton.grid(row=8, column=0, sticky=tkinter.W)
         checkbutton = tkinter.Checkbutton(
-            master=self.inform,
-            text='West',
-            variable=self.informwest)
+            master=self.inform, text="West", variable=self.informwest
+        )
         checkbutton.grid(row=9, column=0, sticky=tkinter.W)
 
-        label = tkinter.Label(master=self.inform, text='Unions')
+        label = tkinter.Label(master=self.inform, text="Unions")
         label.grid(row=4, column=0, sticky=tkinter.SW)
 
-        self.rateofplay.grid_columnconfigure(0, uniform='colr', weight=1)
-        self.rateofplay.grid_columnconfigure(1, uniform='colr', weight=1)
-        self.rateofplay.grid_columnconfigure(2, uniform='colr', weight=1)
-        self.rateofplay.grid_columnconfigure(3, uniform='colr', weight=1)
-        self.rateofplay.grid_columnconfigure(4, uniform='colr', weight=1)
-        self.rateofplay.grid_rowconfigure(0, uniform='rowr', weight=1)
-        self.rateofplay.grid_rowconfigure(1, uniform='rowr', weight=1)
-        self.rateofplay.grid_rowconfigure(2, uniform='rowr', weight=1)
-        self.rateofplay.grid_rowconfigure(3, uniform='rowr', weight=1)
+        self.rateofplay.grid_columnconfigure(0, uniform="colr", weight=1)
+        self.rateofplay.grid_columnconfigure(1, uniform="colr", weight=1)
+        self.rateofplay.grid_columnconfigure(2, uniform="colr", weight=1)
+        self.rateofplay.grid_columnconfigure(3, uniform="colr", weight=1)
+        self.rateofplay.grid_columnconfigure(4, uniform="colr", weight=1)
+        self.rateofplay.grid_rowconfigure(0, uniform="rowr", weight=1)
+        self.rateofplay.grid_rowconfigure(1, uniform="rowr", weight=1)
+        self.rateofplay.grid_rowconfigure(2, uniform="rowr", weight=1)
+        self.rateofplay.grid_rowconfigure(3, uniform="rowr", weight=1)
 
         self.movesfirst = tkinter.Entry(master=self.rateofplay)
         self.moveslater = tkinter.Entry(master=self.rateofplay)
@@ -356,66 +323,67 @@ class NewEvent(panel.PlainPanel):
         self.minuteslater = tkinter.Entry(master=self.rateofplay)
         self.minuteslast = tkinter.Entry(master=self.rateofplay)
         self.secondspermove = tkinter.Entry(master=self.rateofplay)
-        
-        self.movesfirst.grid(
-            row=1, column=2, sticky=tkinter.EW)
-        self.moveslater.grid(
-            row=1, column=3, sticky=tkinter.EW)
-        self.minutesonly.grid(
-            row=2, column=1, sticky=tkinter.EW)
-        self.minutesfirst.grid(
-            row=2, column=2, sticky=tkinter.EW)
-        self.minuteslater.grid(
-            row=2, column=3, sticky=tkinter.EW)
-        self.minuteslast.grid(
-            row=2, column=4, sticky=tkinter.EW)
-        self.secondspermove.grid(
-            row=3, column=4, sticky=tkinter.EW)
 
-        label = tkinter.Label(master=self.rateofplay, text='Session')
+        self.movesfirst.grid(row=1, column=2, sticky=tkinter.EW)
+        self.moveslater.grid(row=1, column=3, sticky=tkinter.EW)
+        self.minutesonly.grid(row=2, column=1, sticky=tkinter.EW)
+        self.minutesfirst.grid(row=2, column=2, sticky=tkinter.EW)
+        self.minuteslater.grid(row=2, column=3, sticky=tkinter.EW)
+        self.minuteslast.grid(row=2, column=4, sticky=tkinter.EW)
+        self.secondspermove.grid(row=3, column=4, sticky=tkinter.EW)
+
+        label = tkinter.Label(master=self.rateofplay, text="Session")
         label.grid(row=0, column=0, sticky=tkinter.NSEW)
-        label = tkinter.Label(master=self.rateofplay, text='Only')
+        label = tkinter.Label(master=self.rateofplay, text="Only")
         label.grid(row=0, column=1, sticky=tkinter.NSEW)
-        label = tkinter.Label(master=self.rateofplay, text='First')
+        label = tkinter.Label(master=self.rateofplay, text="First")
         label.grid(row=0, column=2, sticky=tkinter.NSEW)
-        label = tkinter.Label(master=self.rateofplay, text='Later')
+        label = tkinter.Label(master=self.rateofplay, text="Later")
         label.grid(row=0, column=3, sticky=tkinter.NSEW)
-        label = tkinter.Label(master=self.rateofplay, text='Last')
+        label = tkinter.Label(master=self.rateofplay, text="Last")
         label.grid(row=0, column=4, sticky=tkinter.NSEW)
-        label = tkinter.Label(master=self.rateofplay, text='Moves')
+        label = tkinter.Label(master=self.rateofplay, text="Moves")
         label.grid(row=1, column=0, sticky=tkinter.NSEW)
-        label = tkinter.Label(master=self.rateofplay, text='All')
+        label = tkinter.Label(master=self.rateofplay, text="All")
         label.grid(row=1, column=1, sticky=tkinter.NSEW)
-        label = tkinter.Label(master=self.rateofplay, text='Rest')
+        label = tkinter.Label(master=self.rateofplay, text="Rest")
         label.grid(row=1, column=4, sticky=tkinter.NSEW)
-        label = tkinter.Label(master=self.rateofplay, text='Minutes')
+        label = tkinter.Label(master=self.rateofplay, text="Minutes")
         label.grid(row=2, column=0, sticky=tkinter.NSEW)
         label = tkinter.Label(
-            master=self.rateofplay, text='Seconds added per Move')
-        label.grid(
-            row=3, column=2, sticky=tkinter.NSEW, columnspan=2)
+            master=self.rateofplay, text="Seconds added per Move"
+        )
+        label.grid(row=3, column=2, sticky=tkinter.NSEW, columnspan=2)
 
         db = self.get_appsys().get_results_database()
         self.eventrecord = resultsrecord.get_event_from_record_value(
             db.get_primary_record(
                 filespec.EVENT_FILE_DEF,
-                self.get_appsys().get_ecf_event_detail_context(
-                    ).eventgrid.selection[0][-1]))
-        self.ecfeventrecord = ecfrecord.get_ecf_event(db.get_primary_record(
-            filespec.ECFEVENT_FILE_DEF,
-            db.database_cursor(
+                self.get_appsys()
+                .get_ecf_event_detail_context()
+                .eventgrid.selection[0][-1],
+            )
+        )
+        self.ecfeventrecord = ecfrecord.get_ecf_event(
+            db.get_primary_record(
                 filespec.ECFEVENT_FILE_DEF,
-                filespec.ECFEVENTIDENTITY_FIELD_DEF
+                db.database_cursor(
+                    filespec.ECFEVENT_FILE_DEF,
+                    filespec.ECFEVENTIDENTITY_FIELD_DEF,
                 ).get_unique_primary_for_index_key(
                     db.encode_record_number(
-                        self.eventrecord.value.get_event_identity()))))
+                        self.eventrecord.value.get_event_identity()
+                    )
+                ),
+            )
+        )
         self.populate_event_control()
 
     def close(self):
         """Close resources prior to destroying this instance.
 
         Used, at least, as callback from AppSysFrame container.
-        
+
         """
         pass
 
@@ -423,136 +391,172 @@ class NewEvent(panel.PlainPanel):
         """Define all action buttons that may appear on events page."""
         self.define_button(
             self._btn_ok,
-            text='OK',
-            tooltip=' '.join((
-                'Put the event details on the database. Return to previous',
-                'display.')),
+            text="OK",
+            tooltip=" ".join(
+                (
+                    "Put the event details on the database. Return to previous",
+                    "display.",
+                )
+            ),
             switchpanel=True,
-            command=self.on_ok)
+            command=self.on_ok,
+        )
         self.define_button(
             self._btn_refresh,
-            text='Show Original Data',
-            tooltip='Clear the form and start again.',
+            text="Show Original Data",
+            tooltip="Clear the form and start again.",
             underline=5,
-            command=self.on_refresh)
+            command=self.on_refresh,
+        )
         self.define_button(
             self._btn_cancel,
-            text='Cancel',
-            tooltip=' '.join((
-                'Return to the previous display. Event details are NOT put',
-                'on database.')),
+            text="Cancel",
+            tooltip=" ".join(
+                (
+                    "Return to the previous display. Event details are NOT put",
+                    "on database.",
+                )
+            ),
             underline=2,
             switchpanel=True,
-            command=self.on_cancel)
+            command=self.on_cancel,
+        )
 
     def event_details_ok(self):
         """Return response from update validation and confirmation dialogue."""
 
         def change_value(control, value):
-            control.delete('1.0', tkinter.END)
+            control.delete("1.0", tkinter.END)
             control.insert(tkinter.END, value)
 
         def get_value(control):
-            return control.get('1.0', tkinter.END).rstrip()
+            return control.get("1.0", tkinter.END).rstrip()
 
         errors = []
         if len(self.eventname.get()) == 0:
-            errors.append('Event name not specified.')
+            errors.append("Event name not specified.")
         if len(self.eventname.get()) == 0:
-            errors.append('Event start date not specified.')
+            errors.append("Event start date not specified.")
         if len(self.eventname.get()) == 0:
-            errors.append('Event end date not specified.')
+            errors.append("Event end date not specified.")
         if len(self.gradername.get()) == 0:
             errors.append("Grader's name not specified.")
-        if (len(self.graderemail.get()) == 0 and
-            len(get_value(self.graderaddress)) == 0 and
-            len(self.graderpostcode.get()) == 0):
+        if (
+            len(self.graderemail.get()) == 0
+            and len(get_value(self.graderaddress)) == 0
+            and len(self.graderpostcode.get()) == 0
+        ):
             errors.append("Give grader's email or postal address.")
-        elif (len(self.graderemail.get()) != 0 and
-              (len(get_value(self.graderaddress)) != 0 or
-               len(self.graderpostcode.get()) != 0)):
+        elif len(self.graderemail.get()) != 0 and (
+            len(get_value(self.graderaddress)) != 0
+            or len(self.graderpostcode.get()) != 0
+        ):
             errors.append("Give one of grader's email and postal address.")
-        elif (len(self.graderemail.get()) == 0 and
-              (len(get_value(self.graderaddress)) == 0 or
-               len(self.graderpostcode.get()) == 0)):
+        elif len(self.graderemail.get()) == 0 and (
+            len(get_value(self.graderaddress)) == 0
+            or len(self.graderpostcode.get()) == 0
+        ):
             errors.append("Give grader's postal address and post code.")
         if self.defaultcolour.get() == 0:
-            errors.append('Colour rule not specified.')
-        if (len(self.movesfirst.get()) == 0 and
-            len(self.moveslater.get()) == 0 and
-            len(self.minutesonly.get()) == 0 and
-            len(self.minutesfirst.get()) == 0 and
-            len(self.minuteslater.get()) == 0 and
-            len(self.minuteslast.get()) == 0 and
-            len(self.secondspermove.get()) == 0):
-            errors.append('Rate of Play not specified')
-        elif ((len(self.movesfirst.get()) != 0 or
-               len(self.moveslater.get()) != 0 or
-               len(self.minutesfirst.get()) != 0 or
-               len(self.minuteslater.get()) != 0 or
-               len(self.minuteslast.get()) != 0) and
-              (len(self.minutesonly.get()) != 0 or
-               len(self.secondspermove.get()) != 0)):
-            errors.append(' '.join((
-                "Specify rate of play using 'Only session' column",
-                "or 'First Later and Last' session columns.")))
-        elif (len(self.minutesonly.get()) == 0 and
-              len(self.secondspermove.get()) == 0):
-            if (len(self.movesfirst.get()) == 0 or
-                len(self.minutesfirst.get()) == 0):
-                errors.append('First session rate of play not specified.')
-            if (len(self.moveslater.get()) == 0 and
-                len(self.minuteslater.get()) == 0 and
-                len(self.minuteslast.get()) != 0):
+            errors.append("Colour rule not specified.")
+        if (
+            len(self.movesfirst.get()) == 0
+            and len(self.moveslater.get()) == 0
+            and len(self.minutesonly.get()) == 0
+            and len(self.minutesfirst.get()) == 0
+            and len(self.minuteslater.get()) == 0
+            and len(self.minuteslast.get()) == 0
+            and len(self.secondspermove.get()) == 0
+        ):
+            errors.append("Rate of Play not specified")
+        elif (
+            len(self.movesfirst.get()) != 0
+            or len(self.moveslater.get()) != 0
+            or len(self.minutesfirst.get()) != 0
+            or len(self.minuteslater.get()) != 0
+            or len(self.minuteslast.get()) != 0
+        ) and (
+            len(self.minutesonly.get()) != 0
+            or len(self.secondspermove.get()) != 0
+        ):
+            errors.append(
+                " ".join(
+                    (
+                        "Specify rate of play using 'Only session' column",
+                        "or 'First Later and Last' session columns.",
+                    )
+                )
+            )
+        elif (
+            len(self.minutesonly.get()) == 0
+            and len(self.secondspermove.get()) == 0
+        ):
+            if (
+                len(self.movesfirst.get()) == 0
+                or len(self.minutesfirst.get()) == 0
+            ):
+                errors.append("First session rate of play not specified.")
+            if (
+                len(self.moveslater.get()) == 0
+                and len(self.minuteslater.get()) == 0
+                and len(self.minuteslast.get()) != 0
+            ):
                 pass
-            elif (len(self.moveslater.get()) != 0 and
-                  len(self.minuteslater.get()) != 0):
+            elif (
+                len(self.moveslater.get()) != 0
+                and len(self.minuteslater.get()) != 0
+            ):
                 pass
             else:
-                errors.append('Later session rate of play not specified.')
+                errors.append("Later session rate of play not specified.")
         elif len(self.minutesonly.get()) == 0:
-            errors.append('Only session rate of play not specified.')
+            errors.append("Only session rate of play not specified.")
         if self.adjudication.get() == 0:
-            errors.append('Adjudication option not specified.')
+            errors.append("Adjudication option not specified.")
         if len(errors):
             dlg = tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
-                message='\n'.join(errors),
-                title='Event Detail')
+                message="\n".join(errors),
+                title="Event Detail",
+            )
             return False
 
-        for rop in (self.movesfirst,
-                    self.moveslater,
-                    self.minutesonly,
-                    self.minutesfirst,
-                    self.minuteslater,
-                    self.minuteslast,
-                    self.secondspermove):
+        for rop in (
+            self.movesfirst,
+            self.moveslater,
+            self.minutesonly,
+            self.minutesfirst,
+            self.minuteslater,
+            self.minuteslast,
+            self.secondspermove,
+        ):
             v = rop.get().strip()
             if len(v) != 0:
                 if not v.isdigit():
-                    errors.append('Rate of Play specifications must be digits')
+                    errors.append("Rate of Play specifications must be digits")
                 else:
-                    #change_value(rop, v)
+                    # change_value(rop, v)
                     rop.delete(0, tkinter.END)
                     rop.insert(tkinter.END, v)
         if len(errors):
             dlg = tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
-                message='\n'.join(errors),
-                title='Event Detail')
+                message="\n".join(errors),
+                title="Event Detail",
+            )
             return False
 
         return tkinter.messagebox.askyesno(
             parent=self.get_widget(),
-            message='Confirm request to update event details',
-            title='Event Detail')
+            message="Confirm request to update event details",
+            title="Event Detail",
+        )
 
     def new_event_update(self):
         """Return response from insert validation and confirmation dialogue."""
 
         def get_value(control):
-            return control.get('1.0', tkinter.END).rstrip()
+            return control.get("1.0", tkinter.END).rstrip()
 
         if self.ecfeventrecord is None:
             newrecord = ecfrecord.ECFrefDBrecordEvent()
@@ -595,36 +599,38 @@ class NewEvent(panel.PlainPanel):
             newrecord.key.recno = None
             newrecord.put_record(
                 self.get_appsys().get_results_database(),
-                filespec.ECFEVENT_FILE_DEF)
+                filespec.ECFEVENT_FILE_DEF,
+            )
         else:
             self.ecfeventrecord.edit_record(
                 self.get_appsys().get_results_database(),
                 filespec.ECFEVENT_FILE_DEF,
                 filespec.ECFEVENT_FIELD_DEF,
-                newrecord)
+                newrecord,
+            )
         self.get_appsys().get_results_database().commit()
 
     def on_cancel(self, event=None):
         """Cancel event details amendment."""
         if tkinter.messagebox.askyesno(
             parent=self.get_widget(),
-            message='Confirm request to cancel event details amendment',
-            title='Event Detail'):
+            message="Confirm request to cancel event details amendment",
+            title="Event Detail",
+        ):
             return
         self.inhibit_context_switch(self._btn_cancel)
 
     def on_refresh(self, event=None):
         """Clear event details form."""
         if self.ecfeventrecord is None:
-            msg = 'Confirm request to clear event details form'
+            msg = "Confirm request to clear event details form"
         else:
-            msg = ' '.join(
-                ('Confirm request to put event details',
-                 'from record on form'))
+            msg = " ".join(
+                ("Confirm request to put event details", "from record on form")
+            )
         if tkinter.messagebox.askyesno(
-            parent=self.get_widget(),
-            message=msg,
-            title='Event Detail'):
+            parent=self.get_widget(), message=msg, title="Event Detail"
+        ):
             self.populate_event_control()
 
     def on_ok(self, event=None):
@@ -638,7 +644,7 @@ class NewEvent(panel.PlainPanel):
         """Populate new event widget with data from record."""
 
         def change_text_value(control, value):
-            control.delete('1.0', tkinter.END)
+            control.delete("1.0", tkinter.END)
             control.insert(tkinter.END, value)
 
         def change_value(control, value):
@@ -648,13 +654,12 @@ class NewEvent(panel.PlainPanel):
         def change_fixed_value(control, value):
             control.configure(state=tkinter.NORMAL)
             change_value(control, value)
-            control.configure(state='readonly')
+            control.configure(state="readonly")
 
         if self.ecfeventrecord:
             v = self.ecfeventrecord.value
             change_fixed_value(self.eventname, v.eventname)
-            change_fixed_value(
-                self.eventstartdate, v.eventstartdate)
+            change_fixed_value(self.eventstartdate, v.eventstartdate)
             change_fixed_value(self.eventenddate, v.eventenddate)
             change_value(self.eventcode, v.eventcode)
             change_value(self.graderemail, v.graderemail)
@@ -682,29 +687,28 @@ class NewEvent(panel.PlainPanel):
             self.defaultcolour.set(v.defaultcolour)
             self.adjudication.set(v.adjudication)
         else:
+            change_fixed_value(self.eventname, self.eventrecord.value.name)
             change_fixed_value(
-                self.eventname, self.eventrecord.value.name)
+                self.eventstartdate, self.eventrecord.value.startdate
+            )
             change_fixed_value(
-                self.eventstartdate,
-                self.eventrecord.value.startdate)
-            change_fixed_value(
-                self.eventenddate,
-                self.eventrecord.value.enddate)
-            change_value(self.eventcode, '')
-            change_value(self.graderemail, '')
-            change_value(self.gradername, '')
-            change_text_value(self.graderaddress, '')
-            change_value(self.graderpostcode, '')
-            change_value(self.movesfirst, '')
-            change_value(self.moveslater, '')
-            change_value(self.minutesonly, '')
-            change_value(self.minutesfirst, '')
-            change_value(self.minuteslater, '')
-            change_value(self.minuteslast, '')
-            change_value(self.secondspermove, '')
-            change_value(self.treasurername, '')
-            change_text_value(self.treasureraddress, '')
-            change_value(self.treasurerpostcode, '')
+                self.eventenddate, self.eventrecord.value.enddate
+            )
+            change_value(self.eventcode, "")
+            change_value(self.graderemail, "")
+            change_value(self.gradername, "")
+            change_text_value(self.graderaddress, "")
+            change_value(self.graderpostcode, "")
+            change_value(self.movesfirst, "")
+            change_value(self.moveslater, "")
+            change_value(self.minutesonly, "")
+            change_value(self.minutesfirst, "")
+            change_value(self.minuteslater, "")
+            change_value(self.minuteslast, "")
+            change_value(self.secondspermove, "")
+            change_value(self.treasurername, "")
+            change_text_value(self.treasureraddress, "")
+            change_value(self.treasurerpostcode, "")
             self.informfide.set(0)
             self.informchessmoves.set(0)
             self.informgrandprix.set(0)

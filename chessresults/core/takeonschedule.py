@@ -7,7 +7,7 @@
 
 
 class TakeonSchedule(object):
-    
+
     """Schedule extracted from event schedule file.
 
     Team names are derived from match names.  This class supports editing of
@@ -29,28 +29,38 @@ class TakeonSchedule(object):
 
     def build_schedule(self, textlines):
         """Populate the event schedule from textlines."""
-        
+
         def get_match_name(text):
             """Extract match name from text and return state indicator."""
-            mn = text.split('=', 1)
+            mn = text.split("=", 1)
             if len(mn) != 2:
-                self.error.append(''.join((
-                    '"',
-                    text,
-                    '" is not a match name translation.',)))
+                self.error.append(
+                    "".join(
+                        (
+                            '"',
+                            text,
+                            '" is not a match name translation.',
+                        )
+                    )
+                )
                 return get_match_name
             name, translation = mn
             if name in self.match_names:
-                self.error.append(''.join((
-                    'Match name "',
-                    name,
-                    '" in "',
-                    text,
-                    '" is a duplicate')))
+                self.error.append(
+                    "".join(
+                        (
+                            'Match name "',
+                            name,
+                            '" in "',
+                            text,
+                            '" is a duplicate',
+                        )
+                    )
+                )
                 return get_match_name
             self.match_names[name] = translation
             return get_match_name
-        
+
         self.textlines = textlines
         state = None
         process = get_match_name

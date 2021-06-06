@@ -14,55 +14,94 @@ from . import ecfclubdb
 from . import ecfplayerdb
 from . import filespec
 
-New = 'New'
-_Change = 'Change'
-_Old = 'Old'
-txnFeedback = 'Feedback'
-txnNew = 'New'
-txnUpdate = 'Update'
-objtypeClub = 'Club'
-objtypePlayer = 'Player'
+New = "New"
+_Change = "Change"
+_Old = "Old"
+txnFeedback = "Feedback"
+txnNew = "New"
+txnUpdate = "Update"
+objtypeClub = "Club"
+objtypePlayer = "Player"
 
 _ecfupdateplayertxns = {
     ecfplayerdb._addplayer: New,
     ecfplayerdb._updateplayer: _Change,
     ecfplayerdb._deleteplayer: _Old,
-    }
+}
 _ecfupdateclubtxns = {
     ecfclubdb._addclub: New,
     ecfclubdb._updateclub: _Change,
     ecfclubdb._deleteclub: _Old,
-    }
-_badtxn = 'Unknown'
+}
+_badtxn = "Unknown"
 
-_ECFplayerclubsfields = ('CLUB1', 'CLUB2', 'CLUB3', 'CLUB4', 'CLUB5', 'CLUB6')
+_ECFplayerclubsfields = ("CLUB1", "CLUB2", "CLUB3", "CLUB4", "CLUB5", "CLUB6")
 
-_Eventdictkeys = tuple(('ECODE', 'ENAME', 'EBCF', 'EDATE', 'EFINALDATE',
-                        'ESUBMISSION', 'ETREASURER', 'EADDRESS1', 'EADDRESS2',
-                        'EADDRESS3', 'EADDRESS4', 'EPOSTCODE', 'EGRADER',
-                        'EGADDRESS1', 'EGADDRESS2', 'EGADDRESS3', 'EGADDRESS4',
-                        'EGPOSTCODE', 'EFIRSTMOVES', 'EFIRSTMINUTES',
-                        'ENEXTMOVES', 'ENEXTMINUTES', 'ERESTMINUTES',
-                        'EALLMINUTES', 'ESECPERMOVE', 'EADJUDICATED',
-                        'EGRANDPRIX', 'EFIDE', 'ECHESSMOVES', 'EEAST',
-                        'EMIDLAND', 'ENORTH', 'ESOUTH', 'EWEST', 'ECOLOR'))
-_Playerdictkeys = tuple(('PCODE', 'PNAME', 'PBCF', 'PDOB', 'PGENDER',
-                         'PDIRECT', 'PTITLE', 'PFIDE', 'PLENFORENAME',
-                         'PLENNICKNAME'))
+_Eventdictkeys = tuple(
+    (
+        "ECODE",
+        "ENAME",
+        "EBCF",
+        "EDATE",
+        "EFINALDATE",
+        "ESUBMISSION",
+        "ETREASURER",
+        "EADDRESS1",
+        "EADDRESS2",
+        "EADDRESS3",
+        "EADDRESS4",
+        "EPOSTCODE",
+        "EGRADER",
+        "EGADDRESS1",
+        "EGADDRESS2",
+        "EGADDRESS3",
+        "EGADDRESS4",
+        "EGPOSTCODE",
+        "EFIRSTMOVES",
+        "EFIRSTMINUTES",
+        "ENEXTMOVES",
+        "ENEXTMINUTES",
+        "ERESTMINUTES",
+        "EALLMINUTES",
+        "ESECPERMOVE",
+        "EADJUDICATED",
+        "EGRANDPRIX",
+        "EFIDE",
+        "ECHESSMOVES",
+        "EEAST",
+        "EMIDLAND",
+        "ENORTH",
+        "ESOUTH",
+        "EWEST",
+        "ECOLOR",
+    )
+)
+_Playerdictkeys = tuple(
+    (
+        "PCODE",
+        "PNAME",
+        "PBCF",
+        "PDOB",
+        "PGENDER",
+        "PDIRECT",
+        "PTITLE",
+        "PFIDE",
+        "PLENFORENAME",
+        "PLENNICKNAME",
+    )
+)
 
 
 class ECFrefDBkeyECFclub(KeyData):
 
-    """Primary key of club from ECF.
-    """
+    """Primary key of club from ECF."""
 
     pass
-        
+
 
 class ECFrefDBvalueECFclub(Value):
 
-    """Club data from ECF.
-    """
+    """Club data from ECF."""
 
     def __init__(self):
 
@@ -74,11 +113,13 @@ class ECFrefDBvalueECFclub(Value):
 
     def load(self, value):
         """Override, extract ECF club data from value into attributes."""
-        (self.ECFcode,
-         self.ECFactive,
-         self.ECFname,
-         self.ECFcountycode) = literal_eval(value)
-        
+        (
+            self.ECFcode,
+            self.ECFactive,
+            self.ECFname,
+            self.ECFcountycode,
+        ) = literal_eval(value)
+
     def pack(self):
         """Extend, return ECF club record and index data."""
         v = super(ECFrefDBvalueECFclub, self).pack()
@@ -86,41 +127,35 @@ class ECFrefDBvalueECFclub(Value):
         index[filespec.ECFCLUBCODE_FIELD_DEF] = [self.ECFcode]
         index[filespec.ECFCLUBNAME_FIELD_DEF] = [self.ECFname]
         return v
-        
+
     def pack_value(self, *a):
         """Override, return tuple of self attributes."""
-        return repr((self.ECFcode,
-                     self.ECFactive,
-                     self.ECFname,
-                     self.ECFcountycode))
-        
+        return repr(
+            (self.ECFcode, self.ECFactive, self.ECFname, self.ECFcountycode)
+        )
+
 
 class ECFrefDBrecordECFclub(Record):
 
-    """Club record from ECF.
-    """
+    """Club record from ECF."""
 
-    def __init__(self,
-                 keyclass=ECFrefDBkeyECFclub,
-                 valueclass=ECFrefDBvalueECFclub):
+    def __init__(
+        self, keyclass=ECFrefDBkeyECFclub, valueclass=ECFrefDBvalueECFclub
+    ):
 
-        super(ECFrefDBrecordECFclub, self).__init__(
-            keyclass,
-            valueclass)
+        super(ECFrefDBrecordECFclub, self).__init__(keyclass, valueclass)
 
 
 class ECFrefDBkeyECFplayer(KeyData):
 
-    """Primary key of player from ECF.
-    """
+    """Primary key of player from ECF."""
 
     pass
-        
+
 
 class ECFrefDBvalueECFplayer(Value):
 
-    """Player data from ECF.
-    """
+    """Player data from ECF."""
 
     def __init__(self):
 
@@ -133,12 +168,13 @@ class ECFrefDBvalueECFplayer(Value):
 
     def load(self, value):
         """Override, extract ECF player data from value into attributes."""
-        (self.ECFcode,
-         self.ECFactive,
-         self.ECFname,
-         self.ECFclubcodes,
-         self.ECFmerge,
-         ) = literal_eval(value)
+        (
+            self.ECFcode,
+            self.ECFactive,
+            self.ECFname,
+            self.ECFclubcodes,
+            self.ECFmerge,
+        ) = literal_eval(value)
 
     def pack(self):
         """Extend, return ECF player record and index data."""
@@ -150,40 +186,38 @@ class ECFrefDBvalueECFplayer(Value):
 
     def pack_value(self, *a):
         """Override, return tuple of self attributes."""
-        return repr((
-            self.ECFcode,
-            self.ECFactive,
-            self.ECFname,
-            self.ECFclubcodes,
-            self.ECFmerge))
-        
+        return repr(
+            (
+                self.ECFcode,
+                self.ECFactive,
+                self.ECFname,
+                self.ECFclubcodes,
+                self.ECFmerge,
+            )
+        )
+
 
 class ECFrefDBrecordECFplayer(Record):
 
-    """Player record from ECF.
-    """
+    """Player record from ECF."""
 
-    def __init__(self,
-                 keyclass=ECFrefDBkeyECFplayer,
-                 valueclass=ECFrefDBvalueECFplayer):
+    def __init__(
+        self, keyclass=ECFrefDBkeyECFplayer, valueclass=ECFrefDBvalueECFplayer
+    ):
 
-        super(ECFrefDBrecordECFplayer, self).__init__(
-            keyclass,
-            valueclass)
+        super(ECFrefDBrecordECFplayer, self).__init__(keyclass, valueclass)
 
 
 class ECFrefDBkeyECFdate(KeyData):
 
-    """Primary key of ECF date record.
-    """
+    """Primary key of ECF date record."""
 
     pass
-        
+
 
 class ECFrefDBvalueECFdate(Value):
 
-    """ECF date data.
-    """
+    """ECF date data."""
 
     def __init__(self):
 
@@ -192,31 +226,29 @@ class ECFrefDBvalueECFdate(Value):
         self.ECFtxntype = None
         self.ECFobjtype = None
         self.appliedECFdate = None
-        
+
     def pack(self):
         """Extend, return ECF publication date record and index data."""
         v = super(ECFrefDBvalueECFdate, self).pack()
         index = v[1]
         index[filespec.ECFDATE_FIELD_DEF] = [self.ECFdate]
         return v
-        
+
 
 class ECFrefDBrecordECFdate(Record):
 
-    """ECF date record.
-    """
+    """ECF date record."""
+
     most_recent_club_master_file_date = None
     most_recent_player_master_file_date = None
     applied_club_master_file_date = None
     applied_player_master_file_date = None
 
-    def __init__(self,
-                 keyclass=ECFrefDBkeyECFdate,
-                 valueclass=ECFrefDBvalueECFdate):
+    def __init__(
+        self, keyclass=ECFrefDBkeyECFdate, valueclass=ECFrefDBvalueECFdate
+    ):
 
-        super(ECFrefDBrecordECFdate, self).__init__(
-            keyclass,
-            valueclass)
+        super(ECFrefDBrecordECFdate, self).__init__(keyclass, valueclass)
 
     @staticmethod
     def get_most_recent_date(database, objtype, txntype=None):
@@ -224,7 +256,8 @@ class ECFrefDBrecordECFdate(Record):
         r = ECFrefDBrecordECFdate()
         mrd = None
         c = database.database_cursor(
-            filespec.ECFTXN_FILE_DEF, filespec.ECFDATE_FIELD_DEF)
+            filespec.ECFTXN_FILE_DEF, filespec.ECFDATE_FIELD_DEF
+        )
         try:
             d = c.last()
             while d:
@@ -232,7 +265,8 @@ class ECFrefDBrecordECFdate(Record):
                     database,
                     filespec.ECFTXN_FILE_DEF,
                     filespec.ECFDATE_FIELD_DEF,
-                    d)
+                    d,
+                )
                 if r.value.ECFobjtype == objtype:
                     if txntype == None:
                         mrd = r.value.ECFdate
@@ -249,7 +283,8 @@ class ECFrefDBrecordECFdate(Record):
     def records_exist(database):
         """Return True if ECF publication date records exist."""
         c = database.database_cursor(
-            filespec.ECFTXN_FILE_DEF, filespec.ECFTXN_FIELD_DEF)
+            filespec.ECFTXN_FILE_DEF, filespec.ECFTXN_FIELD_DEF
+        )
         try:
             if c.first():
                 r = True
@@ -268,7 +303,8 @@ class ECFrefDBrecordECFdate(Record):
         ac = None
         ap = None
         c = database.database_cursor(
-            filespec.ECFTXN_FILE_DEF, filespec.ECFDATE_FIELD_DEF)
+            filespec.ECFTXN_FILE_DEF, filespec.ECFDATE_FIELD_DEF
+        )
         try:
             d = c.last()
             while d:
@@ -276,7 +312,8 @@ class ECFrefDBrecordECFdate(Record):
                     database,
                     filespec.ECFTXN_FILE_DEF,
                     filespec.ECFDATE_FIELD_DEF,
-                    d)
+                    d,
+                )
                 if r.value.ECFtxntype == txnNew:
                     if r.value.ECFobjtype == objtypePlayer:
                         if mrp == None:
@@ -299,77 +336,71 @@ class ECFrefDBrecordECFdate(Record):
 
 class ECFrefDBkeyEvent(KeyData):
 
-    """Primary key of event.
-    """
+    """Primary key of event."""
 
     pass
-        
+
 
 class ECFrefDBvalueEvent(ValueList):
 
-    """Event data.
-    """
+    """Event data."""
 
-    attributes = dict(eventname=None,
-                      eventcode=None,
-                      eventstartdate=None,
-                      eventenddate=None,
-                      gradername=None,
-                      graderemail=None,
-                      graderaddress=None,
-                      graderpostcode=None,
-                      treasurername=None,
-                      treasureraddress=None,
-                      treasurerpostcode=None,
-                      defaultcolour=None,
-                      movesfirst=None,
-                      moveslater=None,
-                      minutesonly=None,
-                      minutesfirst=None,
-                      minuteslater=None,
-                      minuteslast=None,
-                      secondspermove=None,
-                      adjudication=None,
-                      informfide=None,
-                      informchessmoves=None,
-                      informgrandprix=None,
-                      informeast=None,
-                      informmidlands=None,
-                      informnorth=None,
-                      informsouth=None,
-                      informwest=None,
-                      submission=None,
-                      )
+    attributes = dict(
+        eventname=None,
+        eventcode=None,
+        eventstartdate=None,
+        eventenddate=None,
+        gradername=None,
+        graderemail=None,
+        graderaddress=None,
+        graderpostcode=None,
+        treasurername=None,
+        treasureraddress=None,
+        treasurerpostcode=None,
+        defaultcolour=None,
+        movesfirst=None,
+        moveslater=None,
+        minutesonly=None,
+        minutesfirst=None,
+        minuteslater=None,
+        minuteslast=None,
+        secondspermove=None,
+        adjudication=None,
+        informfide=None,
+        informchessmoves=None,
+        informgrandprix=None,
+        informeast=None,
+        informmidlands=None,
+        informnorth=None,
+        informsouth=None,
+        informwest=None,
+        submission=None,
+    )
     _attribute_order = tuple(sorted(attributes.keys()))
 
     def get_ecf_event_identity(self):
         """Return tab separated ECF event identity."""
-        return (
-            self.eventname,
-            self.eventstartdate,
-            self.eventenddate)
+        return (self.eventname, self.eventstartdate, self.eventenddate)
 
     def pack(self):
         """Extend, return ECF event record and index data."""
         v = super(ECFrefDBvalueEvent, self).pack()
         index = v[1]
         index[filespec.ECFEVENTIDENTITY_FIELD_DEF] = [
-            repr(self.get_ecf_event_identity())]
+            repr(self.get_ecf_event_identity())
+        ]
         return v
-        
+
 
 class ECFrefDBrecordEvent(Record):
 
-    """Event record.
-    """
+    """Event record."""
 
-    def __init__(self,
-                 keyclass=ECFrefDBkeyEvent,
-                 valueclass=ECFrefDBvalueEvent):
+    def __init__(
+        self, keyclass=ECFrefDBkeyEvent, valueclass=ECFrefDBvalueEvent
+    ):
 
-        super(ECFrefDBrecordEvent, self).__init__(
-            keyclass,
-            valueclass)
+        super(ECFrefDBrecordEvent, self).__init__(keyclass, valueclass)
 
 
 def get_ecf_player(database, key):
@@ -378,22 +409,23 @@ def get_ecf_player(database, key):
     pr = ECFrefDBrecordECFplayer()
     pr.load_record(p)
     return pr
-    
+
 
 def get_ecf_player_for_grading_code(database, key):
     """Return ECFrefDBrecordECFplayer instance for key on index or None."""
     r = database.get_primary_record(
         filespec.ECFPLAYER_FILE_DEF,
         database.database_cursor(
-            filespec.ECFPLAYER_FILE_DEF,
-            filespec.ECFPLAYERCODE_FIELD_DEF
-            ).get_unique_primary_for_index_key(
-                database.encode_record_selector(key)))
+            filespec.ECFPLAYER_FILE_DEF, filespec.ECFPLAYERCODE_FIELD_DEF
+        ).get_unique_primary_for_index_key(
+            database.encode_record_selector(key)
+        ),
+    )
     if r is not None:
         pr = ECFrefDBrecordECFplayer()
         pr.load_record(r)
         return pr
-    
+
 
 def get_ecf_club(database, key):
     """Return ECFrefDBrecordECFclub instance for dbrecord[key]."""
@@ -401,33 +433,34 @@ def get_ecf_club(database, key):
     cr = ECFrefDBrecordECFclub()
     cr.load_record(c)
     return cr
-    
+
 
 def get_ecf_club_details(database, key):
     """Return ECFrefDBrecordECFclub instance for key on index or null string."""
     pr = get_ecf_club_for_club_code(database, key)
     if pr is None:
-        return ''
+        return ""
     elif not pr.value.ECFactive:
-        return ''
+        return ""
     else:
-        return '\t'.join((key, pr.value.ECFname))
-    
+        return "\t".join((key, pr.value.ECFname))
+
 
 def get_ecf_club_for_club_code(database, key):
     """Return ECFrefDBrecordECFclub instance for key on index or None."""
     r = database.get_primary_record(
         filespec.ECFCLUB_FILE_DEF,
         database.database_cursor(
-            filespec.ECFCLUB_FILE_DEF,
-            filespec.ECFCLUBCODE_FIELD_DEF
-            ).get_unique_primary_for_index_key(
-                database.encode_record_selector(key)))
+            filespec.ECFCLUB_FILE_DEF, filespec.ECFCLUBCODE_FIELD_DEF
+        ).get_unique_primary_for_index_key(
+            database.encode_record_selector(key)
+        ),
+    )
     if r is not None:
         pr = ECFrefDBrecordECFclub()
         pr.load_record(r)
         return pr
-    
+
 
 def get_ecf_clubs_for_player(database, codelist):
     """Return (club name, ...) for most recent ECF transaction for player."""
@@ -437,7 +470,7 @@ def get_ecf_clubs_for_player(database, codelist):
         if cr is None:
             clubs.append(c)
         elif cr.value.ECFactive:
-            clubs.append(' '.join(cr.value.ECFname.split()))
+            clubs.append(" ".join(cr.value.ECFname.split()))
         else:
             clubs.append(c)
     return sorted(clubs)
@@ -451,30 +484,35 @@ def get_ecf_event(value):
     else:
         er = None
     return er
-    
+
 
 def get_merge_for_grading_code(database, key):
     """Return grading code with which key has been merged or key."""
     r = database.get_primary_record(
         filespec.ECFPLAYER_FILE_DEF,
         database.database_cursor(
-            filespec.ECFPLAYER_FILE_DEF,
-            filespec.ECFPLAYERCODE_FIELD_DEF
-            ).get_unique_primary_for_index_key(
-                database.encode_record_selector(key)))
+            filespec.ECFPLAYER_FILE_DEF, filespec.ECFPLAYERCODE_FIELD_DEF
+        ).get_unique_primary_for_index_key(
+            database.encode_record_selector(key)
+        ),
+    )
     if r is not None:
         pr = ECFrefDBrecordECFplayer()
         pr.load_record(r)
         try:
             if pr.value.ECFmerge:
-                if database.get_primary_record(
-                    filespec.ECFPLAYER_FILE_DEF,
-                    database.database_cursor(
+                if (
+                    database.get_primary_record(
                         filespec.ECFPLAYER_FILE_DEF,
-                        filespec.ECFPLAYERCODE_FIELD_DEF
+                        database.database_cursor(
+                            filespec.ECFPLAYER_FILE_DEF,
+                            filespec.ECFPLAYERCODE_FIELD_DEF,
                         ).get_unique_primary_for_index_key(
-                            database.encode_record_selector(pr.value.ECFmerge))
-                    ) is not None:
+                            database.encode_record_selector(pr.value.ECFmerge)
+                        ),
+                    )
+                    is not None
+                ):
                     return pr.value.ECFmerge
         except:
             pass

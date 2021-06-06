@@ -12,7 +12,13 @@ the database for the reported events.
 
 """
 
-from .gameobjects import Game, SwissMatchGame, SwissGame, MatchGame, MatchReport
+from .gameobjects import (
+    Game,
+    SwissMatchGame,
+    SwissGame,
+    MatchGame,
+    MatchReport,
+)
 from .resultsrecord import ResultsDBrecordEvent, ResultsDBrecordGame
 from .resultsrecord import ResultsDBrecordName, ResultsDBrecordPlayer
 from .resultsrecord import get_alias, get_name_from_record_value
@@ -23,9 +29,8 @@ from .gameresults import ecfresult
 
 
 class CollationDB(object):
-    
-    """Update results database from games in a Collation instance.
-    """
+
+    """Update results database from games in a Collation instance."""
 
     def __init__(self, games, database):
         """Note the games and database to be updated.
@@ -43,22 +48,22 @@ class CollationDB(object):
         Caller is responsible for commit or backout action.
 
         """
-        eventsections = dict() # {name : {section name : srkey, ...}, ...}
+        eventsections = dict()  # {name : {section name : srkey, ...}, ...}
         eventsamend = dict()
-        eventskey = dict()     # {srkey : name, ...}
-        eventsmap = dict()     # {name : srkey, ...}
+        eventskey = dict()  # {srkey : name, ...}
+        eventsmap = dict()  # {name : srkey, ...}
         namemanager = NameManager(self._database)
-        players = dict()       # {srkey: ResultsDBrecordPlayer instance, ...}
+        players = dict()  # {srkey: ResultsDBrecordPlayer instance, ...}
         playersamend = dict()
         playersgames = dict()
         playerskey = dict()
         playersmap = dict()
         newplayers = dict()
-        newgames = []          # [ResultsDBrecordGame instance, ...]
-        newgamesmap = dict()   # [instance attributes tuple : count, ...}
-        dbgames = []           # [ResultsDBrecordGame instance, ...]
-        dbgamesmap = dict()    # [instance attributes tuple : [key, ...], ...}
-        merges = dict()        # {key: ResultsDBrecordPlayer instance, ...}
+        newgames = []  # [ResultsDBrecordGame instance, ...]
+        newgamesmap = dict()  # [instance attributes tuple : count, ...}
+        dbgames = []  # [ResultsDBrecordGame instance, ...]
+        dbgamesmap = dict()  # [instance attributes tuple : [key, ...], ...}
+        merges = dict()  # {key: ResultsDBrecordPlayer instance, ...}
         mergesamend = dict()
 
         def get_players_blocking_update(buplayers):
@@ -66,21 +71,27 @@ class CollationDB(object):
             ret = []
             for bup in buplayers:
                 affiliation = get_affiliation_details(
-                    self._database, players[bup].value.affiliation)
+                    self._database, players[bup].value.affiliation
+                )
                 name, event, start, end, section, pin = bup
                 if section is None:
-                    section = ''
+                    section = ""
                 if pin is None:
-                    pin = ''
+                    pin = ""
                 if affiliation is None:
-                    affiliation = ''
-                ret.append('\t'.join((
-                    name,
-                    '  '.join((start, end, event)),
-                    section,
-                    str(pin),
-                    affiliation)))
-            return '\n'.join(ret)
+                    affiliation = ""
+                ret.append(
+                    "\t".join(
+                        (
+                            name,
+                            "  ".join((start, end, event)),
+                            section,
+                            str(pin),
+                            affiliation,
+                        )
+                    )
+                )
+            return "\n".join(ret)
 
         def set_name_list(namelist):
             """Return list of name keys for names."""
@@ -124,24 +135,27 @@ class CollationDB(object):
                     if pid not in playersamend:
                         playersamend[pid] = players[pid].clone()
                         playersamend[pid].value.reported_codes = list(
-                            player.reported_codes)
+                            player.reported_codes
+                        )
                     playersamend[pid].value.affiliation = None
-            elif (namemanager.get_code(affiliation) !=
-                  players[pid].value.affiliation):
+            elif (
+                namemanager.get_code(affiliation)
+                != players[pid].value.affiliation
+            ):
                 if pid not in playersamend:
                     playersamend[pid] = players[pid].clone()
                     playersamend[pid].value.reported_codes = list(
-                        player.reported_codes)
+                        player.reported_codes
+                    )
                 playersamend[pid].value.affiliation = namemanager.get_code(
-                    affiliation)
+                    affiliation
+                )
             playersgames[pid] = True
 
         def unset_player(skey):
             """Decrement affiliation and section counts and create key maps"""
             if skey not in playerskey:
-                pr = get_alias(
-                    self._database,
-                    skey)
+                pr = get_alias(self._database, skey)
                 a = pr.value.affiliation
                 if a is not None:
                     namemanager.unset_name(a)
@@ -156,7 +170,8 @@ class CollationDB(object):
                     pe.value.startdate,
                     pe.value.enddate,
                     ps,
-                    pr.value.pin)
+                    pr.value.pin,
+                )
                 playerskey[skey] = pid
                 playersmap[pid] = skey
                 players[pid] = pr
@@ -167,11 +182,13 @@ class CollationDB(object):
             competition = self._games[ugkey].competition
             for game in self._games[ugkey].games:
                 if isinstance(game, Game):
-                    if (game.homeplayer is None or
-                        game.awayplayer is None or
-                        game.result not in ecfresult):
+                    if (
+                        game.homeplayer is None
+                        or game.awayplayer is None
+                        or game.result not in ecfresult
+                    ):
                         continue
-                    elif game.gradegame != True: #to be only test eventually
+                    elif game.gradegame != True:  # to be only test eventually
                         continue
                 else:
                     continue
@@ -193,17 +210,18 @@ class CollationDB(object):
         use_events = []
         for e in eventsections:
             sections = list(eventsections[e].keys())
-            dbevents = get_events_matching_event_identity(
-                self._database,
-                e)
+            dbevents = get_events_matching_event_identity(self._database, e)
             replace_events = []
             for dbe in dbevents:
                 dbsections = dict()
                 for s in dbevents[dbe].value.sections:
-                    dbsections[get_name_from_record_value(
-                        self._database.get_primary_record(
-                            filespec.NAME_FILE_DEF,
-                            s)).value.name] = None
+                    dbsections[
+                        get_name_from_record_value(
+                            self._database.get_primary_record(
+                                filespec.NAME_FILE_DEF, s
+                            )
+                        ).value.name
+                    ] = None
                 for s in sections:
                     if s in dbsections:
                         replace_events.append((dbe, e, dbevents[dbe]))
@@ -227,18 +245,15 @@ class CollationDB(object):
             for dbe, e, record in dbevents:
                 for s in record.value.sections:
                     namemanager.unset_name(s)
-                for g in get_games_for_event(
-                    self._database,
-                    record):
+                for g in get_games_for_event(self._database, record):
                     for s in (
                         g.value.awayteam,
                         g.value.hometeam,
-                        g.value.section):
+                        g.value.section,
+                    ):
                         if s is not None:
                             namemanager.unset_name(s)
-                    for p in (
-                        g.value.homeplayer,
-                        g.value.awayplayer):
+                    for p in (g.value.homeplayer, g.value.awayplayer):
                         unset_player(p)
                     ig = []
                     d = g.value.__dict__
@@ -265,11 +280,13 @@ class CollationDB(object):
             competition = collation.competition
             for game in collation.games:
                 if isinstance(game, Game):
-                    if (game.homeplayer is None or
-                        game.awayplayer is None or
-                        game.result not in ecfresult):
+                    if (
+                        game.homeplayer is None
+                        or game.awayplayer is None
+                        or game.result not in ecfresult
+                    ):
                         continue
-                    elif game.gradegame != True: #to be only test eventually
+                    elif game.gradegame != True:  # to be only test eventually
                         continue
                 else:
                     continue
@@ -286,23 +303,27 @@ class CollationDB(object):
                     break
         if len(dbplayersdict):
             return (
-                ''.join(
-                    ('Demerge listed players and Identify using an ',
-                     'entry that is not being deleted.  Such entries ',
-                     'are not in this list.',
-                     )),
+                "".join(
+                    (
+                        "Demerge listed players and Identify using an ",
+                        "entry that is not being deleted.  Such entries ",
+                        "are not in this list.",
+                    )
+                ),
                 get_players_blocking_update(dbplayersdict),
-                )
+            )
         del dbplayers
         del dbplayersdict
-        
+
         """Put new events (no existing event records) in event map. Use an
         existing event record if one is available."""
         for n in eventsections:
             if n not in eventsmap:
                 er = ResultsDBrecordEvent()
                 er.value.name, er.value.startdate, er.value.enddate = n
-                er.value.sections = set_name_list(list(eventsections[n].keys()))
+                er.value.sections = set_name_list(
+                    list(eventsections[n].keys())
+                )
                 er.key.recno = None
                 er.put_record(self._database, filespec.EVENT_FILE_DEF)
                 eventsmap[n] = er.key.recno
@@ -320,11 +341,13 @@ class CollationDB(object):
             matchreport = isinstance(collation, MatchReport)
             for game in collation.games:
                 if isinstance(game, Game):
-                    if (game.homeplayer is None or
-                        game.awayplayer is None or
-                        game.result not in ecfresult):
+                    if (
+                        game.homeplayer is None
+                        or game.awayplayer is None
+                        or game.result not in ecfresult
+                    ):
                         continue
-                    elif game.gradegame != True: #to be only test eventually
+                    elif game.gradegame != True:  # to be only test eventually
                         continue
                 else:
                     continue
@@ -370,18 +393,24 @@ class CollationDB(object):
             competition = collation.competition
             for game in collation.games:
                 if isinstance(game, Game):
-                    if (game.homeplayer is None or
-                        game.awayplayer is None or
-                        game.result not in ecfresult):
+                    if (
+                        game.homeplayer is None
+                        or game.awayplayer is None
+                        or game.result not in ecfresult
+                    ):
                         continue
-                    elif game.gradegame != True: #to be only test eventually
+                    elif game.gradegame != True:  # to be only test eventually
                         continue
                 else:
                     continue
                 gr = ResultsDBrecordGame()
                 gr.key.recno = None
-                gr.value.homeplayer = playersmap[game.homeplayer.get_identity()]
-                gr.value.awayplayer = playersmap[game.awayplayer.get_identity()]
+                gr.value.homeplayer = playersmap[
+                    game.homeplayer.get_identity()
+                ]
+                gr.value.awayplayer = playersmap[
+                    game.awayplayer.get_identity()
+                ]
                 gr.value.homeplayerwhite = game.homeplayerwhite
                 gr.value.result = game.result
                 if game.date:
@@ -400,13 +429,16 @@ class CollationDB(object):
                 if isinstance(game, MatchGame):
                     gr.value.board = game.board
                 gr.value.event = eventsections[
-                    game.homeplayer.get_player_event()][competition]
+                    game.homeplayer.get_player_event()
+                ][competition]
                 gr.value.section = namemanager.get_code(competition)
                 if isinstance(collation, MatchReport):
                     gr.value.hometeam = namemanager.get_code_default(
-                        collation.hometeam)
+                        collation.hometeam
+                    )
                     gr.value.awayteam = namemanager.get_code_default(
-                        collation.awayteam)
+                        collation.awayteam
+                    )
                 else:
                     gr.value.hometeam = None
                     gr.value.awayteam = None
@@ -442,15 +474,17 @@ class CollationDB(object):
                     linkers.append(players[p].value.name)
         if len(linkers):
             return (
-                ''.join(
-                    ("These player's records cannot be deleted because they ",
-                     'link directly to ECF grading codes and probably link ',
-                     'other records for these players to their ECF grading ',
-                     'code.',
-                     )),
-                '\n'.join(linkers),
-                )
-                
+                "".join(
+                    (
+                        "These player's records cannot be deleted because they ",
+                        "link directly to ECF grading codes and probably link ",
+                        "other records for these players to their ECF grading ",
+                        "code.",
+                    )
+                ),
+                "\n".join(linkers),
+            )
+
         """Do the updates.
         Note that games are the only records that need creating at this
         stage. The other records (names players and events) had to be
@@ -469,46 +503,51 @@ class CollationDB(object):
                 self._database,
                 filespec.GAME_FILE_DEF,
                 filespec.GAME_FIELD_DEF,
-                ng)
-        for og in dbgames[len(newgames):]:
+                ng,
+            )
+        for og in dbgames[len(newgames) :]:
             og.delete_record(self._database, filespec.GAME_FILE_DEF)
-        for ng in newgames[len(dbgames):]:
+        for ng in newgames[len(dbgames) :]:
             ng.put_record(self._database, filespec.GAME_FILE_DEF)
         namemanager.update_names()
         for p in players:
             if not playersgames[p]:
                 players[p].delete_record(
-                    self._database, filespec.PLAYER_FILE_DEF)
+                    self._database, filespec.PLAYER_FILE_DEF
+                )
             elif p in playersamend:
                 players[p].edit_record(
                     self._database,
                     filespec.PLAYER_FILE_DEF,
                     filespec.PLAYER_FIELD_DEF,
-                    playersamend[p])
+                    playersamend[p],
+                )
         for m in merges:
             merges[m].edit_record(
                 self._database,
                 filespec.PLAYER_FILE_DEF,
                 filespec.PLAYER_FIELD_DEF,
-                mergesamend[m])
+                mergesamend[m],
+            )
         for e in eventsamend:
             eventskey[e].edit_record(
                 self._database,
                 filespec.EVENT_FILE_DEF,
                 filespec.EVENT_FIELD_DEF,
-                eventsamend[e])
+                eventsamend[e],
+            )
         for dbe, e, record in delete_events:
             record.delete_record(self._database, filespec.EVENT_FILE_DEF)
 
 
 class NameManager(object):
-    
+
     """Manage name lookup and reference counts for a collation.
 
     Originally local attributes of update_players but merge_players needs this
     stuff when handling take-on of results from ECF submission files and League
     program database dumps.
-    
+
     """
 
     def __init__(self, database):
@@ -516,10 +555,10 @@ class NameManager(object):
         super(NameManager, self).__init__()
         self._database = database
         # These were local attributes of CollationDB.update_results originally.
-        self.names = dict()        # {name : ResultsDBrecordName instance, ...}
-        self.namesamend = dict()   # {name : names[name].clone(), ...}
-        self.nameskey = dict()     # {srkey : name, ...}
-        self.namesmap = dict()     # {name : srkey, ...}
+        self.names = dict()  # {name : ResultsDBrecordName instance, ...}
+        self.namesamend = dict()  # {name : names[name].clone(), ...}
+        self.nameskey = dict()  # {srkey : name, ...}
+        self.namesmap = dict()  # {name : srkey, ...}
 
     def set_name(self, name):
         """Create name record adjust reference count and return key."""
@@ -527,10 +566,11 @@ class NameManager(object):
             nrdb = self._database.get_primary_record(
                 filespec.NAME_FILE_DEF,
                 self._database.database_cursor(
-                    filespec.NAME_FILE_DEF,
-                    filespec.NAMETEXT_FIELD_DEF
-                    ).get_unique_primary_for_index_key(
-                        self._database.encode_record_selector(name)))
+                    filespec.NAME_FILE_DEF, filespec.NAMETEXT_FIELD_DEF
+                ).get_unique_primary_for_index_key(
+                    self._database.encode_record_selector(name)
+                ),
+            )
             if nrdb is not None:
                 nrdb = get_name_from_record_value(nrdb)
             if nrdb is None:
@@ -557,9 +597,8 @@ class NameManager(object):
         """Adjust reference count for name key and return name."""
         if skey not in self.nameskey:
             nr = get_name_from_record_value(
-                self._database.get_primary_record(
-                    filespec.NAME_FILE_DEF,
-                    skey))
+                self._database.get_primary_record(filespec.NAME_FILE_DEF, skey)
+            )
             self.nameskey[skey] = nr.value.name
             name = self.nameskey[skey]
             self.namesmap[name] = skey
@@ -577,14 +616,15 @@ class NameManager(object):
                 rc = self.namesamend[n].value.reference_count
                 if rc <= 0:
                     self.names[n].delete_record(
-                        self._database,
-                        filespec.NAME_FILE_DEF)
+                        self._database, filespec.NAME_FILE_DEF
+                    )
                 elif self.names[n].value.reference_count != rc:
                     self.names[n].edit_record(
                         self._database,
                         filespec.NAME_FILE_DEF,
                         filespec.NAME_FIELD_DEF,
-                        self.namesamend[n])
+                        self.namesamend[n],
+                    )
 
     def get_code(self, name):
         """Return the code for the name from name:code map."""

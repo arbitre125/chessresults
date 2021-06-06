@@ -22,22 +22,17 @@ from ..core import filespec
 
 
 class NewIdentityDSS(DataSource):
-    
+
     """Define an interface between a database and user interface.
-    
+
     The database is an instance of a subclass of
     solentware_base/sqlite3api.Sqlite3api.
-    
+
     """
 
-    def __init__(
-        self,
-        dbhome,
-        dbset=None,
-        dbname=None,
-        newrow=None):
+    def __init__(self, dbhome, dbset=None, dbname=None, newrow=None):
         """Define an interface between sqlite3 database and GUI controls.
-        
+
         See superclass for description of arguments.
 
         """
@@ -45,4 +40,5 @@ class NewIdentityDSS(DataSource):
             dbhome,
             filespec.PLAYER_FILE_DEF,
             filespec.PLAYER_FIELD_DEF,
-            newrow=newrow)
+            newrow=newrow,
+        )

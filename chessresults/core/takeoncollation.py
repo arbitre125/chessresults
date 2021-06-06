@@ -11,8 +11,7 @@ from .importresults import get_player_identifier_from_game
 
 class TakeonCollation(importcollation.ImportCollation):
 
-    """Results extracted from a generic event report.
-    """
+    """Results extracted from a generic event report."""
 
     def __init__(self, reports, fixtures, importdata):
         """Extend, allow for noting merges."""
@@ -22,8 +21,8 @@ class TakeonCollation(importcollation.ImportCollation):
 
         self.reports = reports
         self.schedule = fixtures
-        self.report_order = [] #merge report orders for schedule and results
-        
+        self.report_order = []  # merge report orders for schedule and results
+
         self.error.extend(reports.error)
 
     def collate_game_players(self, game):
@@ -36,13 +35,17 @@ class TakeonCollation(importcollation.ImportCollation):
         """
         pl = []
         for player, pin, affiliation in (
-            (constants._homeplayer,
-             constants._homepin,
-             constants._homeaffiliation),
-            (constants._awayplayer,
-             constants._awaypin,
-             constants._awayaffiliation),
-            ):
+            (
+                constants._homeplayer,
+                constants._homepin,
+                constants._homeaffiliation,
+            ),
+            (
+                constants._awayplayer,
+                constants._awaypin,
+                constants._awayaffiliation,
+            ),
+        ):
             pk = get_player_identifier_from_game(game, player, pin)
             p = self.players.get(pk)
             if p is None:
@@ -52,7 +55,8 @@ class TakeonCollation(importcollation.ImportCollation):
                     startdate=game[constants._startdate],
                     enddate=game[constants._enddate],
                     section=game[constants._section],
-                    pin=game[pin])
+                    pin=game[pin],
+                )
                 if constants._board in game:
                     p.affiliation = game[affiliation]
                 self.players[pk] = p

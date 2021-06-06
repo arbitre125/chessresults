@@ -22,51 +22,51 @@ from . import ecfplayergrids, ecfdetail
 
 
 class ECFClubCodes(panel.PanedPanelGridSelectorBar):
-    
-    """The ECFClubCodes panel for a Results database.
-    """
 
-    _btn_affiliate = 'ecfclubcodes_affiliate'
-    _btn_ecf_club = 'ecfclubcodes_ecf_club'
-    _btn_ecf_club_download = 'ecfclubcodes_ecf_club_download'
-    _btn_no_club = 'ecfclubcodes_no_club'
+    """The ECFClubCodes panel for a Results database."""
+
+    _btn_affiliate = "ecfclubcodes_affiliate"
+    _btn_ecf_club = "ecfclubcodes_ecf_club"
+    _btn_ecf_club_download = "ecfclubcodes_ecf_club_download"
+    _btn_no_club = "ecfclubcodes_no_club"
 
     def __init__(self, parent=None, cnf=dict(), **kargs):
         """Extend and define the results database ECF club code panel."""
         self.newplayerclubgrid = None
         self.ecfclubcodegrid = None
 
-        super(ECFClubCodes, self).__init__(
-            parent=parent,
-            cnf=cnf,
-            **kargs)
+        super(ECFClubCodes, self).__init__(parent=parent, cnf=cnf, **kargs)
 
         self.show_panel_buttons(
-            (self._btn_affiliate,
-             self._btn_ecf_club,
-             self._btn_ecf_club_download,
-             self._btn_no_club,
-             ))
+            (
+                self._btn_affiliate,
+                self._btn_ecf_club,
+                self._btn_ecf_club_download,
+                self._btn_no_club,
+            )
+        )
         self.create_buttons()
 
-        self.newplayerclubgrid, self.ecfclubcodegrid = self.make_grids((
-            dict(
-                grid=ecfplayergrids.NewPlayerClubGrid,
-                selectlabel='Select Player:  ',
-                gridfocuskey='<KeyPress-F7>',
-                selectfocuskey='<KeyPress-F5>',
+        self.newplayerclubgrid, self.ecfclubcodegrid = self.make_grids(
+            (
+                dict(
+                    grid=ecfplayergrids.NewPlayerClubGrid,
+                    selectlabel="Select Player:  ",
+                    gridfocuskey="<KeyPress-F7>",
+                    selectfocuskey="<KeyPress-F5>",
                 ),
-            dict(
-                grid=ecfplayergrids.ECFClubCodeGrid,
-                selectlabel='Select Club Reference:  ',
-                gridfocuskey='<KeyPress-F8>',
-                selectfocuskey='<KeyPress-F6>',
+                dict(
+                    grid=ecfplayergrids.ECFClubCodeGrid,
+                    selectlabel="Select Club Reference:  ",
+                    gridfocuskey="<KeyPress-F8>",
+                    selectfocuskey="<KeyPress-F6>",
                 ),
-            ))
+            )
+        )
 
     def affiliate_players_to_club(self):
         """Mark selected players as affiliated to selected ECF club."""
-        msgtitle = 'Club Codes'
+        msgtitle = "Club Codes"
         npsel = self.newplayerclubgrid.selection
         npbkm = self.newplayerclubgrid.bookmarks
         ecsel = self.ecfclubcodegrid.selection
@@ -74,23 +74,31 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
 
         if len(npsel) + len(npbkm) == 0 or len(ecsel) == 0:
             if len(npsel) + len(ecsel) + len(npbkm) == 0:
-                msg = ' '.join((
-                    'No players selected for affiliation and',
-                    'no club selected either.'))
+                msg = " ".join(
+                    (
+                        "No players selected for affiliation and",
+                        "no club selected either.",
+                    )
+                )
             elif len(ecsel) == 0:
-                msg = 'No club selected for affiliation of player(s).'
-                msg = ' '.join((
-                    'No club selected for affiliation',
-                    'of selected player(s).'))
+                msg = "No club selected for affiliation of player(s)."
+                msg = " ".join(
+                    (
+                        "No club selected for affiliation",
+                        "of selected player(s).",
+                    )
+                )
             else:
-                msg = ' '.join((
-                    'No player(s) selected for affiliation',
-                    'to selected club.'))
+                msg = " ".join(
+                    (
+                        "No player(s) selected for affiliation",
+                        "to selected club.",
+                    )
+                )
 
             dlg = tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message=msg,
-                title=msgtitle)
+                parent=self.get_widget(), message=msg, title=msgtitle
+            )
             return
 
         players = npbkm[:]
@@ -99,26 +107,41 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
                 players.append(npsel[0])
         dlg = dialogue.ModalConfirm(
             parent=self,
-            title='Affiliate Players to Club',
-            text='\n\n'.join(
-                (' '.join(
-                    ('The players listed below will be affiliated to',
-                     self.ecfclubcodegrid.objects[ecsel[0]].value.ECFname,
-                     )),
-                 '\n'.join(
-                     [resultsrecord.get_player_name_text_tabs(
-                         db,
-                         resultsrecord.get_unpacked_player_identity(
-                             ecfmaprecord.get_player(
-                                 db, p[-1]).value.playername))
-                      for p in players]),
-                 )),
-            action_titles={'Cancel': 'Cancel Affiliate Players to Club',
-                           'Ok': 'Affiliate Players to Club'},
-            #close=('Cancel', 'Cancel Affiliate Players to Club', 'Tooltip',),
-            #ok=('Ok', 'Affiliate Players to Club', 'Tooltip',),
+            title="Affiliate Players to Club",
+            text="\n\n".join(
+                (
+                    " ".join(
+                        (
+                            "The players listed below will be affiliated to",
+                            self.ecfclubcodegrid.objects[
+                                ecsel[0]
+                            ].value.ECFname,
+                        )
+                    ),
+                    "\n".join(
+                        [
+                            resultsrecord.get_player_name_text_tabs(
+                                db,
+                                resultsrecord.get_unpacked_player_identity(
+                                    ecfmaprecord.get_player(
+                                        db, p[-1]
+                                    ).value.playername
+                                ),
+                            )
+                            for p in players
+                        ]
+                    ),
+                )
+            ),
+            action_titles={
+                "Cancel": "Cancel Affiliate Players to Club",
+                "Ok": "Affiliate Players to Club",
+            },
+            # close=('Cancel', 'Cancel Affiliate Players to Club', 'Tooltip',),
+            # ok=('Ok', 'Affiliate Players to Club', 'Tooltip',),
             wrap=tkinter.WORD,
-            tabstyle='tabular')
+            tabstyle="tabular",
+        )
         if not dlg.ok_pressed():
             return
 
@@ -132,13 +155,18 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
                 pr.load_record(self.newpersongrid.objects[p])
                 dlg = tkinter.messagebox.showinfo(
                     parent=self.get_widget(),
-                    message=''.join((
-                        resultsrecord.get_player_name_text(
-                            db, pr.value.get_unpacked_playername()),
-                        '\nrecord has been deleted.\n',
-                        'Cannot proceed with club code allocation ',
-                        'for this player.')),
-                    title=msgtitle)
+                    message="".join(
+                        (
+                            resultsrecord.get_player_name_text(
+                                db, pr.value.get_unpacked_playername()
+                            ),
+                            "\nrecord has been deleted.\n",
+                            "Cannot proceed with club code allocation ",
+                            "for this player.",
+                        )
+                    ),
+                    title=msgtitle,
+                )
                 continue
             newmr = mr.clone()
             newmr.value.clubcode = ecfrec.value.ECFcode
@@ -146,9 +174,10 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
                 db,
                 filespec.MAPECFCLUB_FILE_DEF,
                 filespec.MAPECFCLUB_FIELD_DEF,
-                newmr)
+                newmr,
+            )
         db.commit()
-            
+
         self.newplayerclubgrid.bookmarks[:] = []
         if ecsel[0] in self.ecfclubcodegrid.bookmarks:
             self.ecfclubcodegrid.bookmarks.remove(ecsel[0])
@@ -156,28 +185,29 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
         self.newplayerclubgrid.selection[:] = []
         self.clear_selector(True)
         self.ecfclubcodegrid.set_grid_properties()
-        self.refresh_controls((
-            self.newplayerclubgrid,
-            (db, filespec.PLAYER_FILE_DEF, filespec.PLAYERNAME_FIELD_DEF),
-            ))
+        self.refresh_controls(
+            (
+                self.newplayerclubgrid,
+                (db, filespec.PLAYER_FILE_DEF, filespec.PLAYERNAME_FIELD_DEF),
+            )
+        )
         return
 
     def affiliate_players_to_no_club(self):
         """Mark selected players as affiliated to no ECF club."""
-        msgtitle = 'Club Codes'
+        msgtitle = "Club Codes"
         npsel = self.newplayerclubgrid.selection
         npbkm = self.newplayerclubgrid.bookmarks
         db = self.get_appsys().get_results_database()
 
         if len(npsel) + len(npbkm) == 0:
-            msg = ' '.join((
-                'No player(s) selected for affiliation',
-                'to no club.'))
+            msg = " ".join(
+                ("No player(s) selected for affiliation", "to no club.")
+            )
 
             dlg = tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message=msg,
-                title=msgtitle)
+                parent=self.get_widget(), message=msg, title=msgtitle
+            )
             return
 
         players = npbkm[:]
@@ -186,26 +216,39 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
                 players.append(npsel[0])
         dlg = dialogue.ModalConfirm(
             parent=self,
-            title='Affiliate Players to Club',
-            text='\n\n'.join(
-                (' '.join(
-                    ('The players listed below will be affiliated to',
-                     'no club',
-                     )),
-                 '\n'.join(
-                     [resultsrecord.get_player_name_text_tabs(
-                         db,
-                         resultsrecord.get_unpacked_player_identity(
-                             ecfmaprecord.get_player(
-                                 db, p[-1]).value.playername))
-                      for p in players]),
-                 )),
-            action_titles={'Cancel': 'Cancel Affiliate Players to Club',
-                           'Ok': 'Affiliate Players to Club'},
-            #close=('Cancel', 'Cancel Affiliate Players to Club', 'Tooltip',),
-            #ok=('Ok', 'Affiliate Players to Club', 'Tooltip',),
+            title="Affiliate Players to Club",
+            text="\n\n".join(
+                (
+                    " ".join(
+                        (
+                            "The players listed below will be affiliated to",
+                            "no club",
+                        )
+                    ),
+                    "\n".join(
+                        [
+                            resultsrecord.get_player_name_text_tabs(
+                                db,
+                                resultsrecord.get_unpacked_player_identity(
+                                    ecfmaprecord.get_player(
+                                        db, p[-1]
+                                    ).value.playername
+                                ),
+                            )
+                            for p in players
+                        ]
+                    ),
+                )
+            ),
+            action_titles={
+                "Cancel": "Cancel Affiliate Players to Club",
+                "Ok": "Affiliate Players to Club",
+            },
+            # close=('Cancel', 'Cancel Affiliate Players to Club', 'Tooltip',),
+            # ok=('Ok', 'Affiliate Players to Club', 'Tooltip',),
             wrap=tkinter.WORD,
-            tabstyle='tabular')
+            tabstyle="tabular",
+        )
         if not dlg.ok_pressed():
             return
 
@@ -217,13 +260,18 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
                 pr.load_record(self.newpersongrid.objects[p])
                 dlg = tkinter.messagebox.showinfo(
                     parent=self.get_widget(),
-                    message=''.join((
-                        resultsrecord.get_player_name_text(
-                            db, pr.value.get_unpacked_playername()),
-                        '\nrecord has been deleted.\n',
-                        'Cannot proceed with club code allocation ',
-                        'for this player.')),
-                    title=msgtitle)
+                    message="".join(
+                        (
+                            resultsrecord.get_player_name_text(
+                                db, pr.value.get_unpacked_playername()
+                            ),
+                            "\nrecord has been deleted.\n",
+                            "Cannot proceed with club code allocation ",
+                            "for this player.",
+                        )
+                    ),
+                    title=msgtitle,
+                )
                 continue
             newmr = mr.clone()
             newmr.value.clubcode = False
@@ -231,23 +279,26 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
                 db,
                 filespec.MAPECFCLUB_FILE_DEF,
                 filespec.MAPECFCLUB_FIELD_DEF,
-                newmr)
+                newmr,
+            )
         db.commit()
-            
+
         self.newplayerclubgrid.bookmarks[:] = []
         self.newplayerclubgrid.selection[:] = []
         self.clear_selector(self.newplayerclubgrid)
-        self.refresh_controls((
-            self.newplayerclubgrid,
-            (db, filespec.PLAYER_FILE_DEF, filespec.PLAYERNAME_FIELD_DEF),
-            ))
+        self.refresh_controls(
+            (
+                self.newplayerclubgrid,
+                (db, filespec.PLAYER_FILE_DEF, filespec.PLAYERNAME_FIELD_DEF),
+            )
+        )
         return
 
     def close(self):
         """Close resources prior to destroying this instance.
 
         Used, at least, as callback from AppSysFrame container.
-        
+
         """
         pass
 
@@ -255,42 +306,48 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
         """Define all action buttons that may appear on ECF club codes page."""
         self.define_button(
             self._btn_affiliate,
-            text='Affiliate',
-            tooltip='Mark selected players affiliated to selected club.',
+            text="Affiliate",
+            tooltip="Mark selected players affiliated to selected club.",
             underline=1,
-            command=self.on_affiliate)
+            command=self.on_affiliate,
+        )
         self.define_button(
             self._btn_ecf_club,
-            text='New ECF Club',
-            tooltip='Edit new club name and code for ECF submission file.',
+            text="New ECF Club",
+            tooltip="Edit new club name and code for ECF submission file.",
             underline=10,
-            command=self.on_ecf_club)
+            command=self.on_ecf_club,
+        )
         self.define_button(
             self._btn_ecf_club_download,
-            text='Download Club Code',
+            text="Download Club Code",
             tooltip="Download club's details from ECF.",
             underline=2,
-            command=self.on_ecf_club_download)
+            command=self.on_ecf_club_download,
+        )
         self.define_button(
             self._btn_no_club,
-            text='No Club',
-            tooltip='Mark selected players not affiliated to any club.',
+            text="No Club",
+            tooltip="Mark selected players not affiliated to any club.",
             underline=1,
-            command=self.on_no_club)
+            command=self.on_no_club,
+        )
 
     def edit_new_club_ecf_detail(self):
         """Show dialogue to edit ECF form of new club details and do update."""
-        msgtitle = 'New Club Name'
+        msgtitle = "New Club Name"
         npsel = self.newplayerclubgrid.selection
         if len(npsel) == 0:
-            msg = ' '.join((
-                'Select the player whose ECF club detail',
-                'is to be modified (probably before first',
-                'submission of results for the new player).'))
+            msg = " ".join(
+                (
+                    "Select the player whose ECF club detail",
+                    "is to be modified (probably before first",
+                    "submission of results for the new player).",
+                )
+            )
             dlg = tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message=msg,
-                title=msgtitle)
+                parent=self.get_widget(), message=msg, title=msgtitle
+            )
             return
 
         db = self.get_appsys().get_results_database()
@@ -300,23 +357,33 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
             pr.load_record(self.newplayerclubgrid.objects[npsel[0]])
             dlg = tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
-                message=''.join((
-                    resultsrecord.get_player_name_text(
-                        db, pr.value.get_unpacked_playername()),
-                    '\nrecord has been deleted.\nCannot ',
-                    'proceed with amendment of ECF version of name.')),
-                title=msgtitle)
+                message="".join(
+                    (
+                        resultsrecord.get_player_name_text(
+                            db, pr.value.get_unpacked_playername()
+                        ),
+                        "\nrecord has been deleted.\nCannot ",
+                        "proceed with amendment of ECF version of name.",
+                    )
+                ),
+                title=msgtitle,
+            )
             return
         if mr.value.clubecfcode:
             if mr.value.clubcode is not None:
                 dlg = tkinter.messagebox.showinfo(
                     parent=self.get_widget(),
-                    message=''.join((
-                        resultsrecord.get_player_name_text(
-                            db, mr.value.get_unpacked_playername()),
-                        '\nrecord has ECF Club Code.\nCannot ',
-                        'proceed with amendment of ECF club details.')),
-                    title=msgtitle)
+                    message="".join(
+                        (
+                            resultsrecord.get_player_name_text(
+                                db, mr.value.get_unpacked_playername()
+                            ),
+                            "\nrecord has ECF Club Code.\nCannot ",
+                            "proceed with amendment of ECF club details.",
+                        )
+                    ),
+                    title=msgtitle,
+                )
                 return
 
         mr.database = db
@@ -339,20 +406,20 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
         """Affiliate player with club."""
         self.affiliate_players_to_club()
         self.ecfclubcodegrid.set_select_hint_label()
-        return 'break'
+        return "break"
 
     def on_ecf_club(self, event=None):
         """Edit ECF club name."""
         self.edit_new_club_ecf_detail()
-        return 'break'
+        return "break"
 
     def on_ecf_club_download(self, event=None):
         """Download ECF club code."""
         self.download_new_club_ecf_detail()
-        return 'break'
+        return "break"
 
     def on_no_club(self, event=None):
         """Affiliate player with no club."""
         self.affiliate_players_to_no_club()
         self.ecfclubcodegrid.set_select_hint_label()
-        return 'break'
+        return "break"

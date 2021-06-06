@@ -9,23 +9,24 @@ the api.database.Database and api.database.Cursor classes.
 
 import os
 import os.path
+
 # io may be used, for example, on csv files extracted from zip archives into
 # memory rather than to a permanent file or database.
 import io
 import threading
 
-#from ..api.database import DatabaseError, Database
-#from ..api import cursor
-#from ..api.constants import FILE, FOLDER, FIELDS
+# from ..api.database import DatabaseError, Database
+# from ..api import cursor
+# from ..api.constants import FILE, FOLDER, FIELDS
 from solentware_base.core.constants import FILE, FOLDER, FIELDS
 
 
-class TextapiError(Exception):#DatabaseError):
+class TextapiError(Exception):  # DatabaseError):
     pass
 
 
-class Textapi:#(Database):
-    
+class Textapi:  # (Database):
+
     """Implement Database API on a text file.
 
     The database is read only.
@@ -36,12 +37,12 @@ class Textapi:#(Database):
     record number is zero.
     Applications are expected to store instances of one class on a file.
     Each instance is a line of text on a file.
-    
+
     """
 
     def __init__(self, textdbfiles, textdbfolder):
         """Define database structure.
-        
+
         textdb = {
             file:{
                 folder:name,
@@ -53,7 +54,7 @@ class Textapi:#(Database):
         """
         # The database definition from dBasefiles after validation
         self.textdbfiles = None
-        
+
         # The folder from dBasefolder after validation
         self.textdbfolder = None
 
@@ -68,44 +69,58 @@ class Textapi:#(Database):
             try:
                 textdbfolder = os.path.abspath(textdbfolder)
             except:
-                msg = ' '.join(['Main folder name', str(textdbfolder),
-                                'is not valid'])
+                msg = " ".join(
+                    ["Main folder name", str(textdbfolder), "is not valid"]
+                )
                 raise TextapiError(msg)
-        
+
         for dd in textdbfiles:
             if len(dd) == 0:
-                raise TextapiError('Zero length file name')
-            
+                raise TextapiError("Zero length file name")
+
             try:
                 folder = textdbfiles[dd].get(FOLDER, None)
             except:
-                msg = ' '.join(['textdb file definition for', repr(dd),
-                                'must be a dictionary'])
+                msg = " ".join(
+                    [
+                        "textdb file definition for",
+                        repr(dd),
+                        "must be a dictionary",
+                    ]
+                )
                 raise TextapiError(msg)
-            
+
             if folder == None:
                 folder = textdbfolder
             if textdbfolder is not False:
                 try:
                     folder = os.path.abspath(folder)
-                    fname = os.path.join(folder,
-                                         textdbfiles[dd].get(FILE, None))
+                    fname = os.path.join(
+                        folder, textdbfiles[dd].get(FILE, None)
+                    )
                 except:
-                    msg = ' '.join(['File name for', dd, 'is invalid'])
+                    msg = " ".join(["File name for", dd, "is invalid"])
                     raise TextapiError(msg)
             else:
                 fname = textdbfiles[dd].get(FILE, None)
-            
+
             if fname in pathnames:
-                msg = ' '.join(['File name', fname,
-                                'linked to', pathnames[fname],
-                                'cannot link to', dd])
+                msg = " ".join(
+                    [
+                        "File name",
+                        fname,
+                        "linked to",
+                        pathnames[fname],
+                        "cannot link to",
+                        dd,
+                    ]
+                )
                 raise TextapiError(msg)
-            
+
             pathnames[fname] = dd
             files[dd] = {
                 FILE: fname,
-                }
+            }
 
             self.main[dd] = self.make_root(files[dd][FILE])
 
@@ -127,10 +142,10 @@ class Textapi:#(Database):
 
     def database_cursor(self, dbname, dummy, keyrange=None):
         """Create a cursor on dbname.
-        
+
         keyrange is an addition for DPT. It may yet be removed.
         dummy is ignored.  It is present for compatibility with bsddb.
-        
+
         """
         if self.main[dbname]._table_link != None:
             return self.main[dbname].make_cursor()
@@ -184,7 +199,7 @@ class Textapi:#(Database):
             if self.main[n]._table_link == None:
                 for m in self.main:
                     self.main[n].close()
-                msg = ' '.join(['Open file', repr(n)])
+                msg = " ".join(["Open file", repr(n)])
                 raise TextapiError(msg)
 
     def decode_as_primary_key(self, dbname, srkey):
@@ -201,18 +216,18 @@ class Textapi:#(Database):
 
 
 class TextapiRoot:
-    
+
     """Provide record access to a text file in bsddb style.
 
     The cursor instance returned by Cursor() duplicates many methods in
     this class.  The bsddb interface provides similar methods on the
     underlying database and via cursors on that database.  In that
     context the behaviour can be very diferrent.
-    
+
     """
 
     def __init__(self, filename):
-        
+
         self._localdata = threading.local()
         self._lock_text = threading.Lock()
         self._lock_text.acquire()
@@ -224,7 +239,7 @@ class TextapiRoot:
             self._lock_text.release()
 
     def __del__(self):
-        
+
         self.close()
 
     def close(self):
@@ -254,14 +269,14 @@ class TextapiRoot:
             self._lock_text.release()
 
     def open_root(self):
-        
+
         self._lock_text.acquire()
         try:
             try:
                 if isinstance(self.filename, io.BytesIO):
                     self._table_link = self.filename
                 else:
-                    self._table_link = open(self.filename, 'rb')
+                    self._table_link = open(self.filename, "rb")
                 self.textlines = self._table_link.read().splitlines()
                 self.record_count = len(self.textlines)
                 self._localdata.record_number = None
@@ -312,14 +327,14 @@ class TextapiRoot:
             return (self._localdata.record_select, value)
 
     def _set_closed_state(self):
-        
+
         self._table_link = None
         self.textlines = None
         self.record_count = None
         self._localdata.record_number = None
         self._localdata.record_select = None
         self._clientcursors.clear()
-        
+
     def _first_record(self):
         """Position at and return first line of text."""
         self._select_first()
@@ -389,12 +404,10 @@ class TextapiRoot:
             self._localdata.record_select = number
 
 
-class Cursor:#(cursor.Cursor):
-    
-    """Define cursor implemented using the Berkeley DB cursor methods.
-    
-    """
-    
+class Cursor:  # (cursor.Cursor):
+
+    """Define cursor implemented using the Berkeley DB cursor methods."""
+
     def __init__(self, dbobject, **kargs):
         """Cursor emulates parts of a bsddb3 cursor.
 
@@ -402,7 +415,7 @@ class Cursor:#(cursor.Cursor):
         kargs - absorb argunents relevant to other database engines.
 
         """
-        super().__init__()#dbobject)
+        super().__init__()  # dbobject)
         self._cursor = _CursorText(dbobject)
 
     def first(self):
@@ -428,7 +441,7 @@ class Cursor:#(cursor.Cursor):
 
         """
         pass
-        
+
     def _get_record(self, record):
         """Return record if key matches partial key (if any)."""
         return record
@@ -452,10 +465,10 @@ class Cursor:#(cursor.Cursor):
 
     def count_records(self):
         """return record count or None if cursor is not usable."""
-        #if not self.is_cursor_open():
+        # if not self.is_cursor_open():
         if self._cursor is None:
             return None
-        #return self.cursor_count()
+        # return self.cursor_count()
         return self._cursor._dbobject.record_count
 
     def get_position_of_record(self, record=None):
@@ -499,17 +512,17 @@ class Cursor:#(cursor.Cursor):
 
 
 class _CursorText:
-    
+
     """Define a text file cursor.
 
     Wrap the TextapiRoot methods in corresponding cursor method names.
     The methods with all lower case names emulate the bsddb cursor
     methods.
-    
+
     """
-    
+
     def __init__(self, dbobject):
-        
+
         self._dbobject = dbobject
         self._current = -1
 
@@ -586,4 +599,3 @@ class _CursorText:
 
         self._dbobject = None
         self._current = None
-

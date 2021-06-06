@@ -4,14 +4,15 @@
 
 """Results database application using OGD interface."""
 
-if __name__=='__main__':
+if __name__ == "__main__":
 
     import chessresults.gui.resultsroot
     import chessresults.gui.leagues_ogd
 
     app = chessresults.gui.resultsroot.Results(
-        title='ChessResultsOGD',
+        title="ChessResultsOGD",
         gui_module=chessresults.gui.leagues_ogd.Leagues,
         width=400,
-        height=200)
+        height=200,
+    )
     app.root.mainloop()

@@ -4,14 +4,15 @@
 
 """Results database application using ECF grading interface."""
 
-if __name__=='__main__':
+if __name__ == "__main__":
 
     import chessresults.gui.resultsroot
     import chessresults.gui.leagues
 
     app = chessresults.gui.resultsroot.Results(
-        title='ChessResultsGrading',
+        title="ChessResultsGrading",
         gui_module=chessresults.gui.leagues.Leagues,
         width=400,
-        height=200)
+        height=200,
+    )
     app.root.mainloop()

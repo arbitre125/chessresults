@@ -13,7 +13,7 @@ from solentware_grid.gui.datarow import (
     WIDGET_CONFIGURE,
     WIDGET,
     ROW,
-    )
+)
 
 from .datarow import DataRow
 from ..core import resultsrecord, ecfmaprecord, ecfgcodemaprecord
@@ -22,62 +22,70 @@ from ..core import filespec
 
 class ResultsDBrowEvent(resultsrecord.ResultsDBrecordEvent, DataRow):
 
-    """Display an Event record.
-    """
+    """Display an Event record."""
+
     header_specification = [
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Start date', anchor=tkinter.CENTER),
-         GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=0, uniform='edate'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='End date', anchor=tkinter.CENTER),
-         GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=0, uniform='edate'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Name', anchor=tkinter.CENTER),
-         GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='ename'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Sections', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='esections'),
-         ROW: 0,
-         },
-        ]
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Start date", anchor=tkinter.CENTER),
+            GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=0, uniform="edate"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="End date", anchor=tkinter.CENTER),
+            GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=0, uniform="edate"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Name", anchor=tkinter.CENTER),
+            GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="ename"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Sections", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="esections"),
+            ROW: 0,
+        },
+    ]
 
     def __init__(self, database=None):
         """Extend, link event record without affiliation to database."""
         super(ResultsDBrowEvent, self).__init__()
         self.set_database(database)
         self.row_specification = [
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
-             GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
-             GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
-             GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            ]
-        
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
+                GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
+                GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
+                GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
+                ROW: 0,
+            },
+        ]
+
     def grid_row(self, **kargs):
         """Return super(ResultsDBrowEvent,).grid_row(textitems=(...), **kargs).
 
@@ -86,68 +94,76 @@ class ResultsDBrowEvent(resultsrecord.ResultsDBrecordEvent, DataRow):
         """
         st = []
         for s in self.value.sections:
-            st.append(resultsrecord.get_name_from_record_value(
-                self.database.get_primary_record(
-                    filespec.NAME_FILE_DEF,
-                    s)))
+            st.append(
+                resultsrecord.get_name_from_record_value(
+                    self.database.get_primary_record(filespec.NAME_FILE_DEF, s)
+                )
+            )
 
         return super(ResultsDBrowEvent, self).grid_row(
             textitems=(
-                ''.join((self.value.startdate, '\t')),
-                ''.join((self.value.enddate, '\t')),
+                "".join((self.value.startdate, "\t")),
+                "".join((self.value.enddate, "\t")),
                 self.value.name,
-                '\t'.join([s.value.name.strip() for s in st])),
-            **kargs)
+                "\t".join([s.value.name.strip() for s in st]),
+            ),
+            **kargs
+        )
 
 
 class ResultsDBrowIdentity(resultsrecord.ResultsDBrecordPlayer, DataRow):
 
-    """Display an identified player record.
-    """
+    """Display an identified player record."""
+
     header_specification = [
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Name', anchor=tkinter.CENTER),
-         GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='iname'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(
-             text='Event details', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='ievent'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='isection'),
-         ROW: 0,
-         },
-        ]
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Name", anchor=tkinter.CENTER),
+            GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="iname"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Event details", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="ievent"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="isection"),
+            ROW: 0,
+        },
+    ]
 
     def __init__(self, database=None):
         """Extend, link identified player record to database."""
         super(ResultsDBrowIdentity, self).__init__()
         self.set_database(database)
         self.row_specification = [
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
-             GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            ]
-        
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
+                GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+                ROW: 0,
+            },
+        ]
+
     def grid_row(self, **kargs):
         """Return super(ResultsDBrowIdentity,).grid_row(textitems=(.), **kargs).
 
@@ -158,84 +174,95 @@ class ResultsDBrowIdentity(resultsrecord.ResultsDBrecordPlayer, DataRow):
             textitems=(
                 self.value.name,
                 resultsrecord.get_event_details(
-                    self.database, self.value.event),
+                    self.database, self.value.event
+                ),
                 resultsrecord.get_section_details(
-                    self.database,
-                    self.value.section,
-                    self.value.pin)),
-            **kargs)
+                    self.database, self.value.section, self.value.pin
+                ),
+            ),
+            **kargs
+        )
 
 
 class ResultsDBrowNewPlayer(resultsrecord.ResultsDBrecordPlayer, DataRow):
 
-    """Display a new player record.
-    """
+    """Display a new player record."""
+
     header_specification = [
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(
-             text='Name', anchor=tkinter.CENTER),
-         GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npname'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Event details', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npevent'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npsection'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Association', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npaff'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Reported Codes', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=4, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npcodes'),
-         ROW: 0,
-         },
-        ]
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Name", anchor=tkinter.CENTER),
+            GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npname"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Event details", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npevent"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npsection"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Association", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npaff"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Reported Codes", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=4, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npcodes"),
+            ROW: 0,
+        },
+    ]
 
     def __init__(self, database=None):
         """Extend, link new player record to database."""
         super(ResultsDBrowNewPlayer, self).__init__()
         self.set_database(database)
         self.row_specification = [
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
-             GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=4, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            ]
-        
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
+                GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=4, sticky=tkinter.EW),
+                ROW: 0,
+            },
+        ]
+
     def grid_row(self, **kargs):
         """Return super(ResultsDBrowNewPlayer).grid_row(textitems=(.), **kargs).
 
@@ -243,84 +270,93 @@ class ResultsDBrowNewPlayer(resultsrecord.ResultsDBrecordPlayer, DataRow):
 
         """
         if self.value.reported_codes:
-            reportedcodes = '   '.join(self.value.reported_codes)
+            reportedcodes = "   ".join(self.value.reported_codes)
         else:
-            reportedcodes = ''
+            reportedcodes = ""
         return super(ResultsDBrowNewPlayer, self).grid_row(
             textitems=(
                 self.value.name,
                 resultsrecord.get_event_details(
-                    self.database, self.value.event),
+                    self.database, self.value.event
+                ),
                 resultsrecord.get_section_details(
-                    self.database,
-                    self.value.section,
-                    self.value.pin),
+                    self.database, self.value.section, self.value.pin
+                ),
                 resultsrecord.get_affiliation_details(
-                    self.database,
-                    self.value.affiliation),
-                reportedcodes),
-            **kargs)
+                    self.database, self.value.affiliation
+                ),
+                reportedcodes,
+            ),
+            **kargs
+        )
 
 
 class ResultsDBrowAlias(resultsrecord.ResultsDBrecordPlayer, DataRow):
 
-    """Display an alias record.
-    """
+    """Display an alias record."""
+
     header_specification = [
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(
-             text='Name', anchor=tkinter.CENTER),
-         GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npname'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Event details', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npevent'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npsection'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Association', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npaff'),
-         ROW: 0,
-         },
-        ]
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Name", anchor=tkinter.CENTER),
+            GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npname"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Event details", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npevent"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npsection"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Association", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npaff"),
+            ROW: 0,
+        },
+    ]
 
     def __init__(self, database=None):
         """Extend, link new player record to database."""
         super(ResultsDBrowAlias, self).__init__()
         self.set_database(database)
         self.row_specification = [
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
-             GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            ]
-        
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
+                GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
+                ROW: 0,
+            },
+        ]
+
     def grid_row(self, **kargs):
         """Return super(ResultsDBrowAlias).grid_row(textitems=(.), **kargs).
 
@@ -331,87 +367,100 @@ class ResultsDBrowAlias(resultsrecord.ResultsDBrecordPlayer, DataRow):
             textitems=(
                 self.value.name,
                 resultsrecord.get_event_details(
-                    self.database, self.value.event),
+                    self.database, self.value.event
+                ),
                 resultsrecord.get_section_details(
-                    self.database,
-                    self.value.section,
-                    self.value.pin),
+                    self.database, self.value.section, self.value.pin
+                ),
                 resultsrecord.get_affiliation_details(
-                    self.database,
-                    self.value.affiliation)),
-            **kargs)
+                    self.database, self.value.affiliation
+                ),
+            ),
+            **kargs
+        )
 
 
 class ResultsDBrowAliasLink(resultsrecord.ResultsDBrecordPlayer, DataRow):
 
-    """Display an alias record with grading code link.
-    """
+    """Display an alias record with grading code link."""
+
     header_specification = [
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(
-             text='Name', anchor=tkinter.CENTER),
-         GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npname'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Event details', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npevent'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npsection'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Association', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='npaff'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Linked Grading Code', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=4, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='nplink'),
-         ROW: 0,
-         },
-        ]
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Name", anchor=tkinter.CENTER),
+            GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npname"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Event details", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npevent"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npsection"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Association", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="npaff"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(
+                text="Linked Grading Code", anchor=tkinter.W
+            ),
+            GRID_CONFIGURE: dict(column=4, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="nplink"),
+            ROW: 0,
+        },
+    ]
 
     def __init__(self, database=None):
         """Extend, link new player record to database."""
         super(ResultsDBrowAliasLink, self).__init__()
         self.set_database(database)
         self.row_specification = [
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
-             GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=4, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            ]
-        
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
+                GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=4, sticky=tkinter.EW),
+                ROW: 0,
+            },
+        ]
+
     def grid_row(self, **kargs):
         """Return super(ResultsDBrowAliasLink).grid_row(textitems=(.), **kargs).
 
@@ -420,87 +469,96 @@ class ResultsDBrowAliasLink(resultsrecord.ResultsDBrecordPlayer, DataRow):
         """
         person = resultsrecord.get_person_from_player(self.database, self)
         grading_code = ecfmaprecord.get_grading_code_for_person(
-            self.database,
-            person)
+            self.database, person
+        )
         if not grading_code:
             grading_code = ecfgcodemaprecord.get_grading_code_for_person(
-                self.database,
-                person)
+                self.database, person
+            )
         return super(ResultsDBrowAliasLink, self).grid_row(
             textitems=(
                 self.value.name,
                 resultsrecord.get_event_details(
-                    self.database, self.value.event),
+                    self.database, self.value.event
+                ),
                 resultsrecord.get_section_details(
-                    self.database,
-                    self.value.section,
-                    self.value.pin),
+                    self.database, self.value.section, self.value.pin
+                ),
                 resultsrecord.get_affiliation_details(
-                    self.database,
-                    self.value.affiliation),
-                grading_code),
-            **kargs)
+                    self.database, self.value.affiliation
+                ),
+                grading_code,
+            ),
+            **kargs
+        )
 
 
 class ResultsDBrowPlayer(resultsrecord.ResultsDBrecordPlayer, DataRow):
 
-    """Display a player record.
-    """
+    """Display a player record."""
+
     header_specification = [
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(
-             text='Name', anchor=tkinter.CENTER),
-         GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='pname'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Event details', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='pevent'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='psection'),
-         ROW: 0,
-         },
-        {WIDGET: tkinter.Label,
-         WIDGET_CONFIGURE: dict(text='Association', anchor=tkinter.W),
-         GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
-         GRID_COLUMNCONFIGURE: dict(weight=1, uniform='paff'),
-         ROW: 0,
-         },
-        ]
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Name", anchor=tkinter.CENTER),
+            GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="pname"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Event details", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="pevent"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="psection"),
+            ROW: 0,
+        },
+        {
+            WIDGET: tkinter.Label,
+            WIDGET_CONFIGURE: dict(text="Association", anchor=tkinter.W),
+            GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
+            GRID_COLUMNCONFIGURE: dict(weight=1, uniform="paff"),
+            ROW: 0,
+        },
+    ]
 
     def __init__(self, database=None):
         """Extend, link player record to database."""
         super(ResultsDBrowPlayer, self).__init__()
         self.set_database(database)
         self.row_specification = [
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
-             GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            {WIDGET: tkinter.Label,
-             WIDGET_CONFIGURE: dict(anchor=tkinter.W),
-             GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
-             ROW: 0,
-             },
-            ]
-        
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.CENTER),
+                GRID_CONFIGURE: dict(column=0, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=1, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=2, sticky=tkinter.EW),
+                ROW: 0,
+            },
+            {
+                WIDGET: tkinter.Label,
+                WIDGET_CONFIGURE: dict(anchor=tkinter.W),
+                GRID_CONFIGURE: dict(column=3, sticky=tkinter.EW),
+                ROW: 0,
+            },
+        ]
+
     def grid_row(self, **kargs):
         """Return super(ResultsDBrowPlayer,).grid_row(textitems=(...), **kargs).
 
@@ -508,25 +566,31 @@ class ResultsDBrowPlayer(resultsrecord.ResultsDBrecordPlayer, DataRow):
 
         """
         items = (
-            self.value.name,
-            resultsrecord.get_event_details(self.database, self.value.event),
-            resultsrecord.get_section_details(
-                self.database,
-                self.value.section,
-                self.value.pin),
-            resultsrecord.get_affiliation_details(
-                self.database,
-                self.value.affiliation)),
+            (
+                self.value.name,
+                resultsrecord.get_event_details(
+                    self.database, self.value.event
+                ),
+                resultsrecord.get_section_details(
+                    self.database, self.value.section, self.value.pin
+                ),
+                resultsrecord.get_affiliation_details(
+                    self.database, self.value.affiliation
+                ),
+            ),
+        )
         return super(ResultsDBrowPlayer, self).grid_row(
             textitems=(
                 self.value.name,
                 resultsrecord.get_event_details(
-                    self.database, self.value.event),
+                    self.database, self.value.event
+                ),
                 resultsrecord.get_section_details(
-                    self.database,
-                    self.value.section,
-                    self.value.pin),
+                    self.database, self.value.section, self.value.pin
+                ),
                 resultsrecord.get_affiliation_details(
-                    self.database,
-                    self.value.affiliation)),
-            **kargs)
+                    self.database, self.value.affiliation
+                ),
+            ),
+            **kargs
+        )

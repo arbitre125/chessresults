@@ -22,10 +22,16 @@ from solentware_base.core.record import Value, ValueList, Record
 
 from . import filespec
 
-_ECFOGDplayercodefield = 'Ref'
-_ECFOGDplayernamefield = 'Name'
+_ECFOGDplayercodefield = "Ref"
+_ECFOGDplayernamefield = "Name"
 _ECFOGDplayerclubsfields = (
-    'ClubNam1', 'ClubNam2', 'ClubNam3', 'ClubNam4', 'ClubNam5', 'ClubNam6')
+    "ClubNam1",
+    "ClubNam2",
+    "ClubNam3",
+    "ClubNam4",
+    "ClubNam5",
+    "ClubNam6",
+)
 
 
 class ECFrefOGDkeyPlayer(KeyData):
@@ -35,11 +41,11 @@ class ECFrefOGDkeyPlayer(KeyData):
     Methods added:
 
     None
-    
+
     Methods overridden:
 
     None
-    
+
     Methods extended:
 
     None
@@ -47,7 +53,7 @@ class ECFrefOGDkeyPlayer(KeyData):
     """
 
     pass
-        
+
 
 class ECFrefOGDvaluePlayer(ValueList):
 
@@ -56,11 +62,11 @@ class ECFrefOGDvaluePlayer(ValueList):
     Methods added:
 
     None
-    
+
     Methods overridden:
 
     None
-    
+
     Methods extended:
 
     pack
@@ -71,7 +77,7 @@ class ECFrefOGDvaluePlayer(ValueList):
         ECFOGDcode=None,
         ECFOGDname=None,
         ECFOGDclubs=list,
-        )
+    )
     _attribute_order = tuple(sorted(attributes.keys()))
 
     def pack(self):
@@ -82,7 +88,8 @@ class ECFrefOGDvaluePlayer(ValueList):
         if self.ECFOGDname:
             index[filespec.OGDPLAYERNAME_FIELD_DEF] = [self.ECFOGDname]
             index[filespec.OGDPLAYERCODEPUBLISHED_FIELD_DEF] = [
-                self.ECFOGDcode]
+                self.ECFOGDcode
+            ]
         return v
 
 
@@ -93,24 +100,22 @@ class ECFrefOGDrecordPlayer(Record):
     Methods added:
 
     None
-    
+
     Methods overridden:
 
     None
-    
+
     Methods extended:
 
     __init__
 
     """
 
-    def __init__(self,
-                 keyclass=ECFrefOGDkeyPlayer,
-                 valueclass=ECFrefOGDvaluePlayer):
+    def __init__(
+        self, keyclass=ECFrefOGDkeyPlayer, valueclass=ECFrefOGDvaluePlayer
+    ):
 
-        super(ECFrefOGDrecordPlayer, self).__init__(
-            keyclass,
-            valueclass)
+        super(ECFrefOGDrecordPlayer, self).__init__(keyclass, valueclass)
 
 
 def get_ecf_ogd_player(database, key):
@@ -119,17 +124,18 @@ def get_ecf_ogd_player(database, key):
     pr = ECFrefOGDrecordPlayer()
     pr.load_record(p)
     return pr
-    
+
 
 def get_ecf_ogd_player_for_grading_code(database, key):
     """Return ECFrefOGDrecordPlayer instance for key on index or None"""
     r = database.get_primary_record(
         filespec.ECFOGDPLAYER_FILE_DEF,
         database.database_cursor(
-            filespec.ECFOGDPLAYER_FILE_DEF,
-            filespec.OGDPLAYERCODE_FIELD_DEF
-            ).get_unique_primary_for_index_key(
-                database.encode_record_selector(key)))
+            filespec.ECFOGDPLAYER_FILE_DEF, filespec.OGDPLAYERCODE_FIELD_DEF
+        ).get_unique_primary_for_index_key(
+            database.encode_record_selector(key)
+        ),
+    )
     if r is not None:
         pr = ECFrefOGDrecordPlayer()
         pr.load_record(r)
