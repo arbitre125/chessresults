@@ -13,7 +13,7 @@ similarity of the class definitions.
 """
 import re
 
-from solentware_misc.api.null import Null
+from solentware_misc.core.null import Null
 
 from .gameresults import (
     displayresult,

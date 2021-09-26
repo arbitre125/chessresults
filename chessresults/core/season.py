@@ -24,7 +24,7 @@ import io
 import tkinter.messagebox
 import re
 
-from solentware_misc.api.utilities import AppSysDate
+from solentware_misc.core.utilities import AppSysDate
 
 from emailextract.core.emailextractor import (
     COLLECTED,

@@ -9,7 +9,7 @@ import tkinter
 
 from solentware_misc.gui.exceptionhandler import ExceptionHandler
 from solentware_misc.gui.reports import show_report
-from solentware_misc.api.utilities import AppSysPersonName
+from solentware_misc.core.utilities import AppSysPersonName
 
 from ..core import resultsrecord
 from ..core import filespec

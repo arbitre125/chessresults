@@ -3,7 +3,7 @@
 # Licence: See LICENCE (BSD licence)
 
 """Provide read access to text files using the database interface defined in
-the api.database.Database and api.database.Cursor classes.
+the core.database.Database and core.database.Cursor classes.
 
 """
 
@@ -15,9 +15,9 @@ import os.path
 import io
 import threading
 
-# from ..api.database import DatabaseError, Database
-# from ..api import cursor
-# from ..api.constants import FILE, FOLDER, FIELDS
+# from ..core.database import DatabaseError, Database
+# from ..core import cursor
+# from ..core.constants import FILE, FOLDER, FIELDS
 from solentware_base.core.constants import FILE, FOLDER, FIELDS
 
 

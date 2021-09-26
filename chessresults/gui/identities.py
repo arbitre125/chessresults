@@ -24,7 +24,7 @@ import tkinter.filedialog
 import bz2
 from functools import reduce
 
-from solentware_misc.api.utilities import AppSysPersonName
+from solentware_misc.core.utilities import AppSysPersonName
 from solentware_misc.gui.exceptionhandler import ExceptionHandler
 
 from ..core import constants

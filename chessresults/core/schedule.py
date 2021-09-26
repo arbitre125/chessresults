@@ -5,7 +5,7 @@
 """Event schedule class.
 """
 
-from solentware_misc.api import utilities
+from solentware_misc.core import utilities
 
 from .gameobjects import MatchFixture, Player, code_in_name
 

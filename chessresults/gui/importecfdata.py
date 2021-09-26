@@ -14,7 +14,7 @@ import os
 from solentware_grid.datagrid import DataGridReadOnly
 from solentware_grid.core.dataclient import DataSource
 
-from solentware_misc.api import utilities
+from solentware_misc.core import utilities
 from solentware_misc.gui import logpanel, tasklog, exceptionhandler
 
 from ..core import filespec

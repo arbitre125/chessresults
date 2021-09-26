@@ -6,7 +6,7 @@
 """
 import re
 
-from solentware_misc.api import utilities
+from solentware_misc.core import utilities
 
 from .emailextractor import (
     RESULTS_PREFIX,

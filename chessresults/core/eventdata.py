@@ -13,7 +13,7 @@ data formats.
 import tkinter.messagebox
 from datetime import date
 
-from solentware_misc.api import utilities
+from solentware_misc.core import utilities
 
 from . import names
 

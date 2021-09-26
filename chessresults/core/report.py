@@ -6,8 +6,8 @@
 """
 import re
 
-from solentware_misc.api import utilities
-from solentware_misc.api.null import Null
+from solentware_misc.core import utilities
+from solentware_misc.core.null import Null
 
 from .gameobjects import (
     MatchReport,

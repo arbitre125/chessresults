@@ -20,7 +20,7 @@ import os
 import datetime
 import collections
 
-from solentware_misc.api.utilities import AppSysPersonName
+from solentware_misc.core.utilities import AppSysPersonName
 from solentware_misc.gui import panel, dialogue, textreadonly, texttab
 
 from ..core.eventparser import EventParserError, IEIREE

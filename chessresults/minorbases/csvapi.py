@@ -3,7 +3,7 @@
 # Licence: See LICENCE (BSD licence)
 
 """Provide read access to csv files using the database interface defined in the
-api.database.Database and api.cursor.Cursor classes.
+core.database.Database and core.cursor.Cursor classes.
 
 Adapted from dbaseapi.py adding index access.
 
@@ -16,9 +16,9 @@ from pickle import dumps
 import csv
 import bz2
 
-from ..api.database import DatabaseError, Database
-from ..api import cursor
-from ..api.constants import PRIMARY, SECONDARY, FILE, FOLDER, FIELDS
+from ..core.database import DatabaseError, Database
+from ..core import cursor
+from ..core.constants import PRIMARY, SECONDARY, FILE, FOLDER, FIELDS
 
 
 class CSVapiError(DatabaseError):
@@ -784,7 +784,7 @@ class CursorCSV(CursorCSVfile, cursor.Cursor):
 
     A cursor implemented using a CursorCSVfile cursor for access in
     record number order. Index access is not supported.
-    This class and its methods support the api.dataclient.DataClient class
+    This class and its methods support the core.dataclient.DataClient class
     and may not be appropriate in other contexts.
     CursorCSV is a subclass of CursorCSVfile at present. The methods
     of CursorCSVfile are named to support DataClient directly but

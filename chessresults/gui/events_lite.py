@@ -14,7 +14,7 @@ import os
 import io
 
 from solentware_misc.gui import panel, dialogue
-from solentware_misc.api.utilities import AppSysPersonName
+from solentware_misc.core.utilities import AppSysPersonName
 
 from chesscalc.gui import performance, prediction, population
 

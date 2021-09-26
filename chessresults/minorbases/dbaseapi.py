@@ -3,7 +3,7 @@
 # Licence: See LICENCE (BSD licence)
 
 """Provide read access to dBaseIII files using the database interface defined
-in the api.database.Database and api.cursor.Cursor classes.
+in the core.database.Database and core.cursor.Cursor classes.
 
 <Reference to code copied to be inserted if ever found again>
 
@@ -16,9 +16,9 @@ import os.path
 import io
 import threading
 
-# from ..api.database import DatabaseError, Database
-# from ..api import cursor
-# from ..api.constants import PRIMARY, SECONDARY, FILE, FOLDER, FIELDS
+# from ..core.database import DatabaseError, Database
+# from ..core import cursor
+# from ..core.constants import PRIMARY, SECONDARY, FILE, FOLDER, FIELDS
 from solentware_base.core.constants import (
     PRIMARY,
     SECONDARY,
@@ -27,7 +27,7 @@ from solentware_base.core.constants import (
     FIELDS,
 )
 
-# dBaseIII specific items are not yet worth putting in api.constants
+# dBaseIII specific items are not yet worth putting in core.constants
 # because the definition is provided to support data import only
 START = "start"
 LENGTH = "length"
@@ -1046,7 +1046,7 @@ class Cursor(CursordBaseIII):  # , cursor.Cursor):
 
     A cursor implemented using a CursordBaseIII cursor for access in
     record number order. Index access is not supported.
-    This class and its methods support the api.dataclient.DataClient class
+    This class and its methods support the core.dataclient.DataClient class
     and may not be appropriate in other contexts.
     Cursor is a subclass of CursordBaseIII at present. The methods
     of CursordBaseIII are named to support DataClient directly but

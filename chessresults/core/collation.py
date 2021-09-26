@@ -8,7 +8,7 @@
 import collections
 from time import gmtime, mktime
 
-from solentware_misc.api.utilities import AppSysPersonName
+from solentware_misc.core.utilities import AppSysPersonName
 
 from .gameobjects import (
     GameCollation,

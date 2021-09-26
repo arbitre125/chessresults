@@ -3,7 +3,7 @@
 # Licence: See LICENCE (BSD licence)
 
 """Provide row definition to various file formats using the database interface
-defined in the api.database.Database and api.cursor.Cursor classes.
+defined in the core.database.Database and core.cursor.Cursor classes.
 
 Access is provided for:
 

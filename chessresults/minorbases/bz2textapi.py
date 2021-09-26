@@ -3,8 +3,8 @@
 # Licence: See LICENCE (BSD licence)
 
 """Provide read access to text files compressed by bzip2 using the database
-interface defined in the api.database.Database and api.cursor.Cursor classes
-.
+interface defined in the core.database.Database and core.cursor.Cursor
+classes.
 """
 
 import bz2

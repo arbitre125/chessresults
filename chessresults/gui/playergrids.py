@@ -10,7 +10,7 @@ import tkinter
 from solentware_grid.datagrid import DataGridReadOnly
 from solentware_grid.core import dataclient
 
-from solentware_misc.api.utilities import AppSysPersonNameParts
+from solentware_misc.core.utilities import AppSysPersonNameParts
 from solentware_misc.gui import gridbindings
 
 from . import resultsrow

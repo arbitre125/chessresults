@@ -10,13 +10,13 @@ from ast import literal_eval
 from solentware_base.core.record import KeyData
 from solentware_base.core.record import Value, ValueList, Record
 
-from solentware_misc.api.utilities import (
+from solentware_misc.core.utilities import (
     AppSysPersonNameParts,
     AppSysPersonName,
 )
 
 # Hack while some non-ISO format dates survive on game records
-from solentware_misc.api.utilities import AppSysDate
+from solentware_misc.core.utilities import AppSysDate
 
 from . import filespec
 from .gameresults import ecfresult, awin, draw, hwin
