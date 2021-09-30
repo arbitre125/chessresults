@@ -24,6 +24,7 @@ if __name__ == "__main__":
             "chessresults.minorbases",
             "chessresults.gui",
             "chessresults.gui.minorbases",
+            "chessresults.berkeleydb",
             "chessresults.db",
             "chessresults.dpt",
             "chessresults.sqlite",
