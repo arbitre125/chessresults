@@ -22,27 +22,15 @@ Allow `English Chess Federation`_ (ECF) grading codes to be associated with iden
 Installation Instructions
 =========================
 
-Install the package by typing
+This package is not available on PyPI, or any other package index, but can be installed by typing
 
-   python setup.py install
+   python -m pip install --user --trusted-host solentware.co.uk --find-links http://solentware.co.uk/grading.html --find-links http://solentware.co.uk/components.html chessresults
 
-at the command prompt with setup.py in the current directory.
+at the command prompt.
 
-You may need to give the path and version of Python depending on your system's configuration:
+See `Python`_ and `pip`_ documentation for alternatives and platform-specific points.
 
-   <path to python>/python<version> setup.py install
-
-   For example
-
-      C:\\Python34\\python setup.py install
-
-         on Microsoft Windows or
-
-      python3.4 setup.py install
-
-         on Unix-like systems.
-
-Use `Python`_ 3.4 or later.
+Then run 'python -m pip check' to identify other packages which need to be installed.
 
 The following should be installed to support extraction of results from pdf and spreadsheet attachments.
 
@@ -146,20 +134,21 @@ Two tools are provided to assist when importing data.
 ECF grading codes are not passed to the importing database even if these are available in the exporting database.
 
 
-.. _`English Chess Federation`: http://englishchess.co.uk
-.. _`ECF`: http://englishchess.co.uk
-.. _`ECF Rating`: https://www.ecfrating.org.uk/
-.. _`downloads page`: http://ecfgrading.org.uk/new/downloads-php
-.. _`Python`: https://python.org
-.. _`solentware-base`: http://solentware.co.uk/components.html
-.. _`bsddb3`: https://pypi.org/project/bsddb3
-.. _`berkeleydb`: https://pypi.org/project/berkeleydb
-.. _`dptdb`: http://solentware.co.uk/download.html
-.. _`Berkeley DB`: http://oracle.com
-.. _`Xpdf`: http://foolabs.com/xpdf/home.html
-.. _`pdftotext`: http://foolabs.com/xpdf/download.html
-.. _`Gnumeric`: http://gnumeric.org
-.. _`download`: http://gnumeric.org/download.html
-.. _`apsw`: https://github.com/rogerbinns/apsw
-.. _`pdfminer3k`: https://pypi.org/project/pdfminer3k
-.. _`xlsx2csv`: https://pypi.org/project/xlsx2csv
+.. _English Chess Federation: http://englishchess.co.uk
+.. _ECF: http://englishchess.co.uk
+.. _ECF Rating: https://www.ecfrating.org.uk/
+.. _downloads page: http://ecfgrading.org.uk/new/downloads-php
+.. _Python: https://python.org
+.. _pip: https://packaging.python.org/installing
+.. _solentware-base: http://solentware.co.uk/components.html
+.. _bsddb3: https://pypi.org/project/bsddb3
+.. _berkeleydb: https://pypi.org/project/berkeleydb
+.. _dptdb: http://solentware.co.uk/download.html
+.. _Berkeley DB: http://oracle.com
+.. _Xpdf: http://foolabs.com/xpdf/home.html
+.. _pdftotext: http://foolabs.com/xpdf/download.html
+.. _Gnumeric: http://gnumeric.org
+.. _download: http://gnumeric.org/download.html
+.. _apsw: https://github.com/rogerbinns/apsw
+.. _pdfminer3k: https://pypi.org/project/pdfminer3k
+.. _xlsx2csv: https://pypi.org/project/xlsx2csv

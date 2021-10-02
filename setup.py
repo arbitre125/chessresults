@@ -8,10 +8,18 @@ from setuptools import setup
 if __name__ == "__main__":
 
     long_description = open("README").read()
+    install_requires=[
+        "solentware-base==4.1.6",
+        "chesscalc==1.2.3",
+        "emailstore==1.4.4",
+        "emailextract==0.7.4",
+        "solentware-grid==2.1.4",
+        "solentware-misc==1.3.2",
+    ]
 
     setup(
         name="chessresults",
-        version="5.0.2",
+        version="5.0.3",
         description="Results database for chess games",
         author="Roger Marsh",
         author_email="roger.marsh@solentware.co.uk",
@@ -49,20 +57,11 @@ if __name__ == "__main__":
             "Intended Audience :: End Users/Desktop",
             "Development Status :: 3 - Alpha",
         ],
-        install_requires=[
-            "solentware-base==4.1.5",
-            "chesscalc==1.2.2",
-            "emailstore==1.4.3",
-            "emailextract==0.7.3",
-            "solentware-grid==2.1.3",
-            "solentware-misc==1.3.1",
-        ],
+        install_requires=install_requires,
         dependency_links=[
-            "http://solentware.co.uk/files/solentware-base-4.1.5.tar.gz",
-            "http://solentware.co.uk/files/chesscalc-1.2.2.tar.gz",
-            "http://solentware.co.uk/files/emailstore-1.4.3.tar.gz",
-            "http://solentware.co.uk/files/emailextract-0.7.3.tar.gz",
-            "http://solentware.co.uk/files/solentware-grid-2.1.3.tar.gz",
-            "http://solentware.co.uk/files/solentware-misc-1.3.1.tar.gz",
+            "-".join(required.split("==")).join(
+                ("http://solentware.co.uk/files/", ".tar.gz")
+            )
+            for required in install_requires
         ],
     )
