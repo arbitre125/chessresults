@@ -10,6 +10,10 @@ from solentware_misc.core import utilities
 from .gameobjects import MatchFixture, Player, code_in_name
 
 
+class ScheduleError(Exception):
+    pass
+
+
 class Schedule(object):
 
     """Schedule extracted from event schedule file containing one event.
@@ -280,12 +284,12 @@ class Schedule(object):
             """Module structure requires this function to exist.
 
             The conditions for calling it are no longer ever set up, so raise
-            a RuntimeError if it is called.
+            a ScheduleError if it is called.
 
             The Player objects are now created in the 'get_individual_games'
             function in the sibling 'report' module.
             """
-            raise RuntimeError(
+            raise ScheduleError(
                 "Function 'get_individual_players' must not be called"
             )
 

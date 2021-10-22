@@ -45,6 +45,7 @@ from ..core.ecfmaprecord import (
     get_person,
 )
 from ..core.ecfrecord import get_ecf_player_for_grading_code
+from ..core.schedule import ScheduleError
 
 _SENDER_COLOUR = "#e0f113"  # a pale yellow
 _EDITABLE = "Editable"
@@ -854,7 +855,22 @@ class SourceEdit(panel.PlainPanel):
                     title="Regular Expression Runtime Error",
                 )
             raise
-        self.get_schedule(data)
+        try:
+            self.get_schedule(data)
+        except ScheduleError as exp:
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message="".join(
+                    (
+                        str(exp).join(('Exception "', '" has occurred.\n\n')),
+                        "This probably indicates an invalid combination of ",
+                        "settings in the result extraction configuration ",
+                        "file.",
+                    )
+                ),
+                title="Extract Schedule Error",
+            )
+            return False
         self.report_fixtures(data)
 
         # Remove the 'try' wrapping once the problem is fixed.
