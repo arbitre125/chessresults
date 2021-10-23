@@ -13,7 +13,7 @@ textentry textentry
 
 The sched_* parameters describe how to get fixture list data from a csv file or spreadsheet sheet.
 
-The sched_csv_data_name line says get the information from sheet1 of a spreadsheet and create a line of text with the items in the order shown separated by spaces.
+The sched_csv_data_name line says get the information from sheet1 of a spreadsheet and create a line of text with the items in the order shown separated by spaces.  When the source is a csv file any name at all can be used for sheet1 in this description: but the name must be given.
 
 The other lines say which column of sheet1 provides the data, by number or name.
 
@@ -145,3 +145,14 @@ default \s+(?:def\s+0\s+(?P<nametwo>.*?)\s+1|(?P<nameone>.*?)\s+1\s+def\s+0|home
 
 
 The section_name parameter links the competition name used in match reports with the name used in, or derived from, the fixture list.
+
+
+Spreadsheets and csv files may present results in tabular form where each row gives full details of the game.  Thus the board 1 game from the example match scorecard might be presented as:
+
+"Division Three","Chandlers Ford A","1","4","Salisbury B","03/10/2017","1","David J Holmes","1/2","David Renham","","Black","Southampton League"
+
+in a csv file where the "" field is for the day of the match, Tuesday for example, often given as a reminder in fixture lists but usually omitted on scorecards. 'Black' indicates which pieces the the home team player had.
+
+Spreadsheet sheets and csv files with exactly 14 columns are assumed to be in this tabular form if the report_data_columns parameters are not used to describe the structure.  The other report_data_* parameters are used to describe the tabular form.
+
+The sched_data_* parameters should not be used against the results table because one fixture list entry is created per game.  An independent source for the fixture list should be used if validation of match results against the fixture list is required.  The column names must be different in both tables if spreadsheets or csv files provide both fixture list and match results.
