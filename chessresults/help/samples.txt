@@ -21,6 +21,8 @@ sample_league_ports.txt
 sample_league_ports_fix.txt
 sample_league_ports_match.txt
 sample_league_soton.txt
+sample_tabular_emails.txt
+sample_tabular_league.txt
 sample_tabular_league_fixtures.csv
 sample_tabular_league_results.csv
 
@@ -706,63 +708,22 @@ sched_away_team=3
 
 
 
-sample_tabular_league_fixtures.csv
+sample_tabular_emails.txt
 
-The email attachment used to report a truncated fixture list for the Portsmouth District League in the 2019-2020 season.  This file was created to demonstrate a tabular fixture list and the technique has never been used by this software to do real grading (now rating).
+Called collected.conf by default.
 
-The table is allowed to have 7 significant columns.  Any data in FixtureRound is not used at present.
+The configuration file used to pick emails from the mailboxes.
 
-None of the column names must exist in the results table.
+If both emails are in the same *.mbs file just one mboxmailstore line is sufficient.  The dates are the ones relevant when I checked this worked.
 
-The column names do not have to be the ones given here.
-
-The fixtures are published at portsmouthchessleague.uk/2019/Fixtures so no names are changed here.
-
-FixtureSection,FixtureDay,FixtureDate,FixtureRound,FixtureHomeTeam,FixtureAwayTeam,FixtureEvent
-Division One,,3 Oct 2019,,Cosham A,Fareham A,PDL
-Division Three,,19 Dec 2019,,Cosham C,Chichester C,PDL
-Division One,,28 Jan 2020,,Fareham A,Cosham A,PDL
-Division Three,,14 Oct 2019,,Chichester C,Cosham C,PDL
-
-
-
-sample_tabular_league_results.csv
-
-The email attachment used to report the match results for the truncated fixture list for the Portsmouth District League in the 2019-2020 season.  This file was created to demonstrate a set of tabular match results and the technique has never been used by this software to do real grading (now rating).
-
-The table must have exactly 14 columns.
-
-None of the column names must exist in the fixtures table.
-
-The column names do not have to be the ones given here.
-
-The ECF code and for the home team player must be included in the HomePlayer column as a prefix to the name.  For the away team player it must be a suffix to the name in the AwayPlayer column.  If not and there is only one ECF code, it may be treated as the ECF code of the home team player.
-
-The match results are published in several places, including portsmouthchessleague.uk/2019/Fixtures, so no names are changed here.
-
-Section,Day,Date,Round,HomeTeam,HTScore,HomePlayer,Result,AwayPlayer,ATScore,AwayTeam,Board,HPColour,Event
-Division One,,3 Oct 2019,1,Cosham A,2.5,"117540D Pye, David",draw,"108896J Corkett, Anthony",3.5,Fareham A,1,Black,PDL
-Division One,,3 Oct 2019,1,Cosham A,2.5,"121446K Wheeler, John",0-1,"278291B Chapman, Matt",3.5,Fareham A,2,White,PDL
-Division One,,3 Oct 2019,1,Cosham A,2.5,"108890H Cordner, David",draw,"114948K Marsh, Roger DW",3.5,Fareham A,3,Black,PDL
-Division One,,3 Oct 2019,1,Cosham A,2.5,"117509K Puchades, Richard",1-0,"249713L Black, Ted",3.5,Fareham A,4,White,PDL
-Division One,,3 Oct 2019,1,Cosham A,2.5,"119162H Smith, Andrew",draw,"108536A Coburn, Joseph",3.5,Fareham A,5,Black,PDL
-Division One,,3 Oct 2019,1,Cosham A,2.5,"288894E Feltham, George",0-1,"192020A Syed, Ashraf",3.5,Fareham A,6,White,PDL
-Division Three,,19 Dec 2019,1,Cosham C,4,"288894E Feltham, George",draw,"119544L, Squires, Chris R",1,Chichester C,1,White,PDL
-Division Three,,19 Dec 2019,1,Cosham C,4,"102438D Pearson, Simon",1-0,"302394B Howeson, Tom",1,Chichester C,2,Black,PDL
-Division Three,,19 Dec 2019,1,Cosham C,4,"303053C Hamilton, Melissa",1-0,"278296A Spence, Mike",1,Chichester C,3,White,PDL
-Division Three,,19 Dec 2019,1,Cosham C,4,"109923B Dulley, Richard",draw,"328209A Fremantle, Daniel",1,Chichester C,4,Black,PDL
-Division Three,,19 Dec 2019,1,Cosham C,4,"322913A Field, Dan",1-0,"302423E Howeson, Sarah",1,Chichester C,5,White,PDL
-Division One,,28 Jan 2020,5,Fareham A,3,"108896J Corkett, Anthony",0-1,"117540D Pye, David",3,Cosham A,1,Black,PDL
-Division One,,28 Jan 2020,5,Fareham A,3,"278291B Chapman, Matt",1-0,"121446K Wheeler, John",3,Cosham A,2,White,PDL
-Division One,,28 Jan 2020,5,Fareham A,3,"111680A Gregory, Keith",draw,"108890H Cordner, David",3,Cosham A,3,Black,PDL
-Division One,,28 Jan 2020,5,Fareham A,3,"107183L Brameld, Arthur",draw,"117509K Puchades, Richard",3,Cosham A,4,White,PDL
-Division One,,28 Jan 2020,5,Fareham A,3,"114948K Marsh, Roger DW",draw,"119162H Smith, Andrew",3,Cosham A,5,Black,PDL
-Division One,,28 Jan 2020,5,Fareham A,3,"249713L Black, Ted",draw,"302203B Evans, Thomas",3,Cosham A,6,White,PDL
-Division Three,,14 Oct 2019,1,Chichester C,4,"119544L, Squires, Chris R",1-0,"288894E Feltham, George",1,Cosham C,1,White,PDL
-Division Three,,14 Oct 2019,1,Chichester C,4,"302394B Howeson, Tom",1-0,"303053C Hamilton, Melissa",1,Cosham C,2,Black,PDL
-Division Three,,14 Oct 2019,1,Chichester C,4,"213883K Wallace, D H",0-1,"109923B Dulley, Richard",1,Cosham C,3,White,PDL
-Division Three,,14 Oct 2019,1,Chichester C,4,"278296A Spence, Mike",1-0,"142363A Webb, John",1,Cosham C,4,Black,PDL
-Division Three,,14 Oct 2019,1,Chichester C,4,"307556E Stubbington, Leslie",1-0,"206528K Moss, Edward",1,Cosham C,5,White,PDL
+# collected.conf email collection rules.
+collected collected
+mailboxstyle mbox
+mboxmailstore ~/ExportedResultsEmails/2019-2020/Test-results.mbs
+mboxmailstore ~/ExportedResultsEmails/2019-2020/Test-fixtures.mbs
+earliestfromdate 2021-10-17
+mostrecentfromdate 2021-10-24
+emailsfrom <email address>
 
 
 
@@ -848,7 +809,12 @@ team_name :chi @ bognor:Chichester C
 #default \s+(?:def\s+0\s+(?P<nametwo>.*?)\s+1|(?P<nameone>.*?)\s+1\s+def\s+0|home\s+default|away\s+default)
 
 # Portsmouth District League Match Results format (website csv downloads from September 2017)
+
+# Replace 'games' by the name of the sheet in a spreadsheet which supplies
+# the data.  Hopefully the fixtures and results sheets will have different
+# names.  For csv files 'games' can be any name but must be present.
 text_from_rows games
+
 #report_csv_data_name games report_data_columns
 #report_data_columns 0+1+2+3+4+5+6+7+8+9+10+11+12
 
@@ -920,19 +886,60 @@ fixture_body \s*(?P<dayname>[^\.]+)\.\s*(?P<day>[0-9]+)\.\s*(?P<month>[0-9]+)\.\
 
 
 
-sample_tabular_emails.txt
+sample_tabular_league_fixtures.csv
 
-Called collected.conf by default.
+The email attachment used to report a truncated fixture list for the Portsmouth District League in the 2019-2020 season.  This file was created to demonstrate a tabular fixture list and the technique has never been used by this software to do real grading (now rating).
 
-The configuration file used to pick emails from the mailboxes.
+The table is allowed to have 7 significant columns.  Any data in FixtureRound is not used at present.
 
-If both emails are in the same *.mbs file just one mboxmailstore line is sufficient.  The dates are the ones relevant when I checked this worked.
+None of the column names must exist in the results table.
 
-# collected.conf email collection rules.
-collected collected
-mailboxstyle mbox
-mboxmailstore ~/ExportedResultsEmails/2019-2020/Test-results.mbs
-mboxmailstore ~/ExportedResultsEmails/2019-2020/Test-fixtures.mbs
-earliestfromdate 2021-10-17
-mostrecentfromdate 2021-10-24
-emailsfrom <email address>
+The column names do not have to be the ones given here.
+
+The fixtures are published at portsmouthchessleague.uk/2019/Fixtures so no names are changed here.
+
+FixtureSection,FixtureDay,FixtureDate,FixtureRound,FixtureHomeTeam,FixtureAwayTeam,FixtureEvent
+Division One,,3 Oct 2019,,Cosham A,Fareham A,PDL
+Division Three,,19 Dec 2019,,Cosham C,Chichester C,PDL
+Division One,,28 Jan 2020,,Fareham A,Cosham A,PDL
+Division Three,,14 Oct 2019,,Chichester C,Cosham C,PDL
+
+
+
+sample_tabular_league_results.csv
+
+The email attachment used to report the match results for the truncated fixture list for the Portsmouth District League in the 2019-2020 season.  This file was created to demonstrate a set of tabular match results and the technique has never been used by this software to do real grading (now rating).
+
+The table must have exactly 14 columns.
+
+None of the column names must exist in the fixtures table.
+
+The column names do not have to be the ones given here.
+
+The ECF code and for the home team player must be included in the HomePlayer column as a prefix to the name.  For the away team player it must be a suffix to the name in the AwayPlayer column.  If not and there is only one ECF code, it may be treated as the ECF code of the home team player.
+
+The match results are published in several places, including portsmouthchessleague.uk/2019/Fixtures, so no names are changed here.
+
+Section,Day,Date,Round,HomeTeam,HTScore,HomePlayer,Result,AwayPlayer,ATScore,AwayTeam,Board,HPColour,Event
+Division One,,3 Oct 2019,1,Cosham A,2.5,"117540D Pye, David",draw,"108896J Corkett, Anthony",3.5,Fareham A,1,Black,PDL
+Division One,,3 Oct 2019,1,Cosham A,2.5,"121446K Wheeler, John",0-1,"278291B Chapman, Matt",3.5,Fareham A,2,White,PDL
+Division One,,3 Oct 2019,1,Cosham A,2.5,"108890H Cordner, David",draw,"114948K Marsh, Roger DW",3.5,Fareham A,3,Black,PDL
+Division One,,3 Oct 2019,1,Cosham A,2.5,"117509K Puchades, Richard",1-0,"249713L Black, Ted",3.5,Fareham A,4,White,PDL
+Division One,,3 Oct 2019,1,Cosham A,2.5,"119162H Smith, Andrew",draw,"108536A Coburn, Joseph",3.5,Fareham A,5,Black,PDL
+Division One,,3 Oct 2019,1,Cosham A,2.5,"288894E Feltham, George",0-1,"192020A Syed, Ashraf",3.5,Fareham A,6,White,PDL
+Division Three,,19 Dec 2019,1,Cosham C,4,"288894E Feltham, George",draw,"119544L, Squires, Chris R",1,Chichester C,1,White,PDL
+Division Three,,19 Dec 2019,1,Cosham C,4,"102438D Pearson, Simon",1-0,"302394B Howeson, Tom",1,Chichester C,2,Black,PDL
+Division Three,,19 Dec 2019,1,Cosham C,4,"303053C Hamilton, Melissa",1-0,"278296A Spence, Mike",1,Chichester C,3,White,PDL
+Division Three,,19 Dec 2019,1,Cosham C,4,"109923B Dulley, Richard",draw,"328209A Fremantle, Daniel",1,Chichester C,4,Black,PDL
+Division Three,,19 Dec 2019,1,Cosham C,4,"322913A Field, Dan",1-0,"302423E Howeson, Sarah",1,Chichester C,5,White,PDL
+Division One,,28 Jan 2020,5,Fareham A,3,"108896J Corkett, Anthony",0-1,"117540D Pye, David",3,Cosham A,1,Black,PDL
+Division One,,28 Jan 2020,5,Fareham A,3,"278291B Chapman, Matt",1-0,"121446K Wheeler, John",3,Cosham A,2,White,PDL
+Division One,,28 Jan 2020,5,Fareham A,3,"111680A Gregory, Keith",draw,"108890H Cordner, David",3,Cosham A,3,Black,PDL
+Division One,,28 Jan 2020,5,Fareham A,3,"107183L Brameld, Arthur",draw,"117509K Puchades, Richard",3,Cosham A,4,White,PDL
+Division One,,28 Jan 2020,5,Fareham A,3,"114948K Marsh, Roger DW",draw,"119162H Smith, Andrew",3,Cosham A,5,Black,PDL
+Division One,,28 Jan 2020,5,Fareham A,3,"249713L Black, Ted",draw,"302203B Evans, Thomas",3,Cosham A,6,White,PDL
+Division Three,,14 Oct 2019,1,Chichester C,4,"119544L, Squires, Chris R",1-0,"288894E Feltham, George",1,Cosham C,1,White,PDL
+Division Three,,14 Oct 2019,1,Chichester C,4,"302394B Howeson, Tom",1-0,"303053C Hamilton, Melissa",1,Cosham C,2,Black,PDL
+Division Three,,14 Oct 2019,1,Chichester C,4,"213883K Wallace, D H",0-1,"109923B Dulley, Richard",1,Cosham C,3,White,PDL
+Division Three,,14 Oct 2019,1,Chichester C,4,"278296A Spence, Mike",1-0,"142363A Webb, John",1,Cosham C,4,Black,PDL
+Division Three,,14 Oct 2019,1,Chichester C,4,"307556E Stubbington, Leslie",1-0,"206528K Moss, Edward",1,Cosham C,5,White,PDL
