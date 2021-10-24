@@ -835,6 +835,15 @@ def _select_result_line(result_line_description, text):
             )
         else:
             raise
+
+    # A swiss tournament table report is assumed to have more than one round
+    # and hence more than one date in the list after the competition name.
+    # With monthly rating the first round of a club championship may be
+    # reported on it's own; and a dummy second round date is needed to force
+    # swiss tournament table processing.
+    # <word> <date> is valid in non-swiss tournament table context and
+    # cannot be taken as 'swiss' because it is not yet known that the
+    # context is 'swiss'.
     if len(tsc) == 3:
         if len(tsc[0].strip()) == 0:
             if len("".join(RE_DATE.split(tsc[2])).strip()) == 0:
