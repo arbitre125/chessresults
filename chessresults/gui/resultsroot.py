@@ -13,7 +13,6 @@ import os
 from solentware_misc.gui.exceptionhandler import ExceptionHandler
 from solentware_misc.gui import fontchooser
 
-from emailstore.gui import select
 from emailstore.gui import help as emailstore_help
 
 from emailextract.gui import help as emailextract_help
@@ -21,6 +20,8 @@ from emailextract.gui import help as emailextract_help
 from .. import APPLICATION_NAME
 from . import help
 from . import configure
+from . import results_text_rules
+from . import selectemail
 from ..core.emailextractor import EmailExtractor
 from ..core.season import create_event_configuration_file
 from ..core.constants import EVENT_CONF
@@ -71,7 +72,14 @@ class Results(ExceptionHandler):
         menu0.add_command(
             label="Result extraction",
             underline=0,
-            command=self.try_command(self.configure_results, menu0),
+            command=self.try_command(
+                self.configure_extract_text_from_emails, menu0
+            ),
+        )
+        menu0.add_command(
+            label="Text result rules",
+            underline=0,
+            command=self.try_command(self.configure_results_text_rules, menu0),
         )
         menu0.add_separator()
         menu0.add_command(
@@ -194,7 +202,7 @@ class Results(ExceptionHandler):
             return
         cs = fontchooser.AppSysFontChooser(self.root, "Select a Font")
 
-    def configure_results(self):
+    def configure_extract_text_from_emails(self):
         """Set parameters that control results extraction from emails."""
         mf = self.mf
         if mf.results_folder is None:
@@ -258,6 +266,22 @@ class Results(ExceptionHandler):
             emailextractor=EmailExtractor,
         ).read_file(EVENT_CONF)
 
+    def configure_extract_text_from_emails(self):
+        """Set parameters that control results extraction from emails."""
+        configure.Configure(
+            master=self.root,
+            use_toplevel=True,
+            application_name=APPLICATION_NAME,
+        )
+
     def configure_email_selection(self):
         """Set parameters that control email selection from mailboxes."""
-        select.Select(master=self.root, use_toplevel=True)
+        selectemail.SelectEmail(
+            master=self.root,
+            use_toplevel=True,
+            application_name=APPLICATION_NAME,
+        )
+
+    def configure_results_text_rules(self):
+        """Set rules to extract results from text from emails."""
+        results_text_rules.ResultsTextRules(master=self.root)
