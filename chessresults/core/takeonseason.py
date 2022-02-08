@@ -54,16 +54,14 @@ class TakeonSeason(object):
 
     _sourcefiles = (constants.TAKEON_SCHEDULE, constants.TAKEON_REPORTS)
 
-    def __init__(self, folder, season=None):
+    def __init__(self, folder):
         """Override, note the configuration details for event.
 
         folder - contains files of event data
-        season - identifies the season in which the event happens
 
         """
         self.folder = folder
         self.config = "conf"
-        self.season = season
         self.fixtures = None
         self.fixturesfile = None
         self.results = None
@@ -224,7 +222,11 @@ class TakeonSeason(object):
                 cf.writelines(
                     (
                         "".join((sf, "=")),
-                        os.path.join("".join((sf, self.season, ".txt"))),
+                        os.path.join(
+                            "".join(
+                                (sf, os.path.basename(self.folder), ".txt")
+                            )
+                        ),
                         os.linesep,
                     )
                 )

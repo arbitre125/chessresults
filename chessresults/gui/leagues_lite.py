@@ -899,11 +899,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
     def takeon_open(self):
         """Open results data take on documents."""
 
-        def is_folder_name_valid(folder, title):
-            """Return folder name (all names valid)."""
-            return os.path.basename(folder)
-
-        ro = self._takeon_open(TakeonSeason, is_folder_name_valid)
+        ro = self._takeon_open(TakeonSeason)
         if ro:
             self.set_error_file()
             self.results_folder_generic = self.results_folder
@@ -1002,7 +998,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
         """Copy open folder name to self.results_folder_generic."""
         self.results_folder_generic = self.results_folder
 
-    def _takeon_open(self, eventseason, is_folder_name_valid, title=" "):
+    def _takeon_open(self, eventseason, title=" "):
         """Open results data take on source documents."""
         title = "".join(("Open", title, "Documents"))
 
@@ -1038,11 +1034,8 @@ class Leagues(threadqueue.AppSysThreadQueue):
             initialdir=initdir,
         )
         if results_folder:
-            season = is_folder_name_valid(results_folder, title)
-            results_data = eventseason(results_folder, season=season)
-            if season is None:
-                return
-            elif not os.path.exists(results_folder):
+            results_data = eventseason(results_folder)
+            if not os.path.exists(results_folder):
                 if not tkinter.messagebox.askyesno(
                     parent=self.get_widget(),
                     message="".join(
