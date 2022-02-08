@@ -95,7 +95,7 @@ class TakeonEdit(panel.PlainPanel):
         in sectiontypes below.
 
         """
-        data = self.get_context().get_season()
+        data = self.get_context().results_data
         self.get_schedule(data)
         self.report_fixtures(data)
         self.get_results(data)
@@ -164,7 +164,7 @@ class TakeonEdit(panel.PlainPanel):
         ):
             return False
         collatedb = takeoncollationdb.TakeonCollationDB(
-            self.get_context().get_season().collation, db
+            self.get_context().results_data.collation, db
         )
         db.start_transaction()
         u = collatedb.update_results()
@@ -231,7 +231,7 @@ class TakeonEdit(panel.PlainPanel):
             "\n".join(
                 list(
                     difflib.restore(
-                        self.get_context().get_season().fixtures, 2
+                        self.get_context().results_data.fixtures, 2
                     )
                 )
             ),
@@ -240,7 +240,7 @@ class TakeonEdit(panel.PlainPanel):
             tkinter.END,
             "\n".join(
                 list(
-                    difflib.restore(self.get_context().get_season().results, 2)
+                    difflib.restore(self.get_context().results_data.results, 2)
                 )
             ),
         )
@@ -291,7 +291,7 @@ class TakeonEdit(panel.PlainPanel):
             "\n".join(
                 list(
                     difflib.restore(
-                        self.get_context().get_season().fixtures, 1
+                        self.get_context().results_data.fixtures, 1
                     )
                 )
             ),
@@ -301,7 +301,7 @@ class TakeonEdit(panel.PlainPanel):
             "\n".join(
                 list(
                     difflib.restore(
-                        self.get_context().get_season().fixtures, 2
+                        self.get_context().results_data.fixtures, 2
                     )
                 )
             ),
@@ -310,7 +310,7 @@ class TakeonEdit(panel.PlainPanel):
             tkinter.END,
             "\n".join(
                 list(
-                    difflib.restore(self.get_context().get_season().results, 1)
+                    difflib.restore(self.get_context().results_data.results, 1)
                 )
             ),
         )
@@ -318,7 +318,7 @@ class TakeonEdit(panel.PlainPanel):
             tkinter.END,
             "\n".join(
                 list(
-                    difflib.restore(self.get_context().get_season().results, 2)
+                    difflib.restore(self.get_context().results_data.results, 2)
                 )
             ),
         )
@@ -381,7 +381,7 @@ class TakeonEdit(panel.PlainPanel):
             ),
             title="Save",
         ):
-            self.get_context().get_season().save_difference_files(
+            self.get_context().results_data.save_difference_files(
                 self.editschedctrl.get("1.0", tkinter.END).splitlines(),
                 self.editresctrl.get("1.0", tkinter.END).splitlines(),
             )

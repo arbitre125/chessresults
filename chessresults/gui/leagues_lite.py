@@ -751,7 +751,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
                 title="Quit Results",
             ):
                 return False
-        elif self.get_season():
+        elif self.results_data:
             if editor.is_report_modified():
                 if not tkinter.messagebox.askyesno(
                     parent=self.get_widget(),
@@ -810,10 +810,6 @@ class Leagues(threadqueue.AppSysThreadQueue):
     def get_results_database(self):
         """Return the open database."""
         return self.database
-
-    def get_season(self):
-        """Return event results data."""
-        return self.results_data
 
     def get_season_folder(self):
         """Return widget containing results data folder name."""

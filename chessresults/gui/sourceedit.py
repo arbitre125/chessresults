@@ -295,8 +295,8 @@ class SourceEdit(panel.PlainPanel):
                 title="Save",
             ):
                 return
-        season = self.get_context().get_season()
-        dt = season.entry_text
+        results_data = self.get_context().results_data
+        dt = results_data.entry_text
 
         # Ensure edited_text_on_file is set to initial value of edited_text
         # before updating edited_text from widget.
@@ -306,7 +306,7 @@ class SourceEdit(panel.PlainPanel):
 
         modified = dt.edited_text != etof
         if not modified:
-            for e, dt in enumerate(season.difference_text):
+            for e, dt in enumerate(results_data.difference_text):
                 if dt.edited_text != dt.edited_text_on_file:
                     modified = True
                     break
@@ -334,11 +334,11 @@ class SourceEdit(panel.PlainPanel):
             ),
             title="Save",
         ):
-            season.entry_text.save_edited_text_as_new()
-            for dt in season.difference_text:
+            results_data.entry_text.save_edited_text_as_new()
+            for dt in results_data.difference_text:
                 dt.save_edited_text_as_new()
-            season.entry_text.rename_new_edited_text()
-            for dt in season.difference_text:
+            results_data.entry_text.rename_new_edited_text()
+            for dt in results_data.difference_text:
                 dt.rename_new_edited_text()
             self.editedtext.edit_modified(False)
             tkinter.messagebox.showinfo(
@@ -732,10 +732,10 @@ class SourceEdit(panel.PlainPanel):
         """ """
         w = self.editedtext
         w.delete("1.0", tkinter.END)
-        et = self.get_context().get_season().entry_text
+        et = self.get_context().results_data.entry_text
         self._insert_entry(w, LOCAL_SOURCE, et, et.edited_text)
         for e, dt in enumerate(
-            self.get_context().get_season().difference_text
+            self.get_context().results_data.difference_text
         ):
             self._insert_entry(w, str(e), dt, dt.edited_text)
 
@@ -743,26 +743,26 @@ class SourceEdit(panel.PlainPanel):
         """ """
         w = self.originaltext
         w.delete("1.0", tkinter.END)
-        et = self.get_context().get_season().entry_text
+        et = self.get_context().results_data.entry_text
         self._insert_entry(w, LOCAL_SOURCE, et, et.original_text)
         for e, dt in enumerate(
-            self.get_context().get_season().difference_text
+            self.get_context().results_data.difference_text
         ):
             self._insert_entry(w, str(e), dt, dt.original_text)
 
     def copy_data_from_widget(self):
         """Copy current widget data to season's event data attributes."""
         tw = self.editedtext
-        season = self.get_context().get_season()
+        results_data = self.get_context().results_data
 
         # Strip off the place-holder newline characters returned by get.
         # These were added by insert when the data was displayed.
-        for dt in season.difference_text:
+        for dt in results_data.difference_text:
             st, et = tw.tag_ranges(dt.data_tag)
             dt.edited_text = tw.get(
                 tw.index(st) + " +1 char", tw.index(et) + " -1 char"
             )
-        dt = season.entry_text
+        dt = results_data.entry_text
         st, et = tw.tag_ranges(dt.data_tag)
         dt.edited_text = tw.get(
             tw.index(st) + " +1 char", tw.index(et) + " -1 char"
@@ -827,7 +827,7 @@ class SourceEdit(panel.PlainPanel):
             "individual": self._report_individual,  # games between players
         }
         self.copy_data_from_widget()
-        data = self.get_context().get_season()
+        data = self.get_context().results_data
         try:
             data.extract_event()
         except EventParserError as exp:
@@ -1688,8 +1688,8 @@ class SourceEdit(panel.PlainPanel):
         # Unfinished games, now completed, added into game results.
         # Used to be done by update_event_results() in subclasses PDLEdit and
         # SLEdit which then delegated rest of work to this class.
-        xr = self.get_context().get_season().get_collated_unfinished_games()
-        mr = self.get_context().get_season().get_collated_games()
+        xr = self.get_context().results_data.get_collated_unfinished_games()
+        mr = self.get_context().results_data.get_collated_games()
         for r in mr:
             for g in mr[r].games:
                 if g in xr:
@@ -1697,7 +1697,7 @@ class SourceEdit(panel.PlainPanel):
                         g.result = xr[g].result
 
         collatedb = collationdb.CollationDB(
-            self.get_context().get_season().get_collated_games(), db
+            self.get_context().results_data.get_collated_games(), db
         )
         db.start_transaction()
         u = collatedb.update_results()
