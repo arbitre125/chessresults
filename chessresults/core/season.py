@@ -122,17 +122,13 @@ class Season(object):
 
     """
 
-    def __init__(self, folder, season=None):
-        """Create Season instance for season in folder.
+    def __init__(self, folder):
+        """Create Season instance for event results in folder.
 
         folder - contains files of event data
-        season - identifies the season in which the event happens
 
         """
-        if not season.isdigit():
-            raise
         self.folder = folder
-        self.season = season
         self.fixtures = None
         self.fixturesfile = None
         self.results = None

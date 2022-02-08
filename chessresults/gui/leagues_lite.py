@@ -843,26 +843,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
     def results_open(self):
         """Open results source documents."""
 
-        def is_folder_name_valid(folder, title):
-            """Return last two characters of folder name if these are digits."""
-            basename = os.path.basename(folder)
-            if basename[-2:].isdigit():
-                return basename[-2:]
-            else:
-                tkinter.messagebox.showinfo(
-                    parent=self.get_widget(),
-                    message="".join(
-                        (
-                            folder,
-                            "\nname is not valid.\n",
-                            "Folder name must end in two digits ",
-                            "indicating the season",
-                        )
-                    ),
-                    title=title,
-                )
-
-        ro = self._results_open(Season, is_folder_name_valid)
+        ro = self._results_open(Season)
         if ro:
             self.set_error_file()
             self.results_folder_generic = self.results_folder
@@ -924,7 +905,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
         self._database_close()
         self.database = None
 
-    def _results_open(self, eventseason, is_folder_name_valid, title=" "):
+    def _results_open(self, eventseason, title=" "):
         """Open results source documents."""
         title = "".join(("Open", title, "Documents"))
 
@@ -960,10 +941,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
             initialdir=initdir,
         )
         if results_folder:
-            season = is_folder_name_valid(results_folder, title)
-            if season is None:
-                return
-            results_data = eventseason(results_folder, season=season)
+            results_data = eventseason(results_folder)
             if not os.path.exists(results_folder):
                 if not tkinter.messagebox.askyesno(
                     parent=self.get_widget(),
