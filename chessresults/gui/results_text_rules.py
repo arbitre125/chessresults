@@ -13,10 +13,11 @@ import tkinter.filedialog
 
 from solentware_misc.gui.exceptionhandler import ExceptionHandler
 from solentware_misc.gui import textreadonly
+from solentware_misc.gui.configuredialog import ConfigureDialog
 
 from . import help
 from .. import APPLICATION_NAME
-from .configuredialog import ConfigureDialog
+from ..core.constants import EVENT_CONF
 
 startup_minimum_width = 340
 startup_minimum_height = 400
@@ -34,11 +35,13 @@ class ResultsTextRules(ExceptionHandler):
         """
         self.root = tkinter.Toplevel(**kargs)
         try:
-            appname = " ".join((APPLICATION_NAME, "(Rules)"))
+            self.application_name = "".join(
+                (APPLICATION_NAME, " (event rules)")
+            )
             if folder is not None:
-                self.root.wm_title(" - ".join((appname, folder)))
+                self.root.wm_title(" - ".join((self.application_name, folder)))
             else:
-                self.root.wm_title(appname)
+                self.root.wm_title(self.application_name)
             self.root.wm_minsize(
                 width=startup_minimum_width, height=startup_minimum_height
             )
@@ -171,17 +174,17 @@ class ResultsTextRules(ExceptionHandler):
         if self._configuration is not None:
             tkinter.messagebox.showinfo(
                 parent=self.get_toplevel(),
-                title="New Text Result Rules",
+                title=self.application_name,
                 message="Close the current text result rules first.",
             )
             return
         config_file = tkinter.filedialog.asksaveasfilename(
             parent=self.get_toplevel(),
-            title="New Text Result Rules",
+            title=" ".join(("New", self.application_name)),
             defaultextension=".conf",
             filetypes=(("Text Result Rules", "*.conf"),),
-            initialfile="textrules.conf",
-            initialdir="~",
+            initialfile=EVENT_CONF,
+            initialdir=self._folder if self._folder else "~",
         )
         if not config_file:
             return
@@ -202,23 +205,24 @@ class ResultsTextRules(ExceptionHandler):
             fn.close()
         self._configuration = config_file
         self._folder = os.path.dirname(config_file)
+        self.root.wm_title(" - ".join((self.application_name, config_file)))
 
     def file_open(self):
         """Open an existing text result rules file."""
         if self._configuration is not None:
             tkinter.messagebox.showinfo(
                 parent=self.get_toplevel(),
-                title="Text Result Rules",
+                title=self.application_name,
                 message="Close the current text result rules first.",
             )
             return
         config_file = tkinter.filedialog.askopenfilename(
             parent=self.get_toplevel(),
-            title="Open Text Result Rules",
+            title=" ".join(("Open", self.application_name)),
             defaultextension=".conf",
-            filetypes=(("Text Result Rules", "textrules*.conf"),),
-            initialfile="",
-            initialdir="~",
+            filetypes=(("Text Result Rules", "*.conf"),),
+            initialfile=EVENT_CONF,
+            initialdir=self._folder if self._folder else "~",
         )
         if not config_file:
             return
@@ -230,68 +234,41 @@ class ResultsTextRules(ExceptionHandler):
             fn.close()
         self._configuration = config_file
         self._folder = os.path.dirname(config_file)
+        self.root.wm_title(" - ".join((self.application_name, config_file)))
 
     def file_close(self):
         """Close the open text result rules file."""
         if self._configuration is None:
             tkinter.messagebox.showinfo(
                 parent=self.get_toplevel(),
-                title="Text Result Rules",
-                message="Cannot close.\n\nThere is no database open.",
+                title=self.application_name,
+                message="Cannot close.\n\nThere is no file open.",
             )
             return
-        closemsg = "Confirm Close.\n\nChanges not already saved will be lost."
         dlg = tkinter.messagebox.askquestion(
-            parent=self.get_toplevel(), title="Close", message=closemsg
+            parent=self.get_toplevel(),
+            title=self.application_name,
+            message="Confirm Close.",
         )
         if dlg == tkinter.messagebox.YES:
             self.configctrl.delete("1.0", tkinter.END)
             self.statusbar.set_status_text()
             self._configuration = None
             self._configuration_edited = False
+            self.root.wm_title(
+                " - ".join((self.application_name, self._folder))
+            )
 
     def file_quit(self):
         """Quit the text result rules application."""
         quitmsg = "Confirm Quit.\n\nChanges not already saved will be lost."
         dlg = tkinter.messagebox.askquestion(
-            parent=self.get_toplevel(), title="Quit", message=quitmsg
+            parent=self.get_toplevel(),
+            title=self.application_name,
+            message="Confirm Quit.",
         )
         if dlg == tkinter.messagebox.YES:
             self.root.destroy()
-
-    # Probably not going to be used because 'Actions | Option editor' does it.
-    def file_save(self):
-        """Save the open text result rules file."""
-        if self._configuration is None:
-            tkinter.messagebox.showinfo(
-                parent=self.get_toplevel(),
-                title="Save",
-                message="Cannot save.\n\nText result rules file not open.",
-            )
-            return
-        if (
-            tkinter.messagebox.askquestion(
-                parent=self.get_toplevel(),
-                title="Save",
-                message="".join(
-                    (
-                        "Confirm save text result rules to\n",
-                        self._configuration,
-                    )
-                ),
-            )
-            != tkinter.messagebox.YES
-        ):
-            return
-        fn = open(self._configuration, "w")
-        try:
-            fn.write(
-                self.configctrl.get("1.0", " ".join((tkinter.END, "-1 chars")))
-            )
-            self._configuration_edited = False
-        finally:
-            fn.close()
-        return True
 
     def file_save_copy_as(self):
         """Save copy of open text result rules and keep current open."""
@@ -304,9 +281,9 @@ class ResultsTextRules(ExceptionHandler):
             return
         config_file = tkinter.filedialog.asksaveasfilename(
             parent=self.get_toplevel(),
-            title="Save Text Result Rules As",
+            title=self.application_name.join(("Save ", " As")),
             defaultextension=".conf",
-            filetypes=(("Text Result Rules", "textrules*.conf"),),
+            filetypes=(("Text Result Rules", "*.conf"),),
             initialfile=os.path.basename(self._configuration),
             initialdir=os.path.dirname(self._configuration),
         )
@@ -343,7 +320,12 @@ class ResultsTextRules(ExceptionHandler):
             return
         config_text = ConfigureDialog(
             self.root,
-            self.configctrl.get("1.0", " ".join((tkinter.END, "-1 chars"))),
+            configuration=self.configctrl.get(
+                "1.0", " ".join((tkinter.END, "-1 chars"))
+            ),
+            dialog_title=" ".join(
+                (self.application_name, "configuration editor")
+            ),
         ).config_text
         if config_text is None:
             return

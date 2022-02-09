@@ -332,8 +332,7 @@ LEAGUE_MATCH_TYPE = "M"
 TOURNAMENT_TYPE = "T"
 OTHER_TYPE = "O"
 
-# Event configuration file.  This file is used rather than EXTRACTED_CONF from
-# emailextract package.
+# Event configuration file.
 EVENT_CONF = "event.conf"
 
 # Default URLs to access ECF website.

@@ -271,7 +271,7 @@ class Results(ExceptionHandler):
         configure.Configure(
             master=self.root,
             use_toplevel=True,
-            application_name=APPLICATION_NAME,
+            application_name="".join((APPLICATION_NAME, " (extract text)")),
         )
 
     def configure_email_selection(self):
@@ -279,7 +279,7 @@ class Results(ExceptionHandler):
         selectemail.SelectEmail(
             master=self.root,
             use_toplevel=True,
-            application_name=APPLICATION_NAME,
+            application_name="".join((APPLICATION_NAME, " (select emails)")),
         )
 
     def configure_results_text_rules(self):
