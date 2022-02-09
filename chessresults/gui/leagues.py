@@ -9,6 +9,8 @@ import os
 import importlib
 import tkinter.messagebox
 
+from solentware_misc.gui.configuredialog import ConfigureDialog
+
 from . import control
 from . import events
 from . import newplayers
@@ -28,7 +30,6 @@ from . import ratedplayers
 from .. import ECF_DATA_IMPORT_MODULE
 from .. import KNOWN_NAME_DATASOURCE_MODULE
 from ..core import constants
-from .configuredialog import ConfigureDialog
 
 
 class Leagues(leagues_lite.Leagues):
@@ -396,4 +397,43 @@ class Leagues(leagues_lite.Leagues):
                 title="Edit ECF URL Defaults",
             )
             return
-        ConfigureDialog(self.get_widget(), default)
+        of = open(default)
+        try:
+            config_text = of.read()
+        except Exception as exc:
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message="".join(
+                    ("Unable to read from\n\n", default, "\n\n", str(exc))
+                ),
+                title=dialog_title,
+            )
+            return
+        finally:
+            of.close()
+        edited_text = ConfigureDialog(
+            self.get_widget(),
+            configuration=config_text,
+            dialog_title="Edit ECF URL Defaults",
+        ).config_text
+        if edited_text is None:
+            return
+        of = open(default, "w")
+        try:
+            of.write(edited_text)
+        except Exception as exc:
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message="".join(
+                    (
+                        "Unable to write to\n\n",
+                        default,
+                        "\n\n",
+                        str(exc),
+                    )
+                ),
+                title=dialog_title,
+            )
+            return
+        finally:
+            of.close()
