@@ -333,6 +333,7 @@ TOURNAMENT_TYPE = "T"
 OTHER_TYPE = "O"
 
 # Event configuration file.
+# The default extracted.conf file name defined in emailextract is not used.
 EVENT_CONF = "event.conf"
 
 # Default URLs to access ECF website.

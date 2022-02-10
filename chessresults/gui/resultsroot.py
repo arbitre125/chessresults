@@ -20,7 +20,6 @@ from emailextract.gui import help as emailextract_help
 from .. import APPLICATION_NAME
 from . import help
 from . import configure
-from . import results_text_rules
 from . import selectemail
 from ..core.emailextractor import EmailExtractor
 from ..core.season import create_event_configuration_file
@@ -75,11 +74,6 @@ class Results(ExceptionHandler):
             command=self.try_command(
                 self.configure_extract_text_from_emails, menu0
             ),
-        )
-        menu0.add_command(
-            label="Text result rules",
-            underline=0,
-            command=self.try_command(self.configure_results_text_rules, menu0),
         )
         menu0.add_separator()
         menu0.add_command(
@@ -281,7 +275,3 @@ class Results(ExceptionHandler):
             use_toplevel=True,
             application_name="".join((APPLICATION_NAME, " (select emails)")),
         )
-
-    def configure_results_text_rules(self):
-        """Set rules to extract results from text from emails."""
-        results_text_rules.ResultsTextRules(master=self.root)
