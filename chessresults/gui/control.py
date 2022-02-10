@@ -27,6 +27,7 @@ except ImportError:  # Not ModuleNotFoundError for Pythons earlier than 3.6
     tnefparse = None
 
 from solentware_misc.gui import dialogue
+from solentware_misc.core.getconfigurationitem import get_configuration_item
 
 from ..minorbases.dbaseapi import dBaseapiError
 from ..core.filespec import (
@@ -39,7 +40,6 @@ from ..core import ecfdataimport
 from ..core import ecfclubdb
 from ..core import ecfplayerdb
 from . import control_lite
-from .configuredialog import get_configuration_item
 from ..core import constants
 from . import ecfdownload
 
@@ -264,6 +264,7 @@ class Control(control_lite.Control):
                                 ),
                             ),
                             default_url,
+                            constants.DEFAULT_URLS,
                         ),
                         None,
                         False,

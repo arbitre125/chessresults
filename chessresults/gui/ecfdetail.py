@@ -12,10 +12,10 @@ import urllib.request
 import os
 
 from solentware_misc.gui.exceptionhandler import ExceptionHandler, FOCUS_ERROR
+from solentware_misc.core.getconfigurationitem import get_configuration_item
 
 from ..core import ecfrecord, ecfmaprecord, resultsrecord, constants
 from ..basecore import ecfdataimport
-from .configuredialog import get_configuration_item
 
 
 class ECFDetailDialog(ExceptionHandler):
@@ -681,6 +681,7 @@ class ECFDownloadGradingCodeDialog(ECFDetailDialog):
                         ),
                     ),
                     constants.PLAYER_INFO_URL,
+                    constants.DEFAULT_URLS,
                 ),
             ),
         )
@@ -848,6 +849,7 @@ class ECFDownloadClubCodeDialog(ECFDetailDialog):
                         ),
                     ),
                     constants.CLUB_INFO_URL,
+                    constants.DEFAULT_URLS,
                 ),
             ),
         )
