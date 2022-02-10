@@ -336,6 +336,13 @@ OTHER_TYPE = "O"
 # The default extracted.conf file name defined in emailextract is not used.
 EVENT_CONF = "event.conf"
 
+# Most recently accessed database and configuation files for selecting and
+# extracting text from emails.
+RESULTS_CONF = ".chessresults.conf"
+RECENT_DATABASE = "database"
+RECENT_EMAIL_SELECTION = "collection"
+RECENT_EMAIL_EXTRACTION = "event"
+
 # Default URLs to access ECF website.
 # These are copied to a file, paired with a database, which may need editing
 # if the ECF URLs change.

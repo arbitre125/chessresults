@@ -28,6 +28,8 @@ from . import importevents
 from . import taskpanel
 from ..core.filespec import FileSpec
 from .. import APPLICATION_DATABASE_MODULE, ERROR_LOG
+from ..core import configuration
+from ..core import constants
 
 # for runtime "from <db|dpt>results import ResultsDatabase"
 _ResultsDB = "ResultsDatabase"
@@ -425,7 +427,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
         database_folder = tkinter.filedialog.askdirectory(
             parent=self.get_widget(),
             title="Select folder for new results database",
-            initialdir="~",
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_DATABASE
+            ),
         )
         if not database_folder:
             tkinter.messagebox.showinfo(
@@ -468,6 +472,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
                     title="New",
                 )
                 return
+        configuration.set_configuration_value(
+            constants.RECENT_DATABASE, database_folder
+        )
 
         # Set the error file in top folder of chess database
         # self.ui.set_error_file_name(
@@ -578,7 +585,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
             return
 
         if self.database_folder is None:
-            initdir = "~"
+            initdir = configuration.get_configuration_value(
+                constants.RECENT_DATABASE
+            )
         else:
             initdir = self.database_folder
         database_folder = tkinter.filedialog.askdirectory(
@@ -594,6 +603,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
                 title="Open",
             )
             return
+        configuration.set_configuration_value(
+            constants.RECENT_DATABASE, database_folder
+        )
 
         # Set the error file in top folder of chess database
         # self.ui.set_error_file_name(

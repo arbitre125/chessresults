@@ -12,6 +12,8 @@ import tkinter.messagebox
 from emailextract.gui.select import Select
 
 from ..core.emailextractor import EmailExtractor
+from ..core import configuration
+from ..core import constants
 
 
 class Configure(Select):
@@ -41,3 +43,27 @@ class Configure(Select):
         finally:
             fn.close()
         self._configuration = config_file
+
+    def file_new(self):
+        """Delegate then update configuration if a file was opened."""
+        super().file_new()
+        self._update_configuration()
+
+    def file_open(self):
+        """Delegate then update configuration if a file was opened."""
+        super().file_open()
+        self._update_configuration()
+
+    def _update_configuration(self):
+        if self._configuration is not None:
+            home = os.path.expanduser("~")
+
+            # removeprefix not available until Python3.9
+            if self._folder.startswith(home):
+                folder = os.path.join("~", self._folder[len(home) + 1 :])
+            else:
+                folder = self._folder
+
+            configuration.set_configuration_value(
+                constants.RECENT_EMAIL_EXTRACTION, folder
+            )
