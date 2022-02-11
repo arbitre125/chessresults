@@ -411,11 +411,38 @@ class Leagues(leagues_lite.Leagues):
             return
         finally:
             of.close()
-        edited_text = ConfigureDialog(
-            self.get_widget(),
-            configuration=config_text,
-            dialog_title="Edit ECF URL Defaults",
-        ).config_text
+
+        # An unresolved bug is worked around by this 'try ... except' block.
+        # The initial exception can be exposed by commenting the 'return'
+        # statement near the end of the 'except KeyError as exc:' block.
+        try:
+            edited_text = ConfigureDialog(
+                self.get_widget(),
+                configuration=config_text,
+                dialog_title="Edit ECF URL Defaults",
+            ).config_text
+        except KeyError as exc:
+            if str(exc) == "'#!menu'":
+                tkinter.messagebox.showinfo(
+                    parent=self.get_widget(),
+                    message="".join(
+                        (
+                            "The sufficient and necessary actions to reach ",
+                            "this point are:\n\n",
+                            "Close a database\n",
+                            "Use the 'Results | ECF URLs' menu option.\n\n",
+                            "The cause is probably an unresolved bug.\n\n",
+                            "The best action now is close and restart the ",
+                            "ChessResults application; but there may be ",
+                            "nothing wrong with manually destroying the bare ",
+                            "widget created to edit the ECF URLs.",
+                        )
+                    ),
+                    title="Edit ECF URL Defaults",
+                )
+                return
+            raise
+
         if edited_text is None:
             return
         of = open(default, "w")
