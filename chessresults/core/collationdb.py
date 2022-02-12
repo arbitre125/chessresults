@@ -58,7 +58,7 @@ class CollationDB(object):
         playersgames = dict()
         playerskey = dict()
         playersmap = dict()
-        newplayers = dict()
+        new_players = dict()
         newgames = []  # [ResultsDBrecordGame instance, ...]
         newgamesmap = dict()  # [instance attributes tuple : count, ...}
         dbgames = []  # [ResultsDBrecordGame instance, ...]
@@ -106,13 +106,13 @@ class CollationDB(object):
             # not removing codes when editing an event (probably).
             pid = player.get_identity()
             affiliation = player.affiliation
-            if pid not in newplayers:
+            if pid not in new_players:
                 name, event, start, end, section, pin = pid
                 if section is not None:
                     namemanager.set_name(section)
                 if affiliation:
                     namemanager.set_name(affiliation)
-                newplayers[pid] = None
+                new_players[pid] = None
             if pid not in players:
                 pr = ResultsDBrecordPlayer()
                 pr.value.name = name

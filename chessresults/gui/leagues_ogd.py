@@ -10,7 +10,7 @@ import importlib
 
 from . import control_ogd
 from . import events_ogd
-from . import newplayers
+from . import newplayers_ogd
 from . import players
 from . import ogdgradingcodes
 from . import leagues_lite
@@ -61,7 +61,7 @@ class Leagues(leagues_lite.Leagues):
             text="NewPlayers",
             tooltip="Identify new players and merge with existing players.",
             underline=0,
-            tabclass=lambda **k: newplayers.NewPlayers(
+            tabclass=lambda **k: newplayers_ogd.NewPlayers(
                 gridhorizontal=False, **k
             ),
             destroy_actions=(control_ogd.Control._btn_closedatabase,),

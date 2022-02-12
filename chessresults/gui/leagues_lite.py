@@ -22,7 +22,7 @@ from . import sourceedit
 from . import takeonedit
 from . import control_lite
 from . import events_lite
-from . import newplayers
+from . import newplayers_lite
 from . import players
 from . import importevents
 from . import taskpanel
@@ -170,7 +170,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
             text="NewPlayers",
             tooltip="Identify new players and merge with existing players.",
             underline=0,
-            tabclass=lambda **k: newplayers.NewPlayers(
+            tabclass=lambda **k: newplayers_lite.NewPlayers(
                 gridhorizontal=False, **k
             ),
             destroy_actions=(control_lite.Control._btn_closedatabase,),

@@ -636,9 +636,9 @@ class ImportReports(object):
         discard = set()
         for nps in self.known_to_new.values():
             discard.update(nps)
-        newplayers = self.gameplayer - discard
+        new_players = self.gameplayer - discard
         discard = set()
-        for p in newplayers:
+        for p in new_players:
             if p not in self.remoteplayer:
                 discard.add(p)
             elif p in self.new_to_known:
@@ -649,8 +649,8 @@ class ImportReports(object):
                     merge, alias = self.remoteplayer[alias]
                 if merge == "False":
                     discard.add(p)
-        newplayers.difference_update(discard)
-        return newplayers
+        new_players.difference_update(discard)
+        return new_players
 
     def map_known_to_new(self, knownplayer, newplayer):
         """Add new player to known player map."""

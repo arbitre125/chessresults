@@ -432,7 +432,7 @@ class Identities(ExceptionHandler):
 
         gameplayermerge = self.importdata.gameplayermerge
         # get new players on exporting database
-        newplayers = self.importdata.get_new_players()
+        new_players = self.importdata.get_new_players()
         # get matches made between new players on exporting database
         # and players on importing database
         self.map_lbii_rem_new = []
@@ -448,12 +448,12 @@ class Identities(ExceptionHandler):
         self.map_lbii_rem_new.sort()
         # get unmatched new players on exporting database
         self.local = []
-        for np in newplayers:
+        for np in new_players:
             if np not in matchedplayers:
                 if np in gameplayermerge:
                     self.local.append((AppSysPersonName(np[0]).name, np, np))
                     for a in gameplayermerge[np]:
-                        if a in newplayers:
+                        if a in new_players:
                             self.local.append(
                                 (AppSysPersonName(a[0]).name, a, np)
                             )
