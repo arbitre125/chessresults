@@ -102,8 +102,6 @@ class CollationDB(object):
 
         def set_player(player):
             """Create record for new player and prepare amendments."""
-            # Handling of reported codes may well be wrong: the danger is
-            # not removing codes when editing an event (probably).
             pid = player.get_identity()
             affiliation = player.affiliation
             if pid not in new_players:
@@ -130,26 +128,33 @@ class CollationDB(object):
                 players[pid] = pr
                 playerskey[pr.key.recno] = pid
                 playersmap[pid] = pr.key.recno
-            elif not affiliation:
-                if players[pid].value.affiliation:
+            else:
+                change_affiliation = False
+                if not affiliation:
+                    if players[pid].value.affiliation:
+                        change_affiliation = True
+                        new_affiliation = None
+                elif (
+                    namemanager.get_code(affiliation)
+                    != players[pid].value.affiliation
+                ):
+                    change_affiliation = True
+                    new_affiliation = namemanager.get_code(affiliation)
+                change_reported_codes = (
+                    set(players[pid].value.reported_codes)
+                    != player.reported_codes
+                )
+                if change_affiliation or change_reported_codes:
                     if pid not in playersamend:
                         playersamend[pid] = players[pid].clone()
-                        playersamend[pid].value.reported_codes = list(
-                            player.reported_codes
-                        )
-                    playersamend[pid].value.affiliation = None
-            elif (
-                namemanager.get_code(affiliation)
-                != players[pid].value.affiliation
-            ):
-                if pid not in playersamend:
-                    playersamend[pid] = players[pid].clone()
-                    playersamend[pid].value.reported_codes = list(
-                        player.reported_codes
-                    )
-                playersamend[pid].value.affiliation = namemanager.get_code(
-                    affiliation
-                )
+                        if change_affiliation:
+                            playersamend[
+                                pid
+                            ].value.affiliation = new_affiliation
+                        if change_reported_codes:
+                            playersamend[pid].value.reported_codes = list(
+                                player.reported_codes
+                            )
             playersgames[pid] = True
 
         def unset_player(skey):
