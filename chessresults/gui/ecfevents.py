@@ -19,6 +19,7 @@ from ..core import ecfrecord
 from ..core import gameresults
 from ..core import constants
 from ..core import filespec
+from ..core import configuration
 from . import ecferrors
 
 
@@ -815,14 +816,22 @@ class ECFEvents(panel.PanelGridSelector):
 
         lines.append(ecf_line((dcc(constants.FINISH),)))
 
-        dlg = tkinter.filedialog.asksaveasfilename(
+        filepath = tkinter.filedialog.asksaveasfilename(
             parent=self.get_widget(),
             title="Save ECF Results submission file",
             initialfile=subfilename,
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_SUBMISSION
+            ),
         )
-        if not dlg:
+        if not filepath:
             return
-        filepath = dlg
+        configuration.set_configuration_value(
+            constants.RECENT_SUBMISSION,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(filepath)
+            ),
+        )
 
         of = open(filepath, "wb")
         of.write(os.linesep.join(lines).encode("ascii"))

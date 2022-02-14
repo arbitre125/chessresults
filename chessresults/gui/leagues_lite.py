@@ -473,7 +473,8 @@ class Leagues(threadqueue.AppSysThreadQueue):
                 )
                 return
         configuration.set_configuration_value(
-            constants.RECENT_DATABASE, database_folder
+            constants.RECENT_DATABASE,
+            configuration.convert_home_directory_to_tilde(database_folder),
         )
 
         # Set the error file in top folder of chess database
@@ -604,7 +605,8 @@ class Leagues(threadqueue.AppSysThreadQueue):
             )
             return
         configuration.set_configuration_value(
-            constants.RECENT_DATABASE, database_folder
+            constants.RECENT_DATABASE,
+            configuration.convert_home_directory_to_tilde(database_folder),
         )
 
         # Set the error file in top folder of chess database
@@ -944,7 +946,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
             return
 
         if self.results_folder is None:
-            initdir = "~"
+            initdir = configuration.get_configuration_value(
+                constants.RECENT_DOCUMENT
+            )
         else:
             initdir = self.results_folder
         results_folder = tkinter.filedialog.askdirectory(
@@ -982,6 +986,12 @@ class Leagues(threadqueue.AppSysThreadQueue):
             if results_data.open_documents(self.get_widget()):
                 self.results_data = results_data
                 self.results_folder = results_folder
+                configuration.set_configuration_value(
+                    constants.RECENT_DOCUMENT,
+                    configuration.convert_home_directory_to_tilde(
+                        results_folder
+                    ),
+                )
                 return True
 
     def _set_folder_generic(self):

@@ -27,6 +27,8 @@ _items = {
     constants.RECENT_DATABASE: "~",
     constants.RECENT_EMAIL_SELECTION: "~",
     constants.RECENT_EMAIL_EXTRACTION: "~",
+    constants.RECENT_DOCUMENT: "~",
+    constants.RECENT_SUBMISSION: "~",
 }
 
 for item in config_text.splitlines():
@@ -66,6 +68,17 @@ def set_configuration_value(item, value):
         if _items[item] != value:
             _items[item] = value
             _save_configuration()
+
+
+def convert_home_directory_to_tilde(path):
+    """Return path with leading /home/<user> converted to ~."""
+    home = os.path.expanduser("~")
+
+    # removeprefix not available until Python3.9
+    if path.startswith(home):
+        return os.path.join("~", path[len(home) + 1 :])
+    else:
+        return path
 
 
 def _save_configuration():

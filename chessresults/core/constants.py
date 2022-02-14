@@ -337,11 +337,13 @@ OTHER_TYPE = "O"
 EVENT_CONF = "event.conf"
 
 # Most recently accessed database and configuation files for selecting and
-# extracting text from emails.
+# extracting text from emails to documents.
 RESULTS_CONF = ".chessresults.conf"
 RECENT_DATABASE = "database"
 RECENT_EMAIL_SELECTION = "collection"
 RECENT_EMAIL_EXTRACTION = "event"
+RECENT_DOCUMENT = "document"
+RECENT_SUBMISSION = "submission"
 
 # Default URLs to access ECF website.
 # These are copied to a file, paired with a database, which may need editing
