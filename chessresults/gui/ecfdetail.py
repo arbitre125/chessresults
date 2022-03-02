@@ -696,8 +696,11 @@ class ECFDownloadGradingCodeDialog(ECFDetailDialog):
             **kargs
         )
 
+    # Implemented by ecfdataimport.copy_single_ecf_players_post_2020_rules()
+    # call, like in ECFDownloadPlayerNameDialog but with different rules to
+    # allow call to occur.
     def on_update(self, event=None):
-        """Validate and apply download to grading code list and player."""
+        """Validate and apply download to ECF code list."""
         ecfcode = "".join(self.edit_ctrl[0].get().strip().split())
         urlname = self.edit_ctrl[1].get().strip()
         if len(ecfcode) != 7:
@@ -815,6 +818,176 @@ class ECFDownloadGradingCodeDialog(ECFDetailDialog):
             tkinter.messagebox.showinfo(
                 parent=self.dialog,
                 title="ECF Grading Code Download",
+                message="".join(
+                    (
+                        "Exception raised trying to extract grading code ",
+                        "from URL\n\n",
+                        str(exc),
+                    )
+                ),
+            )
+            return
+        self.set_yes()
+        self.dialog.destroy()
+        return
+
+
+class ECFDownloadPlayerNameDialog(ECFDetailDialog):
+
+    """Dialogue to download ECF name for player."""
+
+    def __init__(self, parent, database, cnf=dict(), **kargs):
+        """Extend, allow download of ECF name for existing ECF code."""
+        self.database = database
+        items = ()
+        edititems = (
+            ("Download ECF name for ECF code", ""),
+            (
+                "URL",
+                get_configuration_item(
+                    os.path.join(
+                        database.home_directory,
+                        os.path.basename(database.home_directory).join(
+                            (constants.URL_NAMES, ".txt")
+                        ),
+                    ),
+                    constants.PLAYER_INFO_URL,
+                    constants.DEFAULT_URLS,
+                ),
+            ),
+        )
+
+        super().__init__(
+            parent,
+            "ECF Player Name Download",
+            "Download ECF name for ECF code from URL",
+            items,
+            edititems,
+            cnf=cnf,
+            **kargs
+        )
+
+    # Implemented by ecfdataimport.copy_single_ecf_players_post_2020_rules()
+    # call, like in ECFDownloadGradingCodeDialog but with different rules to
+    # allow call to occur.
+    def on_update(self, event=None):
+        """Validate and apply download to grading code list."""
+        ecfcode = "".join(self.edit_ctrl[0].get().strip().split())
+        urlname = self.edit_ctrl[1].get().strip()
+        if len(ecfcode) != 7:
+            dlg = tkinter.messagebox.showinfo(
+                parent=self.dialog,
+                message="".join(
+                    (
+                        "'",
+                        ecfcode,
+                        "' is not 7 characters so cannot be an ECF Grading Code",
+                    )
+                ),
+                title="ECF Player Name Download",
+            )
+            return
+        tokens = list(ecfcode)
+        checkdigit = 0
+        for i in range(6):
+            if not tokens[i].isdigit():
+                dlg = tkinter.messagebox.showinfo(
+                    parent=self.dialog,
+                    message=" ".join(
+                        (
+                            ecfcode,
+                            "is not 6 digits followed by a check",
+                            "character so cannot be an ECF Grading Code",
+                        )
+                    ),
+                    title="ECF Player Name Download",
+                )
+                return
+            checkdigit += int(tokens[5 - i]) * (i + 2)
+        if tokens[-1] != "ABCDEFGHJKL"[checkdigit % 11]:
+            dlg = tkinter.messagebox.showinfo(
+                parent=self.dialog,
+                message=" ".join(
+                    (
+                        ecfcode,
+                        "does not have the correct check character for the",
+                        "six digits so cannot be an ECF Grading Code",
+                    )
+                ),
+                title="ECF Player Name Download",
+            )
+            return
+        ecfplayer = ecfrecord.get_ecf_player_for_grading_code(
+            self.database, ecfcode
+        )
+        if ecfplayer is None:
+            dlg = tkinter.messagebox.showinfo(
+                parent=self.dialog,
+                message="".join(
+                    (
+                        ecfcode,
+                        "\n\nis not on the master list.\n\n",
+                        "Use 'Download ECF Code' instead.",
+                    )
+                ),
+                title="ECF Player Name Download",
+            )
+            return
+
+        mapplayer = ecfmaprecord.get_new_person_for_grading_code(
+            self.database, ecfcode
+        )
+        if mapplayer is not None:
+            dlg = tkinter.messagebox.showinfo(
+                parent=self.dialog,
+                message="".join(
+                    (
+                        ecfcode,
+                        "\n\nis already specified as the ECF Grading ",
+                        "Code for\n\n",
+                        "".join(
+                            (
+                                mapplayer.value.playerecfname,
+                                "\n\n(a new player).  ",
+                            )
+                        ),
+                        "Delete the grading code from the new player, download ",
+                        "the grading code, and link it to the player.",
+                    )
+                ),
+                title="ECF Player Name Download",
+            )
+            return
+        try:
+            url = urllib.request.urlopen("".join((urlname, ecfcode[:6])))
+        except Exception as exc:
+            tkinter.messagebox.showinfo(
+                parent=self.dialog,
+                title="ECF Player Name Download",
+                message="".join(
+                    ("Exception raised trying to open URL\n\n", str(exc))
+                ),
+            )
+            return
+        try:
+            urldata = url.read()
+        except Exception as exc:
+            tkinter.messagebox.showinfo(
+                parent=self.dialog,
+                title="ECF Player Name Download",
+                message="".join(
+                    ("Exception raised trying to read URL\n\n", str(exc))
+                ),
+            )
+            return
+        try:
+            ecfdataimport.copy_single_ecf_players_post_2020_rules(
+                self.database, json.loads(urldata)
+            )
+        except Exception as exc:
+            tkinter.messagebox.showinfo(
+                parent=self.dialog,
+                title="ECF Player Name Download",
                 message="".join(
                     (
                         "Exception raised trying to extract grading code ",

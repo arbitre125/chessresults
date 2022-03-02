@@ -887,6 +887,8 @@ class SourceEdit(panel.PlainPanel):
                         "\nA well-formed entry in a swiss table refering to a ",
                         "row which does not exist: for example 'w12+' where ",
                         "'12' is not a player's PIN.\n",
+                        "\nAn ECF code or membership number missing the ",
+                        "single alpha character suffix or prefix.\n",
                         "\n Edit document as workaround (or solution).",
                     )
                 ),

@@ -33,7 +33,7 @@ from ..core import ecfmaprecord
 def copy_ecf_clubs_post_2020_rules(
     results, logwidget=None, ecfdata=None, downloaddate=None, **kwargs
 ):
-    """ """
+    """Copy downloaded club records in ecfdata to database."""
     keybyteify = results._keybyteify
 
     # downloaddate replaces the datecontrol and ecfdate arguments.
@@ -207,7 +207,7 @@ def copy_ecf_clubs_post_2020_rules(
 def copy_ecf_players_post_2020_rules(
     results, logwidget=None, ecfdata=None, downloaddate=None, **kwargs
 ):
-    """ """
+    """Copy downloaded player records in ecfdata to database."""
     keybyteify = results._keybyteify
 
     # downloaddate replaces the datecontrol argument.
@@ -439,7 +439,7 @@ def copy_ecf_players_post_2011_rules(
     datecontrol=None,
     **kwargs
 ):
-    """Import a new ECF player file
+    """Import a new ECF player file.
 
     widget - the manager object for the ecf data import tab
 
@@ -662,7 +662,7 @@ def copy_ecf_clubs_post_2011_rules(
     datekey=lambda d: d,
     **kwargs
 ):
-    """Import a new ECF club file
+    """Import a new ECF club file.
 
     widget - the manager object for the ecf data import tab
 
@@ -820,7 +820,7 @@ def copy_ecf_clubs_post_2011_rules(
 
 
 def copy_single_ecf_club_post_2020_rules(results, ecfdata=None, **kwargs):
-    """ """
+    """Copy downloaded club record in ecfdata to database."""
     keybyteify = results._keybyteify
 
     # The _strify method of the Database instance is not needed because the
@@ -884,7 +884,7 @@ def copy_single_ecf_club_post_2020_rules(results, ecfdata=None, **kwargs):
 
 
 def copy_single_ecf_players_post_2020_rules(results, ecfdata=None, **kwargs):
-    """ """
+    """Copy downloaded club record in ecfdata to database."""
     keybyteify = results._keybyteify
 
     # The _strify method of the Database instance is not needed because the

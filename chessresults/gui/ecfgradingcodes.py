@@ -27,6 +27,7 @@ class ECFGradingCodes(panel.PanedPanelGridSelectorBar):
     _btn_ecf_name = "ecfgradingcodes_name"
     _btn_grading_code = "ecfgradingcodes_grading_code"
     _btn_grading_code_download = "ecfgradingcodes_grading_code_download"
+    _btn_ecf_name_download = "ecfgradingcodes_ecf_name_download"
     _btn_cancel_edit_ecf_name = "ecfgradingcodes_cancel"
 
     def __init__(self, parent=None, cnf=dict(), **kargs):
@@ -77,15 +78,15 @@ class ECFGradingCodes(panel.PanedPanelGridSelectorBar):
         """Define all action buttons that may appear on ECF grading code page."""
         self.define_button(
             self._btn_identify,
-            text="Link Grading Code",
-            tooltip="Link selected player with selected Grading Code.",
+            text="Link ECF Code",
+            tooltip="Link selected player with selected ECF Code.",
             underline=1,
             command=self.on_identify,
         )
         self.define_button(
             self._btn_revert,
             text="Modify Identity",
-            tooltip="Remove player from Grading Code tab (to adjust identification).",
+            tooltip="Remove player from Rating Codes tab (to adjust identification).",
             underline=4,
             command=self.on_revert,
         )
@@ -98,21 +99,28 @@ class ECFGradingCodes(panel.PanedPanelGridSelectorBar):
         )
         self.define_button(
             self._btn_grading_code,
-            text="New Grading Code",
-            tooltip="Edit new player grading code for ECF submission file.",
-            underline=13,
+            text="New ECF Code",
+            tooltip="Edit new player ECF code for ECF submission file.",
+            underline=9,
             command=self.on_grading_code,
         )
         self.define_button(
             self._btn_cancel_edit_ecf_name,
             text="Cancel Edit ECF Name",
             tooltip="Cancel edit player name from master file.",
-            underline=5,
+            underline=10,
             command=self.on_cancel_edit_ecf_name,
         )
         self.define_button(
+            self._btn_ecf_name_download,
+            text="Download ECF Name",
+            tooltip="Download player's name from ECF.",
+            underline=4,
+            command=self.on_ecf_name_download,
+        )
+        self.define_button(
             self._btn_grading_code_download,
-            text="Download Grading Code",
+            text="Download ECF Code",
             tooltip="Download player's details from ECF.",
             underline=2,
             command=self.on_grading_code_download,
@@ -211,7 +219,7 @@ class ECFGradingCodes(panel.PanedPanelGridSelectorBar):
         if len(npsel) == 0:
             msg = " ".join(
                 (
-                    "Select the player whose ECF form of name",
+                    "Select the new player whose ECF form of name",
                     "is to be modified (probably before first",
                     "submission of results for the new player).",
                 )
@@ -267,11 +275,24 @@ class ECFGradingCodes(panel.PanedPanelGridSelectorBar):
     def edit_new_player_grading_code(self):
         """Show dialogue to edit player's ECF grading code and do update."""
         msgtitle = "New Player Grading Code"
+        if tkinter.messagebox.askokcancel(
+            parent=self.get_widget(),
+            message=" ".join(
+                (
+                    "This action became obsolete when the ECF introduced the",
+                    "programming API to monthly rating.\n\nPrefer the",
+                    "'Download ECF Code' followed by 'Link ECF Code' actions",
+                    "instead.\n\nSelect OK to accept the recommendation.",
+                )
+            ),
+            title=msgtitle,
+        ):
+            return
         npsel = self.newpersongrid.selection
         if len(npsel) == 0:
             msg = " ".join(
                 (
-                    "Select the player whose ECF grading code is",
+                    "Select the new player whose ECF grading code is",
                     "to be modified (probably following receipt",
                     "of feedback file from ECF).",
                 )
@@ -342,12 +363,22 @@ class ECFGradingCodes(panel.PanedPanelGridSelectorBar):
             self.refresh_controls((self.newpersongrid,))
 
     def download_new_player_grading_code(self):
-        """Show dialogue to download player's ECF grading code and do update."""
+        """Show dialogue to download player's ECF code and do update."""
         msgtitle = "Download Player's Grading Code"
 
         db = self.get_appsys().get_results_database()
 
         dlg = ecfdetail.ECFDownloadGradingCodeDialog(None, db)
+        if dlg.is_yes():
+            self.refresh_controls((self.ecfpersongrid,))
+
+    def download_ecf_name_for_ecf_code(self):
+        """Show dialogue to download player's ECF name and do update."""
+        msgtitle = "Download Player's ECF name"
+
+        db = self.get_appsys().get_results_database()
+
+        dlg = ecfdetail.ECFDownloadPlayerNameDialog(None, db)
         if dlg.is_yes():
             self.refresh_controls((self.ecfpersongrid,))
 
@@ -373,13 +404,18 @@ class ECFGradingCodes(panel.PanedPanelGridSelectorBar):
         return "break"
 
     def on_grading_code(self, event=None):
-        """Edit the locally entered ECF grading code."""
+        """Edit the locally entered ECF code."""
         self.edit_new_player_grading_code()
         return "break"
 
     def on_grading_code_download(self, event=None):
-        """Download the locally entered ECF grading code."""
+        """Download the locally entered ECF code."""
         self.download_new_player_grading_code()
+        return "break"
+
+    def on_ecf_name_download(self, event=None):
+        """Download the ECF name for the locally entered ECF code."""
+        self.download_ecf_name_for_ecf_code()
         return "break"
 
     def return_person_for_identification(self):

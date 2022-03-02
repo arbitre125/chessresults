@@ -348,11 +348,16 @@ RECENT_SUBMISSION = "submission"
 # Default URLs to access ECF website.
 # These are copied to a file, paired with a database, which may need editing
 # if the ECF URLs change.
+# PLAYER_SEARCH_URL is the 'browser searh' URL because the programming API
+# does not have a 'membership number' query URL.  It is assumed a regular
+# expression will be capable of locating the relevent ECF code if it exists
+# in the search response.
 URL_NAMES = "URLnames_"
 ACTIVE_CLUBS_URL = "active_clubs_url"
 PLAYERS_RATINGS_URL = "players_ratings_url"
 PLAYER_INFO_URL = "player_info_url"
 CLUB_INFO_URL = "club_info_url"
+PLAYER_SEARCH_URL = "player_search_url"
 DEFAULT_URLS = (
     (
         ACTIVE_CLUBS_URL,
@@ -369,6 +374,10 @@ DEFAULT_URLS = (
     (
         CLUB_INFO_URL,
         "https://www.ecfrating.org.uk/v2/new/api.php?v2/clubs/code/",
+    ),
+    (
+        PLAYER_SEARCH_URL,
+        "https://www.ecfrating.org.uk/v2/new/list_players.php?mode=A&search=",
     ),
 )
 
