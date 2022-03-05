@@ -13,6 +13,7 @@ import os
 from solentware_misc.gui import panel
 
 from . import ecfeventgrids
+from . import uploadresults
 from ..core import resultsrecord
 from ..core import ecfmaprecord
 from ..core import ecfrecord
@@ -27,7 +28,9 @@ class ECFEvents(panel.PanelGridSelector):
 
     """The ECF Events panel for a Results database."""
 
-    _btn_ecfsubmit = "ecfevents_submit"
+    _btn_ecf_save = "ecfevents_save"
+    _btn_ecf_submit = "ecfevents_submit"
+    _btn_ecf_check_and_report = "ecfevents_check_and_report"
     _btn_ecfeventdetail = "ecfevents_detail"
 
     def __init__(self, parent=None, cnf=dict(), **kargs):
@@ -35,7 +38,12 @@ class ECFEvents(panel.PanelGridSelector):
         self.eventgrid = None
         super(ECFEvents, self).__init__(parent=parent, cnf=cnf, **kargs)
         self.show_panel_buttons(
-            (self._btn_ecfeventdetail, self._btn_ecfsubmit)
+            (
+                self._btn_ecfeventdetail,
+                self._btn_ecf_save,
+                self._btn_ecf_check_and_report,
+                self._btn_ecf_submit,
+            )
         )
         self.create_buttons()
         (self.eventgrid,) = self.make_grids(
@@ -58,19 +66,33 @@ class ECFEvents(panel.PanelGridSelector):
     def describe_buttons(self):
         """Define all action buttons that may appear on ECF events page."""
         self.define_button(
-            self._btn_ecfsubmit,
-            text="Submit",
-            tooltip="Prepare a file for ECF containing results for selected events.",
-            underline=2,
-            command=self.on_ecf_submit,
-        )
-        self.define_button(
             self._btn_ecfeventdetail,
             text="Update Event Detail",
-            tooltip="Prepare a file for ECF containing results for selected events.",
+            tooltip="Update details for selected event.",
             switchpanel=True,
             underline=0,
             command=self.on_ecf_event_detail,
+        )
+        self.define_button(
+            self._btn_ecf_save,
+            text="Save file",
+            tooltip="Save results file for selected events.",
+            underline=5,
+            command=self.on_ecf_save,
+        )
+        self.define_button(
+            self._btn_ecf_check_and_report,
+            text="Check and Report file",
+            tooltip="Check and report previouly saved results file to ECF.",
+            underline=4,
+            command=self.on_ecf_check_and_report,
+        )
+        self.define_button(
+            self._btn_ecf_submit,
+            text="Submit file",
+            tooltip="Submit previouly saved results file to ECF.",
+            underline=2,
+            command=self.on_ecf_submit,
         )
 
     def is_event_selected(self):
@@ -79,7 +101,7 @@ class ECFEvents(panel.PanelGridSelector):
             dlg = tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
                 message="No event selected for amendment of detail",
-                title="Events",
+                title="ECF Events",
             )
             return False
         return True
@@ -93,9 +115,53 @@ class ECFEvents(panel.PanelGridSelector):
         if not self.is_event_selected():
             return "break"
 
-    def on_ecf_submit(self, event=None):
+    def on_ecf_save(self, event=None):
         """Create an ECF Results Submission File."""
         self.write_results_file_for_ecf()
+
+    def on_ecf_check_and_report(self, event=None):
+        """Check and report created ECF Results Submission File to ECF."""
+        if not uploadresults.curl and not uploadresults.requests:
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message=" ".join(
+                    (
+                        "'Check and Report' action cannot be done because",
+                        "both 'curl' and 'requests' are not available.\n\nA",
+                        "browser can be used to upload the submission file to",
+                        "https://www.ecfrating.org.uk/v2/submit/",
+                    )
+                ),
+                title="ECF Events",
+            )
+            return
+        upload = uploadresults.CheckAndReportResults()
+        upload.root.wait_visibility()
+        upload.root.grab_set()
+        upload.root.wait_window()
+        return
+
+    def on_ecf_submit(self, event=None):
+        """Submit created ECF Results Submission File to ECF."""
+        if not uploadresults.curl and not uploadresults.requests:
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message=" ".join(
+                    (
+                        "'Submit' action cannot be done because",
+                        "both 'curl' and 'requests' are not available.\n\nA",
+                        "browser can be used to upload the submission file to",
+                        "https://www.ecfrating.org.uk/v2/submit/",
+                    )
+                ),
+                title="ECF Events",
+            )
+            return
+        upload = uploadresults.SubmitResults()
+        upload.root.wait_visibility()
+        upload.root.grab_set()
+        upload.root.wait_window()
+        return
 
     def write_results_file_for_ecf(self):
         """Write results for selected events to ECF submission file.
@@ -125,7 +191,7 @@ class ECFEvents(panel.PanelGridSelector):
             dlg = tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
                 message="No events selected for submission of results to ECF",
-                title="Events",
+                title="ECF Events",
             )
             return
 
@@ -161,7 +227,7 @@ class ECFEvents(panel.PanelGridSelector):
                         "providing them.",
                     )
                 ),
-                title="Events",
+                title="ECF Events",
             )
             return
 
@@ -180,7 +246,7 @@ class ECFEvents(panel.PanelGridSelector):
                             "and names are not all the same.",
                         )
                     ),
-                    title="Events",
+                    title="ECF Events",
                 )
                 return
 
@@ -211,7 +277,7 @@ class ECFEvents(panel.PanelGridSelector):
                         'Click "No" to use the selection already made.',
                     )
                 ),
-                title="Events",
+                title="ECF Events",
             )
             if resp == tkinter.messagebox.YES:
                 submit_events.update(all_events)
@@ -233,7 +299,7 @@ class ECFEvents(panel.PanelGridSelector):
                 dlg = tkinter.messagebox.showinfo(
                     parent=self.get_widget(),
                     message="Creation of submission file for ECF abandoned",
-                    title="Events",
+                    title="ECF Events",
                 )
                 return
         else:
@@ -247,7 +313,7 @@ class ECFEvents(panel.PanelGridSelector):
         del all_events
 
         if not tkinter.messagebox.askyesno(
-            parent=self.get_widget(), message=msg, title="Events"
+            parent=self.get_widget(), message=msg, title="ECF Events"
         ):
             return
 
@@ -354,7 +420,7 @@ class ECFEvents(panel.PanelGridSelector):
                     )
                 )
             dlg = tkinter.messagebox.showinfo(
-                parent=self.get_widget(), message=msg, title="Events"
+                parent=self.get_widget(), message=msg, title="ECF Events"
             )
             reports = []
             if len(list1):
@@ -383,7 +449,7 @@ class ECFEvents(panel.PanelGridSelector):
                         "new grading codes allocated.",
                     )
                 ),
-                title="Events - create submission file",
+                title="ECF Events - create submission file",
             ):
                 return
 

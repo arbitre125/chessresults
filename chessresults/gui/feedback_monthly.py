@@ -119,7 +119,7 @@ class FeedbackMonthly(panel.PlainPanel):
         fb.submission_file_name = "@@@@@@@@"
         fb.responsestring = response
         fb.feed(response)
-        fb.insert_whitespace()
+        fb.insert_whitespace_and_redact_dates()
         fb.find_player_lists()
         self.insert_text_feedbackctrl("\n\n")
         if (
