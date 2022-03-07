@@ -28,6 +28,8 @@ except ModuleNotFoundError:
     requests = None
 
 from ..core import feedback_html
+from ..core import configuration
+from ..core import constants
 
 _AVOID_SCROLLBAR = "avoidscrollbar"
 _START_TEXT = " ".join(
@@ -212,10 +214,20 @@ class _UploadResults:
     def select_submission_file(self, event=None):
         """Select a results submission file."""
         localfilename = tkinter.filedialog.askopenfilename(
-            parent=self.text, title="Browse File", initialdir="~"
+            parent=self.text,
+            title="Browse Results Submission File",
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_SUBMISSION
+            ),
         )
         if not localfilename:
             return
+        configuration.set_configuration_value(
+            constants.RECENT_SUBMISSION,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(localfilename)
+            ),
+        )
         self.filename.set(localfilename)
         try:
             rft = open(localfilename).read()
@@ -661,9 +673,21 @@ class SubmitResults(_UploadResults):
                 ),
             )
         )
-        filename = tkinter.filedialog.asksaveasfilename(title=title)
+        filename = tkinter.filedialog.asksaveasfilename(
+            parent=self.text,
+            title=title,
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_FEEDBACK
+            ),
+        )
         if not filename:
             return
+        configuration.set_configuration_value(
+            constants.RECENT_FEEDBACK,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(filename)
+            ),
+        )
         of = open(filename, mode="w")
         try:
             of.write(self.most_recent_response.responsestring)

@@ -27,11 +27,13 @@ from ..core import (
     gameresults,
     ecfgcodemaprecord,
     ecfogdrecord,
+    configuration,
 )
 from ..core.importreports import convert_alias_to_transfer_format
 from . import (
     eventgrids,
     gamesummary,
+    reports,
 )
 from .taskpanel import TaskPanel
 
@@ -530,6 +532,9 @@ class Events(panel.PanelGridSelector):
             title="Export Event Results",
             defaultextension=".bz2",
             filetypes=(("bz2 compressed", "*.bz2"),),
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_EXPORT_EVENTS
+            ),
         )
         if not filename:
             tkinter.messagebox.showwarning(
@@ -538,6 +543,12 @@ class Events(panel.PanelGridSelector):
                 message="Event Results export file not saved",
             )
             return
+        configuration.set_configuration_value(
+            constants.RECENT_EXPORT_EVENTS,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(filename)
+            ),
+        )
         outputfile = bz2.open(filename, mode="wt", encoding="utf8")
         outputfile.write("\n".join(self.__exportdata))
         outputfile.close()
@@ -556,6 +567,9 @@ class Events(panel.PanelGridSelector):
             title="Event Summary - Filename Prefix",
             defaultextension=".bz2",
             filetypes=(("bz2 compressed", "*.bz2"),),
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_EVENT_SUMMARY
+            ),
         )
         if not filename:
             tkinter.messagebox.showwarning(
@@ -564,6 +578,12 @@ class Events(panel.PanelGridSelector):
                 message="Event Summary files not saved",
             )
             return
+        configuration.set_configuration_value(
+            constants.RECENT_EVENT_SUMMARY,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(filename)
+            ),
+        )
         prefix = os.path.splitext(os.path.basename(filename))[0]
         if prefix.endswith(".csv"):
             prefix = prefix[:-4]
@@ -1007,9 +1027,10 @@ class Events(panel.PanelGridSelector):
             logwidget.append_text_only("")
         prediction.Prediction(
             self,
-            "Calculate Performance Distributions",
+            "Calculate  Distributions",
             "\n".join(event_report),
-            *gefpc
+            *gefpc,
+            show_report=_PredictionReport
         )
         if logwidget:
             logwidget.append_text("Calculations completed.")
@@ -1111,7 +1132,8 @@ class Events(panel.PanelGridSelector):
             self,
             "Calculate Player Performances",
             "\n".join(event_report),
-            *gefpc
+            *gefpc,
+            show_report=_PerformanceReport
         )
         if logwidget:
             logwidget.append_text("Calculations completed.")
@@ -1217,7 +1239,8 @@ class Events(panel.PanelGridSelector):
             self,
             "Calculate Population Map Analysis",
             "\n".join(event_report),
-            *gefpc
+            *gefpc,
+            show_report=_PopulationReport
         )
         if logwidget:
             logwidget.append_text("Calculations completed.")
@@ -1499,3 +1522,21 @@ class Events(panel.PanelGridSelector):
         if logwidget:
             logwidget.append_text("Ready to save event summary.")
             logwidget.append_text_only("")
+
+
+class _PerformanceReport(reports.ChessResultsReport):
+    """Provide initialdir argument for the Save dialogue."""
+
+    configuration_item = constants.RECENT_PERFORMANCES
+
+
+class _PredictionReport(reports.ChessResultsReport):
+    """Provide initialdir argument for the Save dialogue."""
+
+    configuration_item = constants.RECENT_PREDICTIONS
+
+
+class _PopulationReport(reports.ChessResultsReport):
+    """Provide initialdir argument for the Save dialogue."""
+
+    configuration_item = constants.RECENT_POPULATION

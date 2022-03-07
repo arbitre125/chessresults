@@ -18,6 +18,8 @@ import bz2
 from solentware_misc.gui import panel
 
 from ..core import filespec
+from ..core import configuration
+from ..core import constants
 
 
 class Control(panel.PlainPanel):
@@ -133,17 +135,25 @@ class Control(panel.PlainPanel):
 
     def on_import_events(self, event=None):
         """Do import events actions."""
-        dlg = tkinter.filedialog.askopenfilename(
+        filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
             title="Open Event file",
             defaultextension=".bz2",
             filetypes=(("bz2 compressed", "*.bz2"),),
-            initialdir="~",
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_IMPORT_EVENTS
+            ),
         )
-        if not dlg:
+        if not filepath:
             self.inhibit_context_switch(self._btn_importevents)
             return
-        bz2file = bz2.BZ2File(dlg, "rb")
+        configuration.set_configuration_value(
+            constants.RECENT_IMPORT_EVENTS,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(filepath)
+            ),
+        )
+        bz2file = bz2.BZ2File(filepath, "rb")
         text = bz2file.read()
         bz2file.close()
 
@@ -158,7 +168,7 @@ class Control(panel.PlainPanel):
         # not matter.
         self.get_appsys().set_kwargs_for_next_tabclass_call(
             dict(
-                datafile=(dlg, text),
+                datafile=(filepath, text),
                 closecontexts=(
                     filespec.GAME_FILE_DEF,
                     filespec.PLAYER_FILE_DEF,

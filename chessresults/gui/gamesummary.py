@@ -6,11 +6,12 @@
 """
 
 import tkinter
+import os
 
 from solentware_misc.gui.exceptionhandler import ExceptionHandler
-from solentware_misc.gui.reports import show_report
 from solentware_misc.core.utilities import AppSysPersonName
 
+from . import reports
 from ..core import resultsrecord
 from ..core import filespec
 from ..core.gameresults import (
@@ -19,8 +20,15 @@ from ..core.gameresults import (
     awin as AWIN,
     draw as DRAW,
 )
+from ..core import constants
 
 INVERT_RESULT = {HWIN: AWIN, DRAW: DRAW, AWIN: HWIN}
+
+
+class _GameSummaryReport(reports.ChessResultsReport):
+    """Provide initialdir argument for the Save dialogue."""
+
+    configuration_item = constants.RECENT_PERFORMANCES
 
 
 class GameSummary(ExceptionHandler):
@@ -34,7 +42,7 @@ class GameSummary(ExceptionHandler):
             database.get_primary_record(filespec.EVENT_FILE_DEF, event[-1])
         ).value
 
-        self.summary = show_report(
+        self.summary = _GameSummaryReport(
             parent,
             "".join(
                 (

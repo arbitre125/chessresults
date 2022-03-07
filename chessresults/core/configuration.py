@@ -29,6 +29,17 @@ _items = {
     constants.RECENT_EMAIL_EXTRACTION: "~",
     constants.RECENT_DOCUMENT: "~",
     constants.RECENT_SUBMISSION: "~",
+    constants.RECENT_FEEDBACK: "~",
+    constants.RECENT_FEEDBACK_EMAIL: "~",
+    constants.RECENT_MASTERFILE: "~",
+    constants.RECENT_IMPORT_EVENTS: "~",
+    constants.RECENT_EXPORT_EVENTS: "~",
+    constants.RECENT_PERFORMANCES: "~",
+    constants.RECENT_PREDICTIONS: "~",
+    constants.RECENT_POPULATION: "~",
+    constants.RECENT_GAME_SUMMARY: "~",
+    constants.RECENT_EVENT_SUMMARY: "~",
+    constants.RECENT_GRADING_LIST: "~",
 }
 
 for item in config_text.splitlines():

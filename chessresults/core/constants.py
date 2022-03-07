@@ -344,6 +344,17 @@ RECENT_EMAIL_SELECTION = "collection"
 RECENT_EMAIL_EXTRACTION = "event"
 RECENT_DOCUMENT = "document"
 RECENT_SUBMISSION = "submission"
+RECENT_FEEDBACK = "feedback"
+RECENT_FEEDBACK_EMAIL = "feedback_email"
+RECENT_MASTERFILE = "masterfile"
+RECENT_IMPORT_EVENTS = "import_events"
+RECENT_EXPORT_EVENTS = "export_events"
+RECENT_PERFORMANCES = "performances"
+RECENT_PREDICTIONS = "predictions"
+RECENT_POPULATION = "population"
+RECENT_GAME_SUMMARY = "game_summary"
+RECENT_EVENT_SUMMARY = "event_summary"
+RECENT_GRADING_LIST = "grading_list"
 
 # Default URLs to access ECF website.
 # These are copied to a file, paired with a database, which may need editing

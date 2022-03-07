@@ -21,6 +21,8 @@ from ..core.filespec import ECFOGDPLAYER_FILE_DEF, MAPECFOGDPLAYER_FILE_DEF
 from ..core import ecfogddataimport
 from ..core import ecfogddb
 from . import control_lite
+from ..core import configuration
+from ..core import constants
 
 
 class Control(control_lite.Control):
@@ -85,21 +87,27 @@ class Control(control_lite.Control):
             command=self.on_quit_ecf_ogd_zipped_files,
         )
 
-    def display_ecf_ogd_zipped_file_contents(self, initialdir=""):
+    def display_ecf_ogd_zipped_file_contents(self):
         """Display ECF master data with date for confirmation of update."""
-        if not initialdir:
-            initialdir = "~"
-        dlg = tkinter.filedialog.askopenfilename(
+        filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
             title="Open ECF data file",
             defaultextension=".zip",
             filetypes=(("ECF master lists", "*.zip"),),
-            initialdir=initialdir,
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_GRADING_LIST
+            ),
         )
-        if not dlg:
+        if not filepath:
             return
+        configuration.set_configuration_value(
+            constants.RECENT_GRADING_LIST,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(filepath)
+            ),
+        )
 
-        ziparchive = zipfile.ZipFile(dlg, "r")
+        ziparchive = zipfile.ZipFile(filepath, "r")
         try:
             namelist = ziparchive.namelist()
             if len(namelist):
@@ -124,7 +132,7 @@ class Control(control_lite.Control):
                 listbox.pack(fill=tkinter.BOTH, expand=tkinter.TRUE)
                 frame.pack(fill=tkinter.BOTH, expand=tkinter.TRUE)
                 listbox.insert(tkinter.END, *sorted(namelist))
-                self.datafilepath.configure(text=dlg)
+                self.datafilepath.configure(text=filepath)
                 self.ecf_reference_file = listbox
                 self._ecf_reference_widget = frame
                 return True
@@ -184,9 +192,7 @@ class Control(control_lite.Control):
 
     def on_ecf_ogd_grading_file(self, event=None):
         """Do display ECF Grading List actions."""
-        if self.display_ecf_ogd_zipped_file_contents(
-            self.datafilepath.cget("text"),
-        ):
+        if self.display_ecf_ogd_zipped_file_contents():
             self.show_buttons_for_import_ecf_ogd_data()
             self.create_buttons()
 

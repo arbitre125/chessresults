@@ -42,6 +42,7 @@ from ..core import ecfplayerdb
 from . import control_lite
 from ..core import constants
 from . import ecfdownload
+from ..core import configuration
 
 
 class Control(control_lite.Control):
@@ -164,21 +165,29 @@ class Control(control_lite.Control):
 
     def on_ecf_results_feedback(self, event=None):
         """Do ECF feedback actions."""
-        dlg = tkinter.filedialog.askopenfilename(
+        filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
             title="Open ECF feedback email or attachment",
             # defaultextension='.txt',
             # filetypes=(('ECF feedback', '*.txt'),),
-            initialdir="~",
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_FEEDBACK_EMAIL
+            ),
         )
-        if not dlg:
+        if not filepath:
             self.inhibit_context_switch(self._btn_ecfresultsfeedback)
             return
+        configuration.set_configuration_value(
+            constants.RECENT_FEEDBACK_EMAIL,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(filepath)
+            ),
+        )
         try:
-            feedbackfile = open(dlg, "rb")
+            feedbackfile = open(filepath, "rb")
             try:
                 self.get_appsys().set_kwargs_for_next_tabclass_call(
-                    dict(datafile=(dlg, _get_feedback_text(feedbackfile)))
+                    dict(datafile=(filepath, _get_feedback_text(feedbackfile)))
                 )
             finally:
                 feedbackfile.close()
@@ -194,23 +203,31 @@ class Control(control_lite.Control):
 
     def on_ecf_results_feedback_monthly(self, event=None):
         """Do ECF feedback actions."""
-        dlg = tkinter.filedialog.askopenfilename(
+        filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
-            title="Open ECF feedback email or attachment",
+            title="Open Saved ECF Feedback",
             # defaultextension='.txt',
             # filetypes=(('ECF feedback', '*.txt'),),
-            initialdir="~",
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_FEEDBACK
+            ),
         )
-        if not dlg:
+        if not filepath:
             self.inhibit_context_switch(self._btn_ecfresultsfeedbackmonthly)
             return
+        configuration.set_configuration_value(
+            constants.RECENT_FEEDBACK,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(filepath)
+            ),
+        )
         try:
-            feedbackfile = open(dlg, "rb")
+            feedbackfile = open(filepath, "rb")
             try:
                 self.get_appsys().set_kwargs_for_next_tabclass_call(
                     dict(
                         datafile=(
-                            dlg,
+                            filepath,
                             _get_feedback_monthly_text(feedbackfile),
                         )
                     )
@@ -218,7 +235,7 @@ class Control(control_lite.Control):
             finally:
                 feedbackfile.close()
         except:
-            dlg = tkinter.messagebox.showinfo(
+            tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
                 message="".join(
                     ("File\n", os.path.split(dlg)[-1], "\ndoes not exist")
@@ -468,27 +485,31 @@ class Control(control_lite.Control):
 
     def on_ecf_master_file(self, event=None):
         """Do unzip ECF master file actions"""
-        if self.display_ecf_zipped_file_contents(
-            self.datafilepath.cget("text"),
-        ):
+        if self.display_ecf_zipped_file_contents():
             self.show_buttons_for_ecf_master_file()
             self.create_buttons()
 
-    def display_ecf_zipped_file_contents(self, initialdir=""):
+    def display_ecf_zipped_file_contents(self):
         """Display ECF master data with date for confirmation of update."""
-        if not initialdir:
-            initialdir = "~"
-        dlg = tkinter.filedialog.askopenfilename(
+        filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
             title="Open ECF data file",
             defaultextension=".zip",
             filetypes=(("ECF master lists", "*.zip"),),
-            initialdir=initialdir,
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_MASTERFILE
+            ),
         )
-        if not dlg:
+        if not filepath:
             return
+        configuration.set_configuration_value(
+            constants.RECENT_MASTERFILE,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(filepath)
+            ),
+        )
 
-        ziparchive = zipfile.ZipFile(dlg, "r")
+        ziparchive = zipfile.ZipFile(filepath, "r")
         try:
             namelist = ziparchive.namelist()
             if len(namelist):
@@ -513,7 +534,7 @@ class Control(control_lite.Control):
                 listbox.pack(fill=tkinter.BOTH, expand=tkinter.TRUE)
                 frame.pack(fill=tkinter.BOTH, expand=tkinter.TRUE)
                 listbox.insert(tkinter.END, *sorted(namelist))
-                self.datafilepath.configure(text=dlg)
+                self.datafilepath.configure(text=filepath)
                 self.ecf_reference_file = listbox
                 self._ecf_reference_widget = frame
                 return True
