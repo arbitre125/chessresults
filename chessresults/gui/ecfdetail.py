@@ -674,12 +674,7 @@ class ECFDownloadGradingCodeDialog(ECFDetailDialog):
             (
                 "URL",
                 get_configuration_item(
-                    os.path.join(
-                        database.home_directory,
-                        os.path.basename(database.home_directory).join(
-                            (constants.URL_NAMES, ".txt")
-                        ),
-                    ),
+                    os.path.expanduser(os.path.join("~", constants.URL_CONF)),
                     constants.PLAYER_INFO_URL,
                     constants.DEFAULT_URLS,
                 ),
@@ -845,12 +840,7 @@ class ECFDownloadPlayerNameDialog(ECFDetailDialog):
             (
                 "URL",
                 get_configuration_item(
-                    os.path.join(
-                        database.home_directory,
-                        os.path.basename(database.home_directory).join(
-                            (constants.URL_NAMES, ".txt")
-                        ),
-                    ),
+                    os.path.expanduser(os.path.join("~", constants.URL_CONF)),
                     constants.PLAYER_INFO_URL,
                     constants.DEFAULT_URLS,
                 ),
@@ -1015,12 +1005,7 @@ class ECFDownloadClubCodeDialog(ECFDetailDialog):
             (
                 "URL",
                 get_configuration_item(
-                    os.path.join(
-                        database.home_directory,
-                        os.path.basename(database.home_directory).join(
-                            (constants.URL_NAMES, ".txt")
-                        ),
-                    ),
+                    os.path.expanduser(os.path.join("~", constants.URL_CONF)),
                     constants.CLUB_INFO_URL,
                     constants.DEFAULT_URLS,
                 ),

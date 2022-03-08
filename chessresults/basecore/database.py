@@ -27,11 +27,6 @@ class Database:
         homenames = set(n for n in names if os.path.basename(n) in listnames)
         if ERROR_LOG in listnames:
             homenames.add(os.path.join(self.home_directory, ERROR_LOG))
-        default = os.path.basename(self.home_directory).join(
-            (constants.URL_NAMES, ".txt")
-        )
-        if default in listnames:
-            homenames.add(os.path.join(self.home_directory, default))
         if len(listnames - set(os.path.basename(h) for h in homenames)):
             message = "".join(
                 (

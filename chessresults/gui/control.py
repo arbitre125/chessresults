@@ -266,7 +266,6 @@ class Control(control_lite.Control):
             self.inhibit_context_switch(button)
             return
         if dlg.download_pressed():
-            hd = self.get_appsys().get_results_database().home_directory
             dialogue_result = dialogue.ModalEntryApply(
                 self.appsys,
                 title,
@@ -274,11 +273,8 @@ class Control(control_lite.Control):
                     (
                         "URL",
                         get_configuration_item(
-                            os.path.join(
-                                hd,
-                                os.path.basename(hd).join(
-                                    (constants.URL_NAMES, ".txt")
-                                ),
+                            os.path.expanduser(
+                                os.path.join("~", constants.URL_CONF)
                             ),
                             default_url,
                             constants.DEFAULT_URLS,

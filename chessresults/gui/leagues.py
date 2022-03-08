@@ -30,6 +30,7 @@ from . import ratedplayers
 from .. import ECF_DATA_IMPORT_MODULE
 from .. import KNOWN_NAME_DATASOURCE_MODULE
 from ..core import constants
+from . import configuredialog_hack
 
 
 class Leagues(leagues_lite.Leagues):
@@ -347,18 +348,12 @@ class Leagues(leagues_lite.Leagues):
     def set_ecf_url_defaults(self):
         """Set URL defaults for ECF website.
 
-        Create a file, if it does not exist, with URL defaults as sibling of
-        results folder.
+        Create a file, if it does not exist, with URL defaults in user's
+        home directory.
 
         """
-        if self.database_folder is None:
-            return
-        default = os.path.join(
-            self.database_folder,
-            os.path.basename(self.database_folder).join(
-                (constants.URL_NAMES, ".txt")
-            ),
-        )
+        default = os.path.expanduser(os.path.join("~", constants.URL_CONF))
+
         if not os.path.exists(default):
             urls = "\n".join([" ".join(u) for u in constants.DEFAULT_URLS])
             of = open(default, "w")
@@ -391,19 +386,8 @@ class Leagues(leagues_lite.Leagues):
 
     def edit_ecf_url_defaults(self):
         """Edit URL defaults for ECF website if the defaults file exists."""
-        if self.database_folder is None:
-            tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message="Database must be open to edit ECF URL defaults",
-                title="Edit ECF URL Defaults",
-            )
-            return
-        default = os.path.join(
-            self.database_folder,
-            os.path.basename(self.database_folder).join(
-                (constants.URL_NAMES, ".txt")
-            ),
-        )
+        default = os.path.expanduser(os.path.join("~", constants.URL_CONF))
+
         if not os.path.exists(default):
             tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
@@ -455,26 +439,31 @@ class Leagues(leagues_lite.Leagues):
                 dialog_title="Edit ECF URL Defaults",
             ).config_text
         except KeyError as exc:
-            if str(exc) == "'#!menu'":
-                tkinter.messagebox.showinfo(
-                    parent=self.get_widget(),
-                    message="".join(
-                        (
-                            "The sufficient and necessary actions to reach ",
-                            "this point are:\n\n",
-                            "Close a database\n",
-                            "Use the 'Results | ECF URLs' menu option.\n\n",
-                            "The cause is probably an unresolved bug.\n\n",
-                            "The best action now is close and restart the ",
-                            "ChessResults application; but there may be ",
-                            "nothing wrong with manually destroying the bare ",
-                            "widget created to edit the ECF URLs.",
-                        )
-                    ),
-                    title="Edit ECF URL Defaults",
-                )
-                return
-            raise
+            if str(exc) != "'#!menu'":
+                raise
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message="".join(
+                    (
+                        "The sufficient and necessary actions to reach ",
+                        "this point are:\n\n",
+                        "Close a database\n",
+                        "Use the 'Tools | ECF URLs' menu option.\n\n",
+                        "The cause is probably an unresolved bug.\n\n",
+                        "The best action now is close and restart the ",
+                        "ChessResults application; but there may be ",
+                        "nothing wrong with dismissing this message, ",
+                        "manually destroying the bare widget, and editing ",
+                        "the ECF URLs in the widget that appears.",
+                    )
+                ),
+                title="Edit ECF URL Defaults",
+            )
+            edited_text = configuredialog_hack.ConfigureDialogHack(
+                self.get_widget(),
+                configuration=config_text,
+                dialog_title="Edit ECF URL Defaults",
+            ).config_text
 
         if edited_text is None:
             return

@@ -363,7 +363,7 @@ RECENT_GRADING_LIST = "grading_list"
 # does not have a 'membership number' query URL.  It is assumed a regular
 # expression will be capable of locating the relevent ECF code if it exists
 # in the search response.
-URL_NAMES = "URLnames_"
+URL_CONF = ".chessresults_url.conf"
 ACTIVE_CLUBS_URL = "active_clubs_url"
 PLAYERS_RATINGS_URL = "players_ratings_url"
 PLAYER_INFO_URL = "player_info_url"

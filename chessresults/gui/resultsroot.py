@@ -84,6 +84,8 @@ class Results(ExceptionHandler):
 
         menu3 = tkinter.Menu(menubar, name="tools", tearoff=False)
         menubar.add_cascade(label="Tools", menu=menu3, underline=0)
+        menu3.add_separator()
+        self.mf._add_ecf_url_item(menu3)
         menu3.add_command(
             label="Fonts",
             underline=0,

@@ -94,7 +94,6 @@ class Leagues(threadqueue.AppSysThreadQueue):
             command=self.try_command(self.database_close, menu1),
         )
         menu1.add_separator()
-        self._add_ecf_url_item(menu1)
         menu1.add_command(
             label="Delete",
             underline=0,

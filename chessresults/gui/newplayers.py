@@ -147,11 +147,8 @@ class NewPlayers(newplayers_lite.NewPlayers):
                 if groups["mno"]:
                     ecfcode = None
                     urlname = get_configuration_item(
-                        os.path.join(
-                            db.home_directory,
-                            os.path.basename(db.home_directory).join(
-                                (constants.URL_NAMES, ".txt")
-                            ),
+                        os.path.expanduser(
+                            os.path.join("~", constants.URL_CONF)
                         ),
                         constants.PLAYER_SEARCH_URL,
                         constants.DEFAULT_URLS,
@@ -240,11 +237,8 @@ class NewPlayers(newplayers_lite.NewPlayers):
                         )
                         continue
                     urlname = get_configuration_item(
-                        os.path.join(
-                            db.home_directory,
-                            os.path.basename(db.home_directory).join(
-                                (constants.URL_NAMES, ".txt")
-                            ),
+                        os.path.expanduser(
+                            os.path.join("~", constants.URL_CONF)
                         ),
                         constants.PLAYER_INFO_URL,
                         constants.DEFAULT_URLS,
