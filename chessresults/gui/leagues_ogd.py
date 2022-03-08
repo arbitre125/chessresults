@@ -92,6 +92,7 @@ class Leagues(leagues_lite.Leagues):
             tabclass=lambda **k: importecfogd.ImportECFOGD(**k),
             destroy_actions=(
                 importecfogd.ImportECFOGD._btn_closeecfogdimport,
+                control_ogd.Control._btn_closedatabase,
             ),
         )
 
@@ -115,6 +116,10 @@ class Leagues(leagues_lite.Leagues):
                     self._state_importecfogd,
                     importecfogd.ImportECFOGD._btn_closeecfogdimport,
                 ): [self._state_dbopen, self._tab_control],
+                (
+                    self._state_importecfogd,
+                    control_ogd.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
             },
         )
 

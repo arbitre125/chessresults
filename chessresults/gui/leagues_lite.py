@@ -189,7 +189,10 @@ class Leagues(threadqueue.AppSysThreadQueue):
             tooltip="Import event data",
             underline=-1,
             tabclass=lambda **k: importevents.ImportEvents(**k),
-            destroy_actions=(importevents.ImportEvents._btn_closeimport,),
+            destroy_actions=(
+                importevents.ImportEvents._btn_closeimport,
+                control_lite.Control._btn_closedatabase,
+            ),
         )
         self.define_tab(
             self._tab_reportevent,
@@ -197,7 +200,10 @@ class Leagues(threadqueue.AppSysThreadQueue):
             tooltip="Default background task log",
             underline=-1,
             tabclass=lambda **k: taskpanel.TaskPanel(**k),
-            destroy_actions=(taskpanel.TaskPanel._btn_closebackgroundtask,),
+            destroy_actions=(
+                taskpanel.TaskPanel._btn_closebackgroundtask,
+                control_lite.Control._btn_closedatabase,
+            ),
         )
 
         self.define_state_transitions(
@@ -310,6 +316,14 @@ class Leagues(threadqueue.AppSysThreadQueue):
                     self._state_dbopen_report_event,
                     taskpanel.TaskPanel._btn_closebackgroundtask,
                 ): [self._state_dbopen, self._tab_events],
+                (
+                    self._state_dbopen_report_event,
+                    control_lite.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
+                (
+                    self._state_dbopen_import_events,
+                    control_lite.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
             },
         )
 

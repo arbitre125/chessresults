@@ -137,7 +137,10 @@ class Leagues(leagues_lite.Leagues):
             text="ECF Event Detail",
             tooltip="Update details of event for submission to ECF.",
             tabclass=lambda **k: newevent.NewEvent(**k),
-            destroy_actions=(newevent.NewEvent._btn_cancel,),
+            destroy_actions=(
+                newevent.NewEvent._btn_cancel,
+                control.Control._btn_closedatabase,
+            ),
         )
         self.define_tab(
             self._tab_ecfplayers,
@@ -155,7 +158,10 @@ class Leagues(leagues_lite.Leagues):
             tooltip="Import data from ECF Master and Update zipped files.",
             underline=-1,
             tabclass=lambda **k: importecfdata.ImportECFData(**k),
-            destroy_actions=(importecfdata.ImportECFData._btn_closeecfimport,),
+            destroy_actions=(
+                importecfdata.ImportECFData._btn_closeecfimport,
+                control.Control._btn_closedatabase,
+            ),
         )
         self.define_tab(
             self._tab_importfeedback,
@@ -163,7 +169,10 @@ class Leagues(leagues_lite.Leagues):
             tooltip="Import data from ECF feedback text files.",
             underline=-1,
             tabclass=lambda **k: feedback.Feedback(**k),
-            destroy_actions=(feedback.Feedback._btn_closefeedback,),
+            destroy_actions=(
+                feedback.Feedback._btn_closefeedback,
+                control.Control._btn_closedatabase,
+            ),
         )
         self.define_tab(
             self._tab_importfeedbackmonthly,
@@ -173,6 +182,7 @@ class Leagues(leagues_lite.Leagues):
             tabclass=lambda **k: feedback_monthly.FeedbackMonthly(**k),
             destroy_actions=(
                 feedback_monthly.FeedbackMonthly._btn_closefeedbackmonthly,
+                control.Control._btn_closedatabase,
             ),
         )
         self.define_tab(
@@ -181,7 +191,10 @@ class Leagues(leagues_lite.Leagues):
             tooltip="Join an event's players with same-named players.",
             underline=-1,
             tabclass=lambda **k: joineventplayers.JoinEventPlayers(**k),
-            destroy_actions=(joineventplayers.JoinEventPlayers._btn_cancel,),
+            destroy_actions=(
+                joineventplayers.JoinEventPlayers._btn_cancel,
+                control.Control._btn_closedatabase,
+            ),
         )
         self.define_tab(
             self._tab_clubsdownload,
@@ -292,6 +305,26 @@ class Leagues(leagues_lite.Leagues):
                     self._state_playersdownload,
                     ratedplayers.RatedPlayers._btn_closeratedplayers,
                 ): [self._state_dbopen, self._tab_control],
+                (
+                    self._state_ecfeventdetail,
+                    control.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
+                (
+                    self._state_importecfdata,
+                    control.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
+                (
+                    self._state_importfeedback,
+                    control.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
+                (
+                    self._state_importfeedbackmonthly,
+                    control.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
+                (
+                    self._state_joineventplayers,
+                    control.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
             },
         )
 
