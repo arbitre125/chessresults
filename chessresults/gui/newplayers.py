@@ -148,7 +148,7 @@ class NewPlayers(newplayers_lite.NewPlayers):
                     ecfcode = None
                     urlname = get_configuration_item(
                         os.path.expanduser(
-                            os.path.join("~", constants.URL_CONF)
+                            os.path.join("~", constants.RESULTS_CONF)
                         ),
                         constants.PLAYER_SEARCH_URL,
                         constants.DEFAULT_URLS,
@@ -238,7 +238,7 @@ class NewPlayers(newplayers_lite.NewPlayers):
                         continue
                     urlname = get_configuration_item(
                         os.path.expanduser(
-                            os.path.join("~", constants.URL_CONF)
+                            os.path.join("~", constants.RESULTS_CONF)
                         ),
                         constants.PLAYER_INFO_URL,
                         constants.DEFAULT_URLS,

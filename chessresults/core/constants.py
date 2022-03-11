@@ -338,6 +338,7 @@ EVENT_CONF = "event.conf"
 
 # Most recently accessed database and configuation files for selecting and
 # extracting text from emails to documents.
+# Some could be per database, but done per user.
 RESULTS_CONF = ".chessresults.conf"
 RECENT_DATABASE = "database"
 RECENT_EMAIL_SELECTION = "collection"
@@ -355,15 +356,32 @@ RECENT_POPULATION = "population"
 RECENT_GAME_SUMMARY = "game_summary"
 RECENT_EVENT_SUMMARY = "event_summary"
 RECENT_GRADING_LIST = "grading_list"
+DEFAULT_RECENTS = (
+    (RECENT_DATABASE, "~"),
+    (RECENT_EMAIL_SELECTION, "~"),
+    (RECENT_EMAIL_EXTRACTION, "~"),
+    (RECENT_DOCUMENT, "~"),
+    (RECENT_SUBMISSION, "~"),
+    (RECENT_FEEDBACK, "~"),
+    (RECENT_FEEDBACK_EMAIL, "~"),
+    (RECENT_MASTERFILE, "~"),
+    (RECENT_IMPORT_EVENTS, "~"),
+    (RECENT_EXPORT_EVENTS, "~"),
+    (RECENT_PERFORMANCES, "~"),
+    (RECENT_PREDICTIONS, "~"),
+    (RECENT_POPULATION, "~"),
+    (RECENT_GAME_SUMMARY, "~"),
+    (RECENT_EVENT_SUMMARY, "~"),
+    (RECENT_GRADING_LIST, "~"),
+)
 
 # Default URLs to access ECF website.
-# These are copied to a file, paired with a database, which may need editing
+# These are copied to a file, paired with a user, which may need editing
 # if the ECF URLs change.
 # PLAYER_SEARCH_URL is the 'browser searh' URL because the programming API
 # does not have a 'membership number' query URL.  It is assumed a regular
 # expression will be capable of locating the relevent ECF code if it exists
 # in the search response.
-URL_CONF = ".chessresults_url.conf"
 ACTIVE_CLUBS_URL = "active_clubs_url"
 PLAYERS_RATINGS_URL = "players_ratings_url"
 PLAYER_INFO_URL = "player_info_url"

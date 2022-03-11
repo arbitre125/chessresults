@@ -31,6 +31,7 @@ from .. import ECF_DATA_IMPORT_MODULE
 from .. import KNOWN_NAME_DATASOURCE_MODULE
 from ..core import constants
 from . import configuredialog_hack
+from ..core import configuration
 
 
 class Leagues(leagues_lite.Leagues):
@@ -352,7 +353,7 @@ class Leagues(leagues_lite.Leagues):
         home directory.
 
         """
-        default = os.path.expanduser(os.path.join("~", constants.URL_CONF))
+        default = os.path.expanduser(os.path.join("~", constants.RESULTS_CONF))
 
         if not os.path.exists(default):
             urls = "\n".join([" ".join(u) for u in constants.DEFAULT_URLS])
@@ -386,52 +387,23 @@ class Leagues(leagues_lite.Leagues):
 
     def edit_ecf_url_defaults(self):
         """Edit URL defaults for ECF website if the defaults file exists."""
-        default = os.path.expanduser(os.path.join("~", constants.URL_CONF))
-
-        if not os.path.exists(default):
-            tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message="".join(
-                    (
-                        default,
-                        "\n\ndoes not exist.  Try closing and opening ",
-                        "the database to cause it to be created with default ",
-                        "values.",
-                    )
-                ),
-                title="Edit ECF URL Defaults",
+        url_items = {
+            default[0]: default[1] for default in constants.DEFAULT_URLS
+        }
+        configuration.get_configuration_text_and_values_for_items_from_file(
+            url_items
+        )
+        config_text = []
+        for k, v in sorted(url_items.items()):
+            config_text.append(
+                " ".join((k, configuration.get_configuration_value(k, v)))
             )
-            return
-        if not os.path.isfile(default):
-            tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message="".join(
-                    (
-                        default,
-                        "\n\nis not a file: it cannot be the defaults.",
-                    )
-                ),
-                title="Edit ECF URL Defaults",
-            )
-            return
-        of = open(default)
-        try:
-            config_text = of.read()
-        except Exception as exc:
-            tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message="".join(
-                    ("Unable to read from\n\n", default, "\n\n", str(exc))
-                ),
-                title=dialog_title,
-            )
-            return
-        finally:
-            of.close()
+        config_text = "\n".join(config_text)
 
         # An unresolved bug is worked around by this 'try ... except' block.
-        # The initial exception can be exposed by commenting the 'return'
-        # statement near the end of the 'except KeyError as exc:' block.
+        # The initial exception can be exposed by uncommenting the 'else'
+        # block at start of 'except' block.
+        # I have no idea what is going on so cannot fix problem.
         try:
             edited_text = ConfigureDialog(
                 self.get_widget(),
@@ -441,6 +413,8 @@ class Leagues(leagues_lite.Leagues):
         except KeyError as exc:
             if str(exc) != "'#!menu'":
                 raise
+            # else:
+            #    raise
             tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
                 message="".join(
@@ -467,22 +441,6 @@ class Leagues(leagues_lite.Leagues):
 
         if edited_text is None:
             return
-        of = open(default, "w")
-        try:
-            of.write(edited_text)
-        except Exception as exc:
-            tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message="".join(
-                    (
-                        "Unable to write to\n\n",
-                        default,
-                        "\n\n",
-                        str(exc),
-                    )
-                ),
-                title=dialog_title,
-            )
-            return
-        finally:
-            of.close()
+        configuration.set_configuration_values_from_text(
+            edited_text, config_items=url_items
+        )

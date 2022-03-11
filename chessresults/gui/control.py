@@ -274,7 +274,7 @@ class Control(control_lite.Control):
                         "URL",
                         get_configuration_item(
                             os.path.expanduser(
-                                os.path.join("~", constants.URL_CONF)
+                                os.path.join("~", constants.RESULTS_CONF)
                             ),
                             default_url,
                             constants.DEFAULT_URLS,

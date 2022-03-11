@@ -28,7 +28,7 @@ INVERT_RESULT = {HWIN: AWIN, DRAW: DRAW, AWIN: HWIN}
 class _GameSummaryReport(reports.ChessResultsReport):
     """Provide initialdir argument for the Save dialogue."""
 
-    configuration_item = constants.RECENT_PERFORMANCES
+    configuration_item = constants.RECENT_GAME_SUMMARY
 
 
 class GameSummary(ExceptionHandler):
