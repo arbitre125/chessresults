@@ -21,7 +21,6 @@ from .. import APPLICATION_NAME
 from . import help
 from . import configure
 from . import selectemail
-from ..core.emailextractor import EmailExtractor
 from ..core.season import create_event_configuration_file
 from ..core.constants import EVENT_CONF
 
