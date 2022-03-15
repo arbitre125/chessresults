@@ -87,7 +87,7 @@ class ECFEvents(panel.PanelGridSelector):
             self._btn_ecf_check_and_report,
             text="Check and Report file",
             tooltip="Check and report previouly saved results file to ECF.",
-            underline=4,
+            underline=13,
             command=self.on_ecf_check_and_report,
         )
         self.define_button(
