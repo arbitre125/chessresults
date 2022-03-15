@@ -13,6 +13,8 @@ to the database.
 import tkinter
 import datetime
 import re
+import email
+import os
 
 from solentware_misc.gui import panel
 from solentware_misc.gui import textreadonly
@@ -24,6 +26,7 @@ from ..core import filespec
 from ..core import constants
 from ..core import ecfrecord
 from ..core import feedback_html
+from ..core import configuration
 
 _remove_dates_re = re.compile(r"\d{4}-\d{2}-\d{2}")
 _exact_re = re.compile(r"\s+Exact\s+match\s+(\d{6}[A-L])\s*\Z")
@@ -686,3 +689,73 @@ class FeedbackMonthly(panel.PlainPanel):
                     if maprec.value.playerecfcode is None:
                         if maprec.value.playerecfname is not None:
                             return maprec
+
+
+def show_ecf_results_feedback_monthly_tab(tab, button):
+    """Show monthly feedback panel to do ECF feedback actions.
+
+    tab is the tab instance containing the button initiating the action.
+    button is the button which initiated the action.
+
+    The button has a different name, for state purposes, on each tab.
+
+    """
+    filepath = tkinter.filedialog.askopenfilename(
+        parent=tab.get_widget(),
+        title="Open Saved ECF Feedback",
+        # defaultextension='.txt',
+        # filetypes=(('ECF feedback', '*.txt'),),
+        initialdir=configuration.get_configuration_value(
+            constants.RECENT_FEEDBACK
+        ),
+    )
+    if not filepath:
+        tab.inhibit_context_switch(button)
+        return
+    configuration.set_configuration_value(
+        constants.RECENT_FEEDBACK,
+        configuration.convert_home_directory_to_tilde(
+            os.path.dirname(filepath)
+        ),
+    )
+    try:
+        feedbackfile = open(filepath, "rb")
+        try:
+            tab.get_appsys().set_kwargs_for_next_tabclass_call(
+                dict(
+                    datafile=(
+                        filepath,
+                        _get_feedback_monthly_text(feedbackfile),
+                    )
+                )
+            )
+        finally:
+            feedbackfile.close()
+    except:
+        tkinter.messagebox.showinfo(
+            parent=tab.get_widget(),
+            message="".join(
+                ("File\n", os.path.split(dlg)[-1], "\ndoes not exist")
+            ),
+            title=" ".join(["Open ECF feedback email or attachment"]),
+        )
+        return
+
+
+def _get_feedback_monthly_text(file):
+    """Return feedback text from open binary file.
+
+    Required text is assumed to be either in 'text/html' parts of an email,
+    but not an 'application/ms-tnef' attachment, or in a text file containing
+    the saved response from a submission to the ECF ratings website.
+
+    """
+    m = email.message_from_binary_file(file)
+
+    # Assume feedback is a saved response file if no message keys are found.
+    if not m.keys():
+        file.seek(0)
+        return file.read().decode()
+
+    # Assume feedback is in body of email, with no attachments.
+    return m.get_payload()

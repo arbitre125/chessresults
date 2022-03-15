@@ -14,6 +14,7 @@ from solentware_misc.gui import panel
 
 from . import ecfeventgrids
 from . import uploadresults
+from .feedback_monthly import show_ecf_results_feedback_monthly_tab
 from ..core import resultsrecord
 from ..core import ecfmaprecord
 from ..core import ecfrecord
@@ -32,6 +33,7 @@ class ECFEvents(panel.PanelGridSelector):
     _btn_ecf_submit = "ecfevents_submit"
     _btn_ecf_check_and_report = "ecfevents_check_and_report"
     _btn_ecfeventdetail = "ecfevents_detail"
+    _btn_ecf_feedback_monthly = "ecfevents_feedback_monthly"
 
     def __init__(self, parent=None, cnf=dict(), **kargs):
         """Extend and define the results database ECF events panel"""
@@ -43,6 +45,7 @@ class ECFEvents(panel.PanelGridSelector):
                 self._btn_ecf_save,
                 self._btn_ecf_check_and_report,
                 self._btn_ecf_submit,
+                self._btn_ecf_feedback_monthly,
             )
         )
         self.create_buttons()
@@ -93,6 +96,14 @@ class ECFEvents(panel.PanelGridSelector):
             tooltip="Submit previouly saved results file to ECF.",
             underline=2,
             command=self.on_ecf_submit,
+        )
+        self.define_button(
+            self._btn_ecf_feedback_monthly,
+            text="Feedback",
+            tooltip="Display a feedback email for a results upload to ECF.",
+            underline=7,
+            switchpanel=True,
+            command=self.on_ecf_results_feedback_monthly,
         )
 
     def is_event_selected(self):
@@ -162,6 +173,11 @@ class ECFEvents(panel.PanelGridSelector):
         upload.root.grab_set()
         upload.root.wait_window()
         return
+
+    def on_ecf_results_feedback_monthly(self, event=None):
+        """Do ECF feedback actions."""
+        show_ecf_results_feedback_monthly_tab(
+            self, self._btn_ecf_feedback_monthly)
 
     def write_results_file_for_ecf(self):
         """Write results for selected events to ECF submission file.

@@ -54,6 +54,7 @@ class Leagues(leagues_lite.Leagues):
     _state_importecfdata = "leagues_state_importecfdata"
     _state_importfeedback = "leagues_state_importfeedback"
     _state_importfeedbackmonthly = "leagues_state_importfeedback_monthly"
+    _state_responsefeedbackmonthly = "leagues_state_responsefeedback_monthly"
     _state_joineventplayers = "leagues_state_joineventplayers"
     _state_clubsdownload = "leagues_state_clubsdownload"
     _state_playersdownload = "leagues_state_playersdownload"
@@ -235,6 +236,9 @@ class Leagues(leagues_lite.Leagues):
                 self._state_importfeedbackmonthly: (
                     self._tab_importfeedbackmonthly,
                 ),
+                self._state_responsefeedbackmonthly: (
+                    self._tab_importfeedbackmonthly,
+                ),
                 self._state_joineventplayers: (self._tab_joineventplayers,),
                 self._state_clubsdownload: (self._tab_clubsdownload,),
                 self._state_playersdownload: (self._tab_playersdownload,),
@@ -280,9 +284,20 @@ class Leagues(leagues_lite.Leagues):
                     self._tab_importfeedbackmonthly,
                 ],
                 (
+                    self._state_dbopen,
+                    ecfevents.ECFEvents._btn_ecf_feedback_monthly,
+                ): [
+                    self._state_responsefeedbackmonthly,
+                    self._tab_importfeedbackmonthly,
+                ],
+                (
                     self._state_importfeedbackmonthly,
                     feedback_monthly.FeedbackMonthly._btn_closefeedbackmonthly,
                 ): [self._state_dbopen, self._tab_control],
+                (
+                    self._state_responsefeedbackmonthly,
+                    feedback_monthly.FeedbackMonthly._btn_closefeedbackmonthly,
+                ): [self._state_dbopen, self._tab_ecfevents],
                 (
                     self._state_dbopen,
                     events.Events._btn_join_event_new_players,
@@ -321,6 +336,10 @@ class Leagues(leagues_lite.Leagues):
                 ): [self._state_dbclosed, None],
                 (
                     self._state_importfeedbackmonthly,
+                    control.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
+                (
+                    self._state_responsefeedbackmonthly,
                     control.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
                 (

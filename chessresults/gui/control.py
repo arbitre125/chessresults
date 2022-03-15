@@ -29,6 +29,7 @@ except ImportError:  # Not ModuleNotFoundError for Pythons earlier than 3.6
 from solentware_misc.gui import dialogue
 from solentware_misc.core.getconfigurationitem import get_configuration_item
 
+from .feedback_monthly import show_ecf_results_feedback_monthly_tab
 from ..minorbases.dbaseapi import dBaseapiError
 from ..core.filespec import (
     ECFPLAYER_FILE_DEF,
@@ -96,7 +97,7 @@ class Control(control_lite.Control):
             self._btn_ecfresultsfeedback,
             text="ECF Results Feedback",
             tooltip="Display a feedback email for a results submission to ECF.",
-            underline=19,
+            underline=12,
             switchpanel=True,
             command=self.on_ecf_results_feedback,
         )
@@ -104,7 +105,7 @@ class Control(control_lite.Control):
             self._btn_ecfresultsfeedbackmonthly,
             text="ECF Monthly Feedback",
             tooltip="Display a feedback email for a results upload to ECF.",
-            underline=12,
+            underline=19,
             switchpanel=True,
             command=self.on_ecf_results_feedback_monthly,
         )
@@ -203,46 +204,8 @@ class Control(control_lite.Control):
 
     def on_ecf_results_feedback_monthly(self, event=None):
         """Do ECF feedback actions."""
-        filepath = tkinter.filedialog.askopenfilename(
-            parent=self.get_widget(),
-            title="Open Saved ECF Feedback",
-            # defaultextension='.txt',
-            # filetypes=(('ECF feedback', '*.txt'),),
-            initialdir=configuration.get_configuration_value(
-                constants.RECENT_FEEDBACK
-            ),
-        )
-        if not filepath:
-            self.inhibit_context_switch(self._btn_ecfresultsfeedbackmonthly)
-            return
-        configuration.set_configuration_value(
-            constants.RECENT_FEEDBACK,
-            configuration.convert_home_directory_to_tilde(
-                os.path.dirname(filepath)
-            ),
-        )
-        try:
-            feedbackfile = open(filepath, "rb")
-            try:
-                self.get_appsys().set_kwargs_for_next_tabclass_call(
-                    dict(
-                        datafile=(
-                            filepath,
-                            _get_feedback_monthly_text(feedbackfile),
-                        )
-                    )
-                )
-            finally:
-                feedbackfile.close()
-        except:
-            tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message="".join(
-                    ("File\n", os.path.split(dlg)[-1], "\ndoes not exist")
-                ),
-                title=" ".join(["Open ECF feedback email or attachment"]),
-            )
-            return
+        show_ecf_results_feedback_monthly_tab(
+            self, self._btn_ecfresultsfeedbackmonthly)
 
     def _ecf_download(self, name, button, default_url, contexts, structure):
         """Do download actions for rated players or active clubs.
@@ -673,22 +636,3 @@ def _get_feedback_text(file):
                 )
 
     return text
-
-
-def _get_feedback_monthly_text(file):
-    """Return feedback text from open binary file.
-
-    Required text is assumed to be either in 'text/html' parts of an email,
-    but not an 'application/ms-tnef' attachment, or in a text file containing
-    the saved response from a submission to the ECF ratings website.
-
-    """
-    m = email.message_from_binary_file(file)
-
-    # Assume feedback is a saved response file if no message keys are found.
-    if not m.keys():
-        file.seek(0)
-        return file.read().decode()
-
-    # Assume feedback is in body of email, with no attachments.
-    return m.get_payload()
