@@ -382,9 +382,13 @@ DEFAULT_RECENTS = (
 # does not have a 'membership number' query URL.  It is assumed a regular
 # expression will be capable of locating the relevent ECF code if it exists
 # in the search response.
+# MEMBER_INFO_URL added when membership number query added to public API.
+# (After 16 January 2022 and before 6 March 2022: too late to change v5.1.)
+# Keep PLAYER_SEARCH_URL so v5.1 can work on databases accessed by v5.2.
 ACTIVE_CLUBS_URL = "active_clubs_url"
 PLAYERS_RATINGS_URL = "players_ratings_url"
 PLAYER_INFO_URL = "player_info_url"
+MEMBER_INFO_URL = "member_info_url"
 CLUB_INFO_URL = "club_info_url"
 PLAYER_SEARCH_URL = "player_search_url"
 DEFAULT_URLS = (
@@ -399,6 +403,10 @@ DEFAULT_URLS = (
     (
         PLAYER_INFO_URL,
         "https://www.ecfrating.org.uk/v2/new/api.php?v2/players/code/",
+    ),
+    (
+        MEMBER_INFO_URL,
+        "https://www.ecfrating.org.uk/v2/new/api.php?v2/players/mid/",
     ),
     (
         CLUB_INFO_URL,

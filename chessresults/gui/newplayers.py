@@ -28,7 +28,6 @@ from ..core import ecfrecord
 from ..core import ecfmaprecord
 from ..core import constants
 from ..basecore.ecfdataimport import copy_single_ecf_players_post_2020_rules
-from ..core.players_html import PlayersHTML, PlayersHTMLTooManyECFCodes
 
 
 class NewPlayers(newplayers_lite.NewPlayers):
@@ -150,12 +149,12 @@ class NewPlayers(newplayers_lite.NewPlayers):
                         os.path.expanduser(
                             os.path.join("~", constants.RESULTS_CONF)
                         ),
-                        constants.PLAYER_SEARCH_URL,
+                        constants.MEMBER_INFO_URL,
                         constants.DEFAULT_URLS,
                     )
                     try:
                         url = urllib.request.urlopen(
-                            "".join((urlname, groups["mno"]))
+                            "".join((urlname, "ME", groups["mno"]))
                         )
                     except Exception as exc:
                         tkinter.messagebox.showinfo(
@@ -186,18 +185,8 @@ class NewPlayers(newplayers_lite.NewPlayers):
                             ),
                         )
                         continue
-                    parser = PlayersHTML(groups["mno"])
-                    parser.feed(urldata.decode())
-                    try:
-                        ecfcode = parser.get_ecf_code()
-                    except PlayersHTMLTooManyECFCodes as error:
-                        tkinter.messagebox.showinfo(
-                            parent=self.get_widget(),
-                            message=str(error),
-                            title=title,
-                        )
-                        continue
-                    if ecfcode is None:
+                    ecfcode = json.loads(urldata)["ECF_code"]
+                    if ecfcode is None or len(ecfcode) != 7:
                         tkinter.messagebox.showinfo(
                             parent=self.get_widget(),
                             message=" ".join(
@@ -215,7 +204,6 @@ class NewPlayers(newplayers_lite.NewPlayers):
                 if ecfrec is None:
                     ecfname = None
                     ecfmerge = None
-                    # Cannot download record from ECF yet.
                     # If ecfname remains None it should mean the player
                     # needs a new ECF code.
                     tokens = list(ecfcode)
