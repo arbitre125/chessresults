@@ -874,6 +874,9 @@ class SourceEdit(panel.PlainPanel):
         self.report_fixtures(data)
 
         # Remove the 'try' wrapping once the problem is fixed.
+        # The KeyError might be fixable but the AttributeError is a genuine
+        # problem found by accident; and probably deserves an Exception of
+        # it's own.
         try:
             self.get_results(data)
         except KeyError:
@@ -893,6 +896,35 @@ class SourceEdit(panel.PlainPanel):
                     )
                 ),
                 title="Generate Report KeyError Exception",
+            )
+            return False
+        except AttributeError as exc:
+            if str(exc) != "".join(
+                (
+                    "'NoneType' object has no attribute 'authorization_delay'",
+                )
+            ):
+                raise
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message="".join(
+                    (
+                        "The known cause of this exception is:\n\n",
+                        "Type a match result in the textentry area, ",
+                        "perhaps because the usual email report is ",
+                        "not available, with date, competition, ",
+                        "match score, and each game result, on their ",
+                        "own line.  This is the format accepted by ",
+                        "default without rules in configuration file.\n\n",
+                        "Copy, paste, and edit, a match result in it's ",
+                        "usual email format to the textentry area leads ",
+                        "to a normal error report expected in other ",
+                        "situations.\n\nIf the match report must be ",
+                        "typed do the copy, paste, and edit, in the ",
+                        "copied report's original email area.",
+                    )
+                ),
+                title="Generate Report AttributeError Exception",
             )
             return False
 
