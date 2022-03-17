@@ -177,7 +177,8 @@ class ECFEvents(panel.PanelGridSelector):
     def on_ecf_results_feedback_monthly(self, event=None):
         """Do ECF feedback actions."""
         show_ecf_results_feedback_monthly_tab(
-            self, self._btn_ecf_feedback_monthly)
+            self, self._btn_ecf_feedback_monthly
+        )
 
     def write_results_file_for_ecf(self):
         """Write results for selected events to ECF submission file.

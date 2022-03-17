@@ -205,7 +205,8 @@ class Control(control_lite.Control):
     def on_ecf_results_feedback_monthly(self, event=None):
         """Do ECF feedback actions."""
         show_ecf_results_feedback_monthly_tab(
-            self, self._btn_ecfresultsfeedbackmonthly)
+            self, self._btn_ecfresultsfeedbackmonthly
+        )
 
     def _ecf_download(self, name, button, default_url, contexts, structure):
         """Do download actions for rated players or active clubs.

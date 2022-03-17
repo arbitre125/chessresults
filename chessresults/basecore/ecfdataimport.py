@@ -884,7 +884,7 @@ def copy_single_ecf_club_post_2020_rules(results, ecfdata=None, **kwargs):
 
 
 def copy_single_ecf_players_post_2020_rules(results, ecfdata=None, **kwargs):
-    """Copy downloaded club record in ecfdata to database."""
+    """Copy downloaded player record in ecfdata to database."""
     keybyteify = results._keybyteify
 
     # The _strify method of the Database instance is not needed because the
