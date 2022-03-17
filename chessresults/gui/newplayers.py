@@ -108,17 +108,22 @@ class NewPlayers(newplayers_lite.NewPlayers):
             aliasrecord = resultsrecord.get_alias(db, key)
             if aliasrecord is None:
                 continue
-            self._download_player_ecf_code(
+            self._download_ecf_codes_for_player_reported_codes(
                 aliasrecord,
                 db,
                 title,
                 reportedcodes=reportedcodes,
             )
 
-    def _download_player_ecf_code(
+    def _download_ecf_codes_for_player_reported_codes(
         self, aliasrecord, db, title, reportedcodes=None
     ):
-        """Attempt to download ECF code for aliasrecord player."""
+        """Attempt to download ECF codes for aliasrecord player.
+
+        There may be several reported codes for a player.  Look for an
+        ECF code for each of them.
+
+        """
         if reportedcodes is None:
             reportedcodes = set()
         for rc in aliasrecord.value.reported_codes:
@@ -128,8 +133,8 @@ class NewPlayers(newplayers_lite.NewPlayers):
 
             # The regular expression prevents malformed ECF codes with
             # an invalid check digit being treated as ECF membership
-            # numbers.  However a 12 digit numberic code is treated as
-            # two ECF membership numbers, for example.
+            # numbers.  However, for example, a 12 digit numberic code is
+            # treated as two ECF membership numbers.
             # The interpretation of '123456B012345' depends on whether
             # 'B' is the valid check digit for '123456' as an ECF code.
             for match in re.finditer(
@@ -141,71 +146,27 @@ class NewPlayers(newplayers_lite.NewPlayers):
                 ),
                 rc,
             ):
-
                 groups = match.groupdict()
                 if groups["mno"]:
-                    ecfcode = None
-                    urlname = get_configuration_item(
-                        os.path.expanduser(
-                            os.path.join("~", constants.RESULTS_CONF)
-                        ),
-                        constants.MEMBER_INFO_URL,
-                        constants.DEFAULT_URLS,
+                    ecfdata = self._ecf_data_for_reported_membership_number(
+                        aliasrecord, db, title, groups["mno"]
                     )
-                    try:
-                        url = urllib.request.urlopen(
-                            "".join((urlname, "ME", groups["mno"]))
-                        )
-                    except Exception as exc:
-                        tkinter.messagebox.showinfo(
-                            parent=self.get_widget(),
-                            title=title,
-                            message="".join(
-                                (
-                                    "Exception raised trying to open URL ",
-                                    "to fetch ",
-                                    groups["mno"],
-                                    ".\n\n",
-                                    str(exc),
-                                )
-                            ),
-                        )
+                    if ecfdata is None:
                         continue
-                    try:
-                        urldata = url.read()
-                    except Exception as exc:
-                        tkinter.messagebox.showinfo(
-                            parent=self.get_widget(),
-                            title=title,
-                            message="".join(
-                                (
-                                    "Exception raised trying to read URL\n\n",
-                                    str(exc),
-                                )
-                            ),
-                        )
+                    if self._is_reported_ecf_code_on_database(
+                        aliasrecord, db, title, ecfdata["ECF_code"]
+                    ):
                         continue
-                    ecfcode = json.loads(urldata)["ECF_code"]
-                    if ecfcode is None or len(ecfcode) != 7:
-                        tkinter.messagebox.showinfo(
-                            parent=self.get_widget(),
-                            message=" ".join(
-                                (
-                                    "No ECF code found for membership number",
-                                    groups["mno"],
-                                )
-                            ),
-                            title=title,
-                        )
+                    if not self._store_ecf_data_for_reported_membership_number(
+                        aliasrecord, db, title, ecfdata, groups["mno"]
+                    ):
                         continue
-                else:
-                    ecfcode = groups["ec"]
-                ecfrec = ecfrecord.get_ecf_player_for_grading_code(db, ecfcode)
-                if ecfrec is None:
-                    ecfname = None
-                    ecfmerge = None
-                    # If ecfname remains None it should mean the player
-                    # needs a new ECF code.
+                    self._copy_ecf_data_to_database(
+                        aliasrecord, db, title, ecfdata
+                    )
+                    continue
+                ecfcode = groups["ec"]
+                if ecfcode:
                     tokens = list(ecfcode)
                     checkdigit = 0
                     for i in range(6):
@@ -213,193 +174,268 @@ class NewPlayers(newplayers_lite.NewPlayers):
                     if tokens[-1] != "ABCDEFGHJKL"[checkdigit % 11]:
                         tkinter.messagebox.showinfo(
                             parent=self.get_widget(),
-                            message=" ".join(
+                            message="".join(
                                 (
                                     ecfcode,
-                                    "does not have the correct check",
-                                    "character for the six digits so cannot",
+                                    " for\n",
+                                    aliasrecord.value.name,
+                                    "\ndoes not have the correct check ",
+                                    "character for the six digits so cannot ",
                                     "be an ECF Grading Code",
                                 )
                             ),
                             title=title,
                         )
                         continue
-                    urlname = get_configuration_item(
-                        os.path.expanduser(
-                            os.path.join("~", constants.RESULTS_CONF)
-                        ),
-                        constants.PLAYER_INFO_URL,
-                        constants.DEFAULT_URLS,
-                    )
-                    try:
-                        url = urllib.request.urlopen(
-                            "".join((urlname, ecfcode[:6]))
-                        )
-                    except Exception as exc:
-                        tkinter.messagebox.showinfo(
-                            parent=self.get_widget(),
-                            title=title,
-                            message="".join(
-                                (
-                                    "Exception raised trying to open URL to ",
-                                    "fetch ",
-                                    ecfcode,
-                                    ".\n\n",
-                                    str(exc),
-                                )
-                            ),
-                        )
-                        continue
-                    try:
-                        urldata = url.read()
-                    except Exception as exc:
-                        tkinter.messagebox.showinfo(
-                            parent=self.get_widget(),
-                            title=title,
-                            message="".join(
-                                (
-                                    "Exception raised trying to read URL\n\n",
-                                    str(exc),
-                                )
-                            ),
-                        )
-                        continue
-                    if groups["mno"]:
-                        mem_no_rep = " ".join(
-                            ("\nReported membership number", groups["mno"])
-                        )
-                    else:
-                        mem_no_rep = ""
-                    ecfdata = json.loads(urldata)
-                    if not tkinter.messagebox.askyesno(
-                        parent=self.get_widget(),
-                        message="".join(
-                            (
-                                "ECF code  ",
-                                ecfdata["ECF_code"],
-                                "\nECF name  ",
-                                ecfdata["full_name"],
-                                "\nReported name  ",
-                                aliasrecord.value.name,
-                                mem_no_rep,
-                                "\n\nShould ECF code be stored?",
-                            )
-                        ),
-                        title=title,
+                    if self._is_reported_ecf_code_on_database(
+                        aliasrecord, db, title, ecfcode
                     ):
                         continue
-                    try:
-                        copy_single_ecf_players_post_2020_rules(db, ecfdata)
-                    except Exception as exc:
-                        tkinter.messagebox.showinfo(
-                            parent=self.get_widget(),
-                            title=title,
-                            message="".join(
-                                (
-                                    "Exception raised trying to extract ",
-                                    "grading code from URL\n\n",
-                                    str(exc),
-                                )
-                            ),
-                        )
+                    ecfdata = self._ecf_data_for_reported_ecf_code(
+                        aliasrecord, db, title, ecfcode
+                    )
+                    if ecfdata is None:
                         continue
-                    continue
-                else:
-                    ecfname = ecfrec.value.ECFname
-                    ecfmerge = ecfrec.value.ECFmerge
-                ecfmaprec = ecfmaprecord.get_person_for_grading_code(
-                    db, ecfcode
-                )
-                if ecfmaprec:
-                    # Perhaps ask if the merge should be done?
-                    playerrecord = resultsrecord.get_alias(
-                        db, ecfmaprec.value.playerkey
-                    )
-                    try:
-                        aliases = len(playerrecord.value.alias)
-                    except:
-                        aliases = 0
-                    playername = playerrecord.value.name
-                    eventrecord = resultsrecord.get_event(
-                        db, playerrecord.value.event
-                    )
-                    eventname = eventrecord.value.name
-                    eventstart = eventrecord.value.startdate
-                    eventend = eventrecord.value.enddate
-                    tkinter.messagebox.showinfo(
-                        parent=self.get_widget(),
-                        message="".join(
-                            (
-                                "ECF code ",
-                                ecfcode,
-                                " is already linked to\n",
-                                playername,
-                                "\nin\n",
-                                eventname,
-                                "\nfrom ",
-                                eventstart,
-                                " to ",
-                                eventend,
-                                "\nwith ",
-                                str(aliases),
-                                " other events.\n\nUse 'Merge' to extend ",
-                                "this link if reported code is correct.",
-                            )
-                        ),
-                        title=title,
+                    if not self._store_ecf_data_for_reported_ecf_code(
+                        aliasrecord, db, title, ecfdata, ecfcode
+                    ):
+                        continue
+                    self._copy_ecf_data_to_database(
+                        aliasrecord, db, title, ecfdata
                     )
                     continue
-                playername = aliasrecord.value.name
-                eventrecord = resultsrecord.get_event(
-                    db, aliasrecord.value.event
+
+    def _is_reported_ecf_code_on_database(
+        self, aliasrecord, db, title, reported_ecf_code
+    ):
+        """Attempt to find reported ECF code on database."""
+        ecfrec = ecfrecord.get_ecf_player_for_grading_code(
+            db, reported_ecf_code
+        )
+        if ecfrec is None:
+            return False
+        ecfmaprec = ecfmaprecord.get_person_for_grading_code(
+            db, reported_ecf_code
+        )
+        if ecfmaprec:
+            # Perhaps ask if the merge should be done?
+            playerrecord = resultsrecord.get_alias(
+                db, ecfmaprec.value.playerkey
+            )
+
+            # Attribute alias can be None, but not for a valid playerrecord.
+            aliases = len(playerrecord.value.alias)
+
+            eventrecord = resultsrecord.get_event(db, playerrecord.value.event)
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message="".join(
+                    (
+                        "Reported ECF code ",
+                        reported_ecf_code,
+                        " for\n",
+                        aliasrecord.value.name,
+                        "\nis already linked to\n",
+                        playerrecord.value.name,
+                        "\nin\n",
+                        eventrecord.value.name,
+                        "\nfrom ",
+                        eventrecord.value.startdate,
+                        " to ",
+                        eventrecord.value.enddate,
+                        "\nwith ",
+                        str(aliases),
+                        " other events.\n\nUse 'Merge' to extend ",
+                        "this link if reported code is correct.",
+                    )
+                ),
+                title=title,
+            )
+            return True
+        eventrecord = resultsrecord.get_event(db, aliasrecord.value.event)
+        tkinter.messagebox.showinfo(
+            parent=self.get_widget(),
+            message="".join(
+                (
+                    "ECF code ",
+                    reported_ecf_code,
+                    " for\n\n",
+                    ecfrec.value.ECFname,
+                    "\n\nis not linked to any player.\n\n",
+                    aliasrecord.value.name,
+                    "\n\nreported in\n",
+                    eventrecord.value.name,
+                    "\nfrom ",
+                    eventrecord.value.startdate,
+                    " to ",
+                    eventrecord.value.enddate,
+                    "\n\ncan be linked to this ECF code when presented ",
+                    "on the Grading Codes tab.",
                 )
-                eventname = eventrecord.value.name
-                eventstart = eventrecord.value.startdate
-                eventend = eventrecord.value.enddate
-                if ecfname is None:
-                    tkinter.messagebox.showinfo(
-                        parent=self.get_widget(),
-                        message="".join(
-                            (
-                                "ECF code ",
-                                ecfcode,
-                                " does not exist.\n",
-                                playername,
-                                "\nin\n",
-                                eventname,
-                                "\nfrom ",
-                                eventstart,
-                                " to ",
-                                eventend,
-                                "\nshould be allocated an ECF code without ",
-                                "relying on the reported code ",
-                                ecfcode,
-                                ".",
-                            )
-                        ),
-                        title=title,
+            ),
+            title=title,
+        )
+        return True
+
+    def _ecf_data_for_reported_membership_number(
+        self, aliasrecord, db, title, reported_code
+    ):
+        """Attempt to download ECF code for reported membership number."""
+        return self._get_ecf_data_for_reported_code(
+            aliasrecord,
+            db,
+            title,
+            reported_code,
+            constants.MEMBER_INFO_URL,
+            "".join(("ME", reported_code)),
+        )
+
+    def _ecf_data_for_reported_ecf_code(
+        self, aliasrecord, db, title, reported_code
+    ):
+        """Attempt to download ECF code for reported ecf code."""
+        return self._get_ecf_data_for_reported_code(
+            aliasrecord,
+            db,
+            title,
+            reported_code,
+            constants.PLAYER_INFO_URL,
+            reported_code[:6],
+        )
+
+    def _get_ecf_data_for_reported_code(
+        self, aliasrecord, db, title, reported_code, url_name, request_value
+    ):
+        """Attempt to download ECF data for reported code."""
+        urlname = get_configuration_item(
+            os.path.expanduser(os.path.join("~", constants.RESULTS_CONF)),
+            url_name,
+            constants.DEFAULT_URLS,
+        )
+        try:
+            url = urllib.request.urlopen("".join((urlname, request_value)))
+        except Exception as exc:
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                title=title,
+                message="".join(
+                    (
+                        "Exception raised trying to open URL to ",
+                        "fetch\n",
+                        reported_code,
+                        " for\n",
+                        aliasrecord.value.name,
+                        ".\n\n",
+                        str(exc),
                     )
-                else:
-                    tkinter.messagebox.showinfo(
-                        parent=self.get_widget(),
-                        message="".join(
-                            (
-                                "ECF code ",
-                                ecfcode,
-                                " for\n\n",
-                                ecfname,
-                                "\n\nis not linked to any player.\n\n",
-                                playername,
-                                "\n\nreported in\n",
-                                eventname,
-                                "\nfrom ",
-                                eventstart,
-                                " to ",
-                                eventend,
-                                "\ncan be linked using the reported code ",
-                                ecfcode,
-                                " if the two names are consistent.",
-                            )
-                        ),
-                        title=title,
+                ),
+            )
+            return None
+        try:
+            urldata = url.read()
+        except Exception as exc:
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                title=title,
+                message="".join(
+                    (
+                        "Exception raised trying to read data ",
+                        "from URL for\n",
+                        reported_code,
+                        " for\n",
+                        aliasrecord.value.name,
+                        "\n\n",
+                        str(exc),
                     )
+                ),
+            )
+            return None
+        try:
+            return json.loads(urldata)
+        except Exception as exc:
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                title=title,
+                message="".join(
+                    (
+                        "Exception raised trying to access data ",
+                        "returned from URL for\n",
+                        reported_code,
+                        " for\n",
+                        aliasrecord.value.name,
+                        "\n\n",
+                        str(exc),
+                    )
+                ),
+            )
+            return None
+
+    def _store_ecf_data_for_reported_membership_number(
+        self, aliasrecord, db, title, ecfdata, reportedcode
+    ):
+        """Confirm ECF data for membership number is stored on database."""
+        if not tkinter.messagebox.askyesno(
+            parent=self.get_widget(),
+            message="".join(
+                (
+                    "The reported membership number refers to ",
+                    "ECF code and name\n\n",
+                    ecfdata["ECF_code"],
+                    "\n",
+                    ecfdata["full_name"],
+                    "\n\nThe reported name and membership number are\n\n",
+                    aliasrecord.value.name,
+                    "\n",
+                    reportedcode,
+                    "\n\nShould ECF data be added to database?",
+                )
+            ),
+            title=title,
+        ):
+            return False
+        return True
+
+    def _store_ecf_data_for_reported_ecf_code(
+        self, aliasrecord, db, title, ecfdata, reportedcode
+    ):
+        """Confirm ECF data for ECF code is stored on database."""
+        if not tkinter.messagebox.askyesno(
+            parent=self.get_widget(),
+            message="".join(
+                (
+                    "ECF code  ",
+                    ecfdata["ECF_code"],
+                    "\nECF name  ",
+                    ecfdata["full_name"],
+                    "\n\nReported name  ",
+                    aliasrecord.value.name,
+                    "\nReported ECF code  ",
+                    reportedcode,
+                    "\n\nShould ECF data be added to database?",
+                )
+            ),
+            title=title,
+        ):
+            return False
+        return True
+
+    def _copy_ecf_data_to_database(self, aliasrecord, db, title, ecfdata):
+        """Copy ECF code and player name downloaded from ECF to database."""
+        try:
+            copy_single_ecf_players_post_2020_rules(db, ecfdata)
+        except Exception as exc:
+            tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                title=title,
+                message="".join(
+                    (
+                        "Exception raised trying to save data ",
+                        "returned from URL for\n",
+                        reported_code,
+                        " for\n",
+                        aliasrecord.value.name,
+                        "\non database.\n\n",
+                        str(exc),
+                    )
+                ),
+            )
