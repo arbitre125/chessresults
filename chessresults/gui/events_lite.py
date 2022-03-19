@@ -83,6 +83,7 @@ class Events(panel.PanelGridSelector):
     _btn_save = "eventslite_save"
     _btn_event_summary = "eventslite_event_summary"
     _btn_population = "eventslite_population"
+    _btn_join_event_new_players = "events_join"
 
     def __init__(self, parent=None, cnf=dict(), **kargs):
         """Extend and define the results database events panel."""
@@ -350,6 +351,22 @@ class Events(panel.PanelGridSelector):
         """Delete selecte events."""
         self.delete_events()
         return "break"
+
+    def on_join_event_new_players(self, event=None):
+        """Do processing for 'join event new players' button."""
+        if not self.is_event_selected():
+            return "break"
+
+    def is_event_selected(self):
+        """Return True if events selected.  Otherwise False."""
+        if len(self.eventgrid.selection) == 0:
+            dlg = tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message="No event selected for joining event players",
+                title="Events",
+            )
+            return False
+        return True
 
     def on_export_events(self, event=None):
         """Export selected events."""
@@ -845,6 +862,14 @@ class Events(panel.PanelGridSelector):
             command=self.on_drop_event,
         )
         self.define_button(
+            self._btn_join_event_new_players,
+            text="Join Event New Players",
+            tooltip="Join new players with same same as earlier events.",
+            underline=0,
+            switchpanel=True,
+            command=self.on_join_event_new_players,
+        )
+        self.define_button(
             self._btn_exportevents,
             text="Export Events",
             tooltip=" ".join(
@@ -921,6 +946,7 @@ class Events(panel.PanelGridSelector):
         self.show_panel_buttons(
             (
                 self._btn_dropevent,
+                self._btn_join_event_new_players,
                 self._btn_exportevents,
                 self._btn_performance,
                 self._btn_prediction,

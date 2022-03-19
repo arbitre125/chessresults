@@ -17,7 +17,6 @@ class Events(events_lite.Events):
     """The Events panel for a Results database."""
 
     _btn_ecfplayers = "events_players"
-    _btn_join_event_new_players = "events_join"
 
     def __init__(self, parent=None, cnf=dict(), **kargs):
         """Extend and define the results database events panel."""
@@ -27,22 +26,6 @@ class Events(events_lite.Events):
         """Do processing for buttons with command set to on_ecf_players."""
         self.update_players_to_ecf()
         return "break"
-
-    def on_join_event_new_players(self, event=None):
-        """Do processing for 'join event new players' button."""
-        if not self.is_event_selected():
-            return "break"
-
-    def is_event_selected(self):
-        """Return True if events selected.  Otherwise False."""
-        if len(self.eventgrid.selection) == 0:
-            dlg = tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message="No event selected for joining event players",
-                title="Events",
-            )
-            return False
-        return True
 
     def describe_buttons(self):
         """Define all action buttons that may appear on events page."""

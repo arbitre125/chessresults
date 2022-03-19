@@ -900,9 +900,7 @@ class SourceEdit(panel.PlainPanel):
             return False
         except AttributeError as exc:
             if str(exc) != "".join(
-                (
-                    "'NoneType' object has no attribute 'authorization_delay'",
-                )
+                ("'NoneType' object has no attribute 'authorization_delay'",)
             ):
                 raise
             tkinter.messagebox.showinfo(

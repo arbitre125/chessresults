@@ -26,8 +26,10 @@ from . import newplayers_lite
 from . import players
 from . import importevents
 from . import taskpanel
+from . import joineventplayers
 from ..core.filespec import FileSpec
 from .. import APPLICATION_DATABASE_MODULE, ERROR_LOG
+from .. import KNOWN_NAME_DATASOURCE_MODULE
 from ..core import configuration
 from ..core import constants
 
@@ -52,6 +54,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
     _tab_takeonedit = "leagues_lite_tab_takeonedit"
     _tab_importevents = "leagues_lite_tab_importevents"
     _tab_reportevent = "leagues_lite_tab_reportevent"
+    _tab_joineventplayers = "leagues_tab_joineventplayers"
 
     _state_dbclosed = "leagues_lite_state_dbclosed"
     _state_dbopen = "leagues_lite_state_dbopen"
@@ -61,6 +64,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
     _state_takeonopen_dbopen = "leagues_lite_state_takeonopen_dbopen"
     _state_dbopen_import_events = "leagues_lite_state_dbopen_import_events"
     _state_dbopen_report_event = "leagues_lite_state_dbopen_report_event"
+    _state_joineventplayers = "leagues_lite_state_joineventplayers"
 
     def __init__(self, menubar=None, **kargs):
         """Extend and define the results database results frame."""
@@ -183,6 +187,17 @@ class Leagues(threadqueue.AppSysThreadQueue):
             destroy_actions=(control_lite.Control._btn_closedatabase,),
         )
         self.define_tab(
+            self._tab_joineventplayers,
+            text="Join Event Players",
+            tooltip="Join an event's players with same-named players.",
+            underline=-1,
+            tabclass=lambda **k: joineventplayers.JoinEventPlayers(**k),
+            destroy_actions=(
+                joineventplayers.JoinEventPlayers._btn_cancel,
+                control_lite.Control._btn_closedatabase,
+            ),
+        )
+        self.define_tab(
             self._tab_importevents,
             text="Import Events",
             tooltip="Import event data",
@@ -220,6 +235,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
                 self._state_takeonopen_dbopen: (self._tab_takeonedit,),
                 self._state_dbopen_import_events: (self._tab_importevents,),
                 self._state_dbopen_report_event: (self._tab_reportevent,),
+                self._state_joineventplayers: (self._tab_joineventplayers,),
             },
             switch_state={
                 (None, None): [self._state_dbclosed, None],
@@ -284,6 +300,14 @@ class Leagues(threadqueue.AppSysThreadQueue):
                     self._tab_importevents,
                 ],
                 (
+                    self._state_dbopen,
+                    events_lite.Events._btn_join_event_new_players,
+                ): [self._state_joineventplayers, self._tab_joineventplayers],
+                (
+                    self._state_joineventplayers,
+                    joineventplayers.JoinEventPlayers._btn_cancel,
+                ): [self._state_dbopen, self._tab_events],
+                (
                     self._state_dbopen_import_events,
                     importevents.ImportEvents._btn_closeimport,
                 ): [self._state_dbopen, self._tab_control],
@@ -321,6 +345,10 @@ class Leagues(threadqueue.AppSysThreadQueue):
                 ): [self._state_dbclosed, None],
                 (
                     self._state_dbopen_import_events,
+                    control_lite.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
+                (
+                    self._state_joineventplayers,
                     control_lite.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
             },
@@ -1140,12 +1168,17 @@ class Leagues(threadqueue.AppSysThreadQueue):
     # It is not clear why both this method, and the direct imports to
     # self._knownnames_class in database_new() and database_open(), exist.
     # Also puzzling is that none of this seems to be used.
-    # The leagues module does override this method.
+    # The leagues module did override this method until support for
+    # 'Join Event New Players' was moved to the events_lite module, where it
+    # probably should have been all along.
     # (However it's presence did expose problems in the conditional imports in
     #  the database_new() and database_open() methods via a typo in the vedis
     #  and unqlite resultsdatabase modules!)
     def set_knownnamesdatasource_module(self, enginename):
-        """Do nothing.  Subclass must override to import module."""
+        """Import the known names datasource module."""
+        self._knownnamesdatasource_module = importlib.import_module(
+            KNOWN_NAME_DATASOURCE_MODULE[enginename], "chessresults.gui"
+        )
 
     @property
     def show_master_list_grading_codes(self):

@@ -24,11 +24,9 @@ from . import leagues_lite
 from . import importecfdata
 from . import feedback
 from . import feedback_monthly
-from . import joineventplayers
 from . import activeclubs
 from . import ratedplayers
 from .. import ECF_DATA_IMPORT_MODULE
-from .. import KNOWN_NAME_DATASOURCE_MODULE
 from ..core import constants
 from . import configuredialog_hack
 from ..core import configuration
@@ -46,7 +44,6 @@ class Leagues(leagues_lite.Leagues):
     _tab_importecfdata = "leagues_tab_importecfdata"
     _tab_importfeedback = "leagues_tab_importfeedback"
     _tab_importfeedbackmonthly = "leagues_tab_importfeedback_monthly"
-    _tab_joineventplayers = "leagues_tab_joineventplayers"
     _tab_clubsdownload = "leagues_tab_clubsdownload"
     _tab_playersdownload = "leagues_tab_playersdownload"
 
@@ -55,7 +52,6 @@ class Leagues(leagues_lite.Leagues):
     _state_importfeedback = "leagues_state_importfeedback"
     _state_importfeedbackmonthly = "leagues_state_importfeedback_monthly"
     _state_responsefeedbackmonthly = "leagues_state_responsefeedback_monthly"
-    _state_joineventplayers = "leagues_state_joineventplayers"
     _state_clubsdownload = "leagues_state_clubsdownload"
     _state_playersdownload = "leagues_state_playersdownload"
 
@@ -189,17 +185,6 @@ class Leagues(leagues_lite.Leagues):
             ),
         )
         self.define_tab(
-            self._tab_joineventplayers,
-            text="Join Event Players",
-            tooltip="Join an event's players with same-named players.",
-            underline=-1,
-            tabclass=lambda **k: joineventplayers.JoinEventPlayers(**k),
-            destroy_actions=(
-                joineventplayers.JoinEventPlayers._btn_cancel,
-                control.Control._btn_closedatabase,
-            ),
-        )
-        self.define_tab(
             self._tab_clubsdownload,
             text="Active Clubs Download",
             tooltip="Import data from ECF feedback text files.",
@@ -239,7 +224,6 @@ class Leagues(leagues_lite.Leagues):
                 self._state_responsefeedbackmonthly: (
                     self._tab_importfeedbackmonthly,
                 ),
-                self._state_joineventplayers: (self._tab_joineventplayers,),
                 self._state_clubsdownload: (self._tab_clubsdownload,),
                 self._state_playersdownload: (self._tab_playersdownload,),
             },
@@ -298,14 +282,6 @@ class Leagues(leagues_lite.Leagues):
                     self._state_responsefeedbackmonthly,
                     feedback_monthly.FeedbackMonthly._btn_closefeedbackmonthly,
                 ): [self._state_dbopen, self._tab_ecfevents],
-                (
-                    self._state_dbopen,
-                    events.Events._btn_join_event_new_players,
-                ): [self._state_joineventplayers, self._tab_joineventplayers],
-                (
-                    self._state_joineventplayers,
-                    joineventplayers.JoinEventPlayers._btn_cancel,
-                ): [self._state_dbopen, self._tab_events],
                 (self._state_dbopen, control.Control._btn_clubsdownload): [
                     self._state_clubsdownload,
                     self._tab_clubsdownload,
@@ -342,10 +318,6 @@ class Leagues(leagues_lite.Leagues):
                     self._state_responsefeedbackmonthly,
                     control.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
-                (
-                    self._state_joineventplayers,
-                    control.Control._btn_closedatabase,
-                ): [self._state_dbclosed, None],
             },
         )
 
@@ -357,12 +329,6 @@ class Leagues(leagues_lite.Leagues):
         """Import the ECF reference data import module."""
         self._ecfdataimport_module = importlib.import_module(
             ECF_DATA_IMPORT_MODULE[enginename], "chessresults.gui"
-        )
-
-    def set_knownnamesdatasource_module(self, enginename):
-        """Import the known names datasource module."""
-        self._knownnamesdatasource_module = importlib.import_module(
-            KNOWN_NAME_DATASOURCE_MODULE[enginename], "chessresults.gui"
         )
 
     def set_ecf_url_defaults(self):
