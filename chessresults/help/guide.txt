@@ -49,7 +49,7 @@ Results is used to import reference data (Master List) and result submission fee
 
 Results has three variants, provided in different programs. The results_lite variant does not do the interactions with the ECF, but provides some results analysis. The results_ogd variant can import the publically available ECF Grading List, but cannot do result submission to the ECF. The results_ecf variant can be used to submit results to the ECF provided the Master List has been imported.  The Master List is only available to graders.  A database created by one variant can be accessed by the other variants.
 
-Tools provides access to a font selector: which is not implemented.
+Tools provides access to an editor for the URLs to access the ECF database.  Also a font selector which is not implemented.
 
 Help provides access to this file and other files describing the program.
 
@@ -171,23 +171,29 @@ On getting back to the 'NewPlayers' tab see that 'Clara' has appeared in the top
 
 Decisions recorded on the 'NewPlayers' tab can be undone on the 'Players' tab so that a new decision can be recorded.  Ignored for now.
 
-If you submit results to the ECF for grading you will have a Master List available, and could use the results_ecf variant of this application for the next steps.  Everyone else has to download the Grading List from the ECF website and use the results_ogd variant for the next steps.  Download the zip file, not the csv file. At time of writing it is named grades201408.zip.
+If you submit results to the ECF for rating you will need the ECF codes of the players, and probably the codes of the clubs they play for.  These can be downloaded using 'Administration | Rated Players Download' and 'Administration | Active Clubs Download', or from www.ecfrating.org.uk (at time of writing the links are at www.ecfrating.org.uk/v2/help/help_api.php).  Note neither is a complete list and you may need to use 'Grading Codes | Download ECF Code' or 'Club Codes | Download Club Code' to get the code for each player or club.  There is a case for downloading all codes one-by-one to avoid cluttering your database with thousands of items you do not need.
 
-Display the names of the files in the zip file using 'ECF OGD File' on the 'Administration' tab.  There should be one file in the list, a csv file.
+Start the player download using 'Administration | Rated Players Download' and choose whether to download or extract from a previously saved download (using a browser probably).  ChessResults does not offer the option of saving the download in a file.
 
-Display the content of this file using 'Open ECF OGD File'.
+Import the data, if satisfied it is genuine, using 'Apply Rated Players'.
 
-It should look like grading list data.  That means in order: grading code, player's name, player's gender, player's age, standard play grade category, grade, previous grade, geade before that, <same for rapid play>, <up to six club names>, and more.  If not sure, pick one of the player names and go look at the player's entry on the Online Grading Database on the ECF web site.  It should be obvious that the csv file is genuine or not.
+Actions are reported in the lower pane, finishing with 'Player list downloaded on yyyy-mm-dd has been processed'.
 
-Import the data, if satisfied it is genuine, using 'Start Import'.
+Repeat for clubs starting with 'Administration | Active Clubs Download'.
 
-Actions are reported in the lower pane, finishing with 'Grading Codes and names imported from Online Grading database'.
+The obsolete master list is still supported in case you happen to have one, but using it is no longer described.  The ECF stopped producing them in mid-2020.
 
-Get to the 'Events' tab by using 'Cancel Import', 'Close File List', and 'Events'.
+Display the NewPlayers tab by using 'Cancel Import', 'Close File List', and 'NewPlayers'.
 
-At this point you cannot do what you would do on the results_ecf variant of this program, but you can link players to grading codes anyway.
+The upper pane will have all the players listed.  The lower pane will be empty if this is the first set of results added to the database.
 
-Display the list of players and grading codes using 'Grading Codes'.  See the Anytown event players in the top pane and the grading codes in the bottom pane.
+Move each player to the lower pane by selecting the player and using 'Merge'.
+
+When all players for this event have been moved, usually this is when the upper pane is empty, display the Events tab using 'Events'.
+
+Select the event and move it's players to the upper pane of the Grading Codes and Club Codes tabs using 'ECF Players'.
+
+Display Grading Codes tab using 'Grading Codes'.
 
 Obviously the Anytown players are not going to be in the grading list, and the names are not going match except by an amazing fluke.
 

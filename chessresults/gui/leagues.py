@@ -107,9 +107,9 @@ class Leagues(leagues_lite.Leagues):
         )
         self.define_tab(
             self._tab_ecfgradingcodes,
-            text="Grading Codes",
-            tooltip="Associate player with ECF grading code.",
-            underline=0,
+            text="ECF Codes",
+            tooltip="Associate player with ECF code.",
+            underline=2,
             tabclass=lambda **k: ecfgradingcodes.ECFGradingCodes(
                 gridhorizontal=False, **k
             ),

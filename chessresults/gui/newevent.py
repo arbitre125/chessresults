@@ -391,7 +391,7 @@ class NewEvent(panel.PlainPanel):
         """Define all action buttons that may appear on events page."""
         self.define_button(
             self._btn_ok,
-            text="OK",
+            text="Ok",
             tooltip=" ".join(
                 (
                     "Put the event details on the database. Return to previous",
@@ -399,6 +399,7 @@ class NewEvent(panel.PlainPanel):
                 )
             ),
             switchpanel=True,
+            underline=1,
             command=self.on_ok,
         )
         self.define_button(

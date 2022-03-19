@@ -63,11 +63,11 @@ class Events(events_lite.Events):
         )
         self.define_button(
             self._btn_ecfplayers,
-            text="ECF Players",
+            text="To ECF",
             tooltip=(
                 "Update list of players with results for submission to ECF."
             ),
-            underline=2,
+            underline=1,
             command=self.on_ecf_players,
         )
         self.define_button(

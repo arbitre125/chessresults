@@ -85,9 +85,9 @@ class ECFGradingCodes(panel.PanedPanelGridSelectorBar):
         )
         self.define_button(
             self._btn_revert,
-            text="Modify Identity",
+            text="Adjust Identity",
             tooltip="Remove player from Rating Codes tab (to adjust identification).",
-            underline=4,
+            underline=2,
             command=self.on_revert,
         )
         self.define_button(

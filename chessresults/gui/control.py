@@ -95,17 +95,17 @@ class Control(control_lite.Control):
         )
         self.define_button(
             self._btn_ecfresultsfeedback,
-            text="ECF Results Feedback",
+            text="ECF Grading Feedback",
             tooltip="Display a feedback email for a results submission to ECF.",
-            underline=12,
+            underline=4,
             switchpanel=True,
             command=self.on_ecf_results_feedback,
         )
         self.define_button(
             self._btn_ecfresultsfeedbackmonthly,
-            text="ECF Monthly Feedback",
+            text="ECF Rating Feedback",
             tooltip="Display a feedback email for a results upload to ECF.",
-            underline=19,
+            underline=18,
             switchpanel=True,
             command=self.on_ecf_results_feedback_monthly,
         )

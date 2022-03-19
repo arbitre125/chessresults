@@ -308,7 +308,7 @@ class ECFClubCodes(panel.PanedPanelGridSelectorBar):
             self._btn_affiliate,
             text="Affiliate",
             tooltip="Mark selected players affiliated to selected club.",
-            underline=1,
+            underline=3,
             command=self.on_affiliate,
         )
         self.define_button(

@@ -200,7 +200,7 @@ class ECFPlayers(panel.PanedPanelGridSelectorBar):
             self._btn_edit_ecf_name,
             text="Edit ECF Name",
             tooltip="Edit name from master file for ECF submission file.",
-            underline=7,
+            underline=2,
             command=self.on_edit_ecf_name,
         )
 
