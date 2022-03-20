@@ -89,12 +89,12 @@ def set_configuration_value(item, value):
 
 def set_configuration_values_from_text(text, config_items=None):
     """Set values of configuration items from text if item exists."""
+    if config_items is None:
+        config_items = {}
     default_values = {
         default[0]: default[1]
         for default in (constants.DEFAULT_URLS + constants.DEFAULT_RECENTS)
     }
-    if config_items is None:
-        config_items = {}
 
     change = False
     for i in text.splitlines():
@@ -108,11 +108,13 @@ def set_configuration_values_from_text(text, config_items=None):
             value = default_values[key]
         else:
             value = i[1].strip()
-        _items[key] = value
-        change = True
+        if key not in _items or _items[key] != value:
+            _items[key] = value
+            change = True
     for key, value in default_values.items():
         if key not in _items:
             _items[key] = value
+            change = True
     if change:
         _save_configuration()
 
@@ -147,9 +149,11 @@ def _save_configuration():
 
 
 # Set initial defaults on start-up.
-get_configuration_text_and_values_for_items_from_file(
-    {
-        default[0]: default[1]
-        for default in constants.DEFAULT_URLS + constants.DEFAULT_RECENTS
-    }
+set_configuration_values_from_text(
+    get_configuration_text_and_values_for_items_from_file(
+        {
+            default[0]: default[1]
+            for default in constants.DEFAULT_URLS + constants.DEFAULT_RECENTS
+        }
+    )
 )
