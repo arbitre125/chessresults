@@ -29,9 +29,11 @@ class Leagues(leagues_lite.Leagues):
     """
 
     _tab_ecfogdgradingcodes = "leagues_ogd_tab_ecfogdgradingcodes"
-    _tab_importecfogd = "leagues_ogd_tab_importecfogd"
+    _tab_importecfogd_grading = "leagues_ogd_tab_importecfogdgrading"
+    _tab_importecfogd_rating = "leagues_ogd_tab_importecfogdrating"
 
-    _state_importecfogd = "leagues_ogd_state_importecfogd"
+    _state_importecfogd_grading = "leagues_ogd_state_importecfogdgrading"
+    _state_importecfogd_rating = "leagues_ogd_state_importecfogdrating"
 
     def __init__(self, master=None, cnf=dict(), **kargs):
         """Extend and define the results database results frame."""
@@ -85,9 +87,20 @@ class Leagues(leagues_lite.Leagues):
             destroy_actions=(control_ogd.Control._btn_closedatabase,),
         )
         self.define_tab(
-            self._tab_importecfogd,
+            self._tab_importecfogd_grading,
             text="Import ECF Online Grading Database",
             tooltip="Import ECF Online Grading Database from zipped files.",
+            underline=-1,
+            tabclass=lambda **k: importecfogd.ImportECFOGD(**k),
+            destroy_actions=(
+                importecfogd.ImportECFOGD._btn_closeecfogdimport,
+                control_ogd.Control._btn_closedatabase,
+            ),
+        )
+        self.define_tab(
+            self._tab_importecfogd_rating,
+            text="Import ECF Online Rating Database",
+            tooltip="Import ECF Online Rating Database from zipped files.",
             underline=-1,
             tabclass=lambda **k: importecfogd.ImportECFOGD(**k),
             destroy_actions=(
@@ -105,19 +118,42 @@ class Leagues(leagues_lite.Leagues):
                     self._tab_players,
                     self._tab_ecfogdgradingcodes,
                 ),
-                self._state_importecfogd: (self._tab_importecfogd,),
+                self._state_importecfogd_grading: (
+                    self._tab_importecfogd_grading,
+                ),
+                self._state_importecfogd_rating: (
+                    self._tab_importecfogd_rating,
+                ),
             },
             switch_state={
                 (
                     self._state_dbopen,
                     control_ogd.Control._btn_copyecfogdgradingfile,
-                ): [self._state_importecfogd, self._tab_importecfogd],
+                ): [
+                    self._state_importecfogd_grading,
+                    self._tab_importecfogd_grading,
+                ],
                 (
-                    self._state_importecfogd,
+                    self._state_importecfogd_grading,
                     importecfogd.ImportECFOGD._btn_closeecfogdimport,
                 ): [self._state_dbopen, self._tab_control],
                 (
-                    self._state_importecfogd,
+                    self._state_importecfogd_grading,
+                    control_ogd.Control._btn_closedatabase,
+                ): [self._state_dbclosed, None],
+                (
+                    self._state_dbopen,
+                    control_ogd.Control._btn_copyecfogdratingfile,
+                ): [
+                    self._state_importecfogd_rating,
+                    self._tab_importecfogd_rating,
+                ],
+                (
+                    self._state_importecfogd_rating,
+                    importecfogd.ImportECFOGD._btn_closeecfogdimport,
+                ): [self._state_dbopen, self._tab_control],
+                (
+                    self._state_importecfogd_rating,
                     control_ogd.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
             },

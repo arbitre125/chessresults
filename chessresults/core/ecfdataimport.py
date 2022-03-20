@@ -68,9 +68,9 @@ def _do_ecf_reference_data_import(
     # Microsoft Windows' Pythons seem to be compiled with --enable-threads
     # because the commented code works in that environment.  The situation on
     # OS X, and any GNU-Linux distribution, is not known.
-    # Comparison with the copy_ecf_ogd_players_post_2006_rules() method in the
-    # sibling module sqlite3ecfogddataimport, which worked on OpenBSD 5.7 as it
-    # stood, highlighted the changes needed.
+    # Comparison with the validate_and_copy_ecf_ogd_players_post_2006_rules()
+    # method in the sibling module sqlite3ecfogddataimport, which worked on
+    # OpenBSD 5.7 as it stood, highlighted the changes needed.
     # ecfdate = widget.get_ecf_date()
 
     if not ecffile:

@@ -10,8 +10,6 @@ Import ECF Online Grading Database actions are on this panel.
 
 import tkinter
 import tkinter.messagebox
-import os
-import csv
 
 from solentware_grid.datagrid import DataGridReadOnly
 from solentware_grid.core.dataclient import DataSource
@@ -20,8 +18,6 @@ from solentware_misc.gui import logpanel, tasklog, exceptionhandler
 
 from ..minorbases.textapi import TextapiError
 from ..core import ecfogddb
-from ..core import ecfogdrecord
-from ..core import filespec
 from .minorbases.textdatarow import TextDataRow, TextDataHeader
 
 
@@ -170,126 +166,3 @@ class ImportECFOGD(logpanel.WidgetAndLogPanel):
         """Show buttons for actions allowed at start of import process."""
         self.hide_panel_buttons()
         self.show_panel_buttons((self._btn_closeecfogdimport,))
-
-    def _copy_ogd_players(self, logwidget=None):
-        """Import a new ECF Online Grading Database (player file)."""
-        self.tasklog.append_text(
-            "Extract players from Online Grading Database file."
-        )
-        self.tasklog.append_text_only("")
-        results = self.get_appsys().get_results_database()
-        ogdfile = self.datagrid.get_data_source().dbhome.main[ecfogddb.PLAYERS]
-        gcodes = dict()
-        duplicates = []
-        checkfails = []
-        ref = ecfogdrecord._ECFOGDplayercodefield
-        name = ecfogdrecord._ECFOGDplayernamefield
-        clubs = ecfogdrecord._ECFOGDplayerclubsfields
-        r = csv.DictReader(
-            [o.decode("iso-8859-1") for o in ogdfile.textlines],
-            ogdfile.fieldnames,
-        )
-        for row in r:
-            gcodes.setdefault(row[ref], []).append(
-                (row[name], [row[c] for c in clubs])
-            )
-        for k, v in gcodes.items():
-            if len(v) > 1:
-                duplicates.append(k)
-            if len(k) != 7:
-                checkfails.append(k)
-            else:
-                tokens = list(k)
-                checkdigit = 0
-                for i in range(6):
-                    if not tokens[i].isdigit():
-                        checkfails.append(k)
-                        break
-                    checkdigit += int(tokens[5 - i]) * (i + 2)
-                else:
-                    if tokens[-1] != "ABCDEFGHJKL"[checkdigit % 11]:
-                        checkfails.append(k)
-        if len(duplicates) or len(checkfails):
-            self.tasklog.append_text(
-                "Import from Online Grading Database abandonned."
-            )
-            if len(duplicates):
-                self.tasklog.append_text_only("Duplicate grading codes exist.")
-            if len(checkfails):
-                self.tasklog.append_text_only(
-                    "Grading codes exist that fail the checkdigit test."
-                )
-            self.tasklog.append_text_only("")
-            return
-
-        results.start_transaction()
-        self.tasklog.append_text(
-            "Update existing records from Online Grading Database file."
-        )
-        startlengcodes = len(gcodes)
-        ogdplayerrec = ecfogdrecord.ECFrefOGDrecordPlayer()
-        ogdplayers = results.database_cursor(
-            filespec.ECFOGDPLAYER_FILE_DEF, filespec.ECFOGDPLAYER_FIELD_DEF
-        )
-        try:
-            data = ogdplayers.first()
-            while data:
-                ogdplayerrec.load_record(data)
-                code = ogdplayerrec.value.ECFOGDcode
-                newrec = ogdplayerrec.clone()
-                if code in gcodes:
-                    newrec.value.ECFOGDname = gcodes[code][0][0]
-                    newrec.value.ECFOGDclubs = [c for c in gcodes[code][0][1]]
-                    del gcodes[code]
-                else:
-                    newrec.value.ECFOGDname = None
-                    newrec.value.ECFOGDclubs = []
-                ogdplayerrec.edit_record(
-                    results,
-                    filespec.ECFOGDPLAYER_FILE_DEF,
-                    filespec.ECFOGDPLAYER_FIELD_DEF,
-                    newrec,
-                )
-                data = ogdplayers.next()
-        finally:
-            ogdplayers.close()
-        self.tasklog.append_text_only(
-            "".join(
-                (
-                    str(startlengcodes - len(gcodes)),
-                    " records were updated.",
-                )
-            )
-        )
-
-        self.tasklog.append_text(
-            "Create new records from Online Grading Database file."
-        )
-        self.tasklog.append_text_only(
-            "".join(
-                (
-                    str(len(gcodes)),
-                    " records will be created.",
-                )
-            )
-        )
-        for k, v in gcodes.items():
-            ogdplayerrec = ecfogdrecord.ECFrefOGDrecordPlayer()
-            ogdplayerrec.key.recno = None
-            ogdplayerrec.value.ECFOGDcode = k
-            ogdplayerrec.value.ECFOGDname = v[0][0]
-            ogdplayerrec.value.ECFOGDclubs = [c for c in v[0][1]]
-            ogdplayerrec.put_record(results, filespec.ECFOGDPLAYER_FILE_DEF)
-        self.tasklog.append_text("Commit database update.")
-        self.tasklog.append_text_only("")
-        results.commit()
-        self.tasklog.append_text(
-            "".join(
-                (
-                    "Grading Codes and names imported from ",
-                    "Online Grading database.",
-                )
-            )
-        )
-        self.tasklog.append_text_only("")
-        return True

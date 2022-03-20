@@ -29,6 +29,8 @@ class Control(control_lite.Control):
 
     """The Control panel for a Results database."""
 
+    _btn_copyecfogdratingfile = "control_ogd_copy_rating"
+    _btn_ecfogdratingfile = "control_ogd_rating_file"
     _btn_copyecfogdgradingfile = "control_ogd_copy_grading"
     _btn_ecfogdgradingfile = "control_ogd_grading_file"
     _btn_quitecfogdzippedfiles = "control_ogd_quit"
@@ -65,15 +67,30 @@ class Control(control_lite.Control):
             command=self.on_import_events,
         )
         self.define_button(
+            self._btn_ecfogdratingfile,
+            text="ECF Rating List",
+            tooltip="Open a csv ECF Online rating list file.",
+            underline=4,
+            command=self.on_ecf_ogd_rating_file,
+        )
+        self.define_button(
+            self._btn_copyecfogdratingfile,
+            text="Show ECF Rating List",
+            tooltip="Build new Master file for players.",
+            underline=13,
+            switchpanel=True,
+            command=self.on_copy_ecf_ogd_rating_file,
+        )
+        self.define_button(
             self._btn_ecfogdgradingfile,
-            text="ECF OGD File",
+            text="ECF Grading List",
             tooltip="Open a zipped ECF Online Grading Database file.",
             underline=4,
             command=self.on_ecf_ogd_grading_file,
         )
         self.define_button(
             self._btn_copyecfogdgradingfile,
-            text="Show ECF OGD File",
+            text="Show ECF Grading List",
             tooltip="Build new Master file for players.",
             underline=13,
             switchpanel=True,
@@ -87,13 +104,62 @@ class Control(control_lite.Control):
             command=self.on_quit_ecf_ogd_zipped_files,
         )
 
+    def display_ecf_ogd_csv_file_contents(self):
+        """Display ECF master data with date for confirmation of update."""
+        filepath = tkinter.filedialog.askopenfilename(
+            parent=self.get_widget(),
+            title="Open ECF data file",
+            defaultextension=".csv",
+            filetypes=(("ECF rating lists", "*.csv"),),
+            initialdir=configuration.get_configuration_value(
+                constants.RECENT_RATING_LIST
+            ),
+        )
+        if not filepath:
+            return
+        configuration.set_configuration_value(
+            constants.RECENT_RATING_LIST,
+            configuration.convert_home_directory_to_tilde(
+                os.path.dirname(filepath)
+            ),
+        )
+
+        # Go with 'zip' logic for speed of implementation, not UI convenience.
+        namelist = os.path.basename(filepath)
+        if len(namelist):
+            frame = tkinter.Frame(master=self.get_widget())
+            listbox = tkinter.Listbox(master=frame)
+            yscrollbar = tkinter.Scrollbar(
+                master=frame,
+                orient=tkinter.VERTICAL,
+                command=listbox.yview,
+            )
+            xscrollbar = tkinter.Scrollbar(
+                master=frame,
+                orient=tkinter.HORIZONTAL,
+                command=listbox.xview,
+            )
+            listbox.configure(
+                yscrollcommand=yscrollbar.set,
+                xscrollcommand=xscrollbar.set,
+            )
+            yscrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+            xscrollbar.pack(side=tkinter.BOTTOM, fill=tkinter.X)
+            listbox.pack(fill=tkinter.BOTH, expand=tkinter.TRUE)
+            frame.pack(fill=tkinter.BOTH, expand=tkinter.TRUE)
+            listbox.insert(tkinter.END, namelist)
+            self.datafilepath.configure(text=filepath)
+            self.ecf_reference_file = listbox
+            self._ecf_reference_widget = frame
+            return True
+
     def display_ecf_ogd_zipped_file_contents(self):
         """Display ECF master data with date for confirmation of update."""
         filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
             title="Open ECF data file",
             defaultextension=".zip",
-            filetypes=(("ECF master lists", "*.zip"),),
+            filetypes=(("ECF grading lists", "*.zip"),),
             initialdir=configuration.get_configuration_value(
                 constants.RECENT_GRADING_LIST
             ),
@@ -145,6 +211,17 @@ class Control(control_lite.Control):
             self.show_buttons_for_open_database()
             self.create_buttons()
 
+    def show_buttons_for_import_ecf_ogd_rating_data(self):
+        """Show buttons for actions allowed selecting ECF data to import."""
+        self.hide_panel_buttons()
+        self.show_panel_buttons(
+            (
+                self._btn_closedatabase,
+                self._btn_quitecfogdzippedfiles,
+                self._btn_copyecfogdratingfile,
+            )
+        )
+
     def show_buttons_for_import_ecf_ogd_data(self):
         """Show buttons for actions allowed selecting ECF data to import."""
         self.hide_panel_buttons()
@@ -162,6 +239,7 @@ class Control(control_lite.Control):
         self.show_panel_buttons(
             (
                 self._btn_closedatabase,
+                self._btn_ecfogdratingfile,
                 self._btn_ecfogdgradingfile,
                 self._btn_importevents,
             )
@@ -190,6 +268,31 @@ class Control(control_lite.Control):
         self.show_buttons_for_open_database()
         self.create_buttons()
 
+    def on_ecf_ogd_rating_file(self, event=None):
+        """Do display ECF Rating List actions."""
+        if self.display_ecf_ogd_csv_file_contents():
+            self.show_buttons_for_import_ecf_ogd_rating_data()
+            self.create_buttons()
+
+    def on_copy_ecf_ogd_rating_file(self, event=None):
+        """Do copy ECF Grading List actions."""
+        dbspec = self._get_memory_csv_from_csvfile(ecfogddb.ECFOGD)
+        if dbspec is None:
+            self.inhibit_context_switch(self._btn_copyecfogdratingfile)
+            return
+        self.get_appsys().set_kwargs_for_next_tabclass_call(
+            dict(
+                datafilespec=(dbspec[0], ecfogddb.PLAYERS, ecfogddb.PLAYERS),
+                datafilename=dbspec[1],
+                closecontexts=(
+                    ECFOGDPLAYER_FILE_DEF,
+                    MAPECFOGDPLAYER_FILE_DEF,
+                ),
+                tabtitle="Rating List",
+                copymethod=ecfogddataimport.copy_ecf_ord_players_post_2006_rules,
+            )
+        )
+
     def on_ecf_ogd_grading_file(self, event=None):
         """Do display ECF Grading List actions."""
         if self.display_ecf_ogd_zipped_file_contents():
@@ -211,9 +314,60 @@ class Control(control_lite.Control):
                     MAPECFOGDPLAYER_FILE_DEF,
                 ),
                 tabtitle="Grading List",
-                copymethod=ecfogddataimport.copy_ecf_ogd_players_post_2006_rules,
+                copymethod=ecfogddataimport.validate_and_copy_ecf_ogd_players_post_2006_rules,
             )
         )
+
+    def _get_memory_csv_from_csvfile(self, dbdefinition):
+        """Create 'in-memory' CSV file from csv file."""
+        selection = self.ecf_reference_file.curselection()
+        if not selection:
+            return
+        selected_file = self.datafilepath.cget("text")
+        selected_element = self.ecf_reference_file.get(selection)
+        return self.open_file_from_ecf_csv_master_file(
+            dbdefinition,
+            None,
+            None,
+            selected_file,
+            selected_element,
+        )
+
+    def open_file_from_ecf_csv_master_file(
+        self, dbdefinition, dbset, dbname, archive, element
+    ):
+        """Display ECF rating list data with date for update confirmation."""
+        memory_file = None
+        csvarchive = open(archive, "rb")
+        try:
+            memory_file = io.BytesIO(csvarchive.read())
+        finally:
+            csvarchive.close()
+
+        ecffile = dbdefinition(memory_file)
+        try:
+            ecffile.open_context()
+            return (ecffile, (archive, element))
+        except TextapiError as msg:
+            try:
+                ecffile.close_context()
+            except:
+                pass
+            dlg = tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message=str(msg),
+                title=" ".join(["Open ECF Rating file"]),
+            )
+        except Exception as msg:
+            try:
+                ecffile.close_context()
+            except:
+                pass
+            dlg = tkinter.messagebox.showinfo(
+                parent=self.get_widget(),
+                message=" ".join([str(Exception), str(msg)]),
+                title=" ".join(["Open ECF Rating file"]),
+            )
 
     def _get_memory_csv_from_zipfile(self, dbdefinition):
         """Create 'in-memory' CSV file from zipped file."""
@@ -233,7 +387,7 @@ class Control(control_lite.Control):
     def open_file_from_ecf_zipped_master_file(
         self, dbdefinition, dbset, dbname, archive, element
     ):
-        """Display ECF grsding list data with date for confirmation of update."""
+        """Display ECF grading list data with date for update confirmation."""
         memory_file = None
         ziparchive = zipfile.ZipFile(archive, "r")
         try:
@@ -256,7 +410,7 @@ class Control(control_lite.Control):
             dlg = tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
                 message=str(msg),
-                title=" ".join(["Open ECF OGD file"]),
+                title=" ".join(["Open ECF Grading file"]),
             )
         except Exception as msg:
             try:
@@ -266,5 +420,5 @@ class Control(control_lite.Control):
             dlg = tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
                 message=" ".join([str(Exception), str(msg)]),
-                title=" ".join(["Open ECF OGD file"]),
+                title=" ".join(["Open ECF Grading file"]),
             )

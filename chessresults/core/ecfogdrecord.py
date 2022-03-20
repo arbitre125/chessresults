@@ -4,16 +4,14 @@
 
 """Record definition classes for data from ECF Online Grading Database.
 
-List of classes
+Two download formats exist: the grading list produced up to mid-2020, and
+the rating list produced after mid-2020.
 
-ECFrefOGDkeyPlayer
-ECFrefOGDvaluePlayer
-ECFrefOGDrecordPlayer
+ecfrating.org.uk/v2/help/help_api.php on 20 March 2022 states rating list
+format downloads are available for all grading and rating lists since 1994.
 
-List of functions
-
-get_ecf_ogd_player
-get_ecf_ogd_player_for_grading_code
+Grading list format downloads are no longer available but downloaded copies
+may still exist.
 
 """
 
@@ -22,56 +20,13 @@ from solentware_base.core.record import Value, ValueList, Record
 
 from . import filespec
 
-_ECFOGDplayercodefield = "Ref"
-_ECFOGDplayernamefield = "Name"
-_ECFOGDplayerclubsfields = (
-    "ClubNam1",
-    "ClubNam2",
-    "ClubNam3",
-    "ClubNam4",
-    "ClubNam5",
-    "ClubNam6",
-)
-
 
 class ECFrefOGDkeyPlayer(KeyData):
-
-    """Primary key of player from ECF
-
-    Methods added:
-
-    None
-
-    Methods overridden:
-
-    None
-
-    Methods extended:
-
-    None
-
-    """
-
-    pass
+    """Primary key of player from ECF."""
 
 
 class ECFrefOGDvaluePlayer(ValueList):
-
-    """Player data from ECF
-
-    Methods added:
-
-    None
-
-    Methods overridden:
-
-    None
-
-    Methods extended:
-
-    pack
-
-    """
+    """Player data from ECF."""
 
     attributes = dict(
         ECFOGDcode=None,
@@ -94,22 +49,7 @@ class ECFrefOGDvaluePlayer(ValueList):
 
 
 class ECFrefOGDrecordPlayer(Record):
-
-    """Player record from ECF
-
-    Methods added:
-
-    None
-
-    Methods overridden:
-
-    None
-
-    Methods extended:
-
-    __init__
-
-    """
+    """Player record from ECF."""
 
     def __init__(
         self, keyclass=ECFrefOGDkeyPlayer, valueclass=ECFrefOGDvaluePlayer
@@ -119,7 +59,7 @@ class ECFrefOGDrecordPlayer(Record):
 
 
 def get_ecf_ogd_player(database, key):
-    """Return ECFrefOGDrecordPlayer instance for dbrecord[key]"""
+    """Return ECFrefOGDrecordPlayer instance for dbrecord[key]."""
     p = database.get_primary_record(filespec.ECFOGDPLAYER_FILE_DEF, key)
     pr = ECFrefOGDrecordPlayer()
     pr.load_record(p)
@@ -127,7 +67,7 @@ def get_ecf_ogd_player(database, key):
 
 
 def get_ecf_ogd_player_for_grading_code(database, key):
-    """Return ECFrefOGDrecordPlayer instance for key on index or None"""
+    """Return ECFrefOGDrecordPlayer instance for key on index or None."""
     r = database.get_primary_record(
         filespec.ECFOGDPLAYER_FILE_DEF,
         database.database_cursor(

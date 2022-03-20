@@ -16,12 +16,12 @@ addition of this source to the menu.
 from ..core import filespec
 from ..core import ecfogdrecord
 from ..basecore.ecfogddataimport import (
-    _validate_ecf_ogd_players_post_2006_rules,
-    _copy_ecf_ogd_players_post_2006_rules,
+    validate_ecf_ogd_players_post_2006_rules,
+    copy_ecf_ogd_players_post_2006_rules,
 )
 
 
-def copy_ecf_ogd_players_post_2006_rules(
+def validate_and_copy_ecf_ogd_players_post_2006_rules(
     results, logwidget=None, ecffile=None, parent=None, **kwargs
 ):
     """Import a new ECF downloadable OGD player file.
@@ -29,7 +29,7 @@ def copy_ecf_ogd_players_post_2006_rules(
     widget - the manager object for the ecf data import tab
 
     """
-    gcodes = _validate_ecf_ogd_players_post_2006_rules(logwidget, ecffile)
+    gcodes = validate_ecf_ogd_players_post_2006_rules(logwidget, ecffile)
     if gcodes is False:
         return
 
@@ -80,6 +80,4 @@ def copy_ecf_ogd_players_post_2006_rules(
     )
 
     # Import data.
-    return _copy_ecf_ogd_players_post_2006_rules(
-        results, logwidget, ecffile, gcodes
-    )
+    return copy_ecf_ogd_players_post_2006_rules(results, logwidget, gcodes)

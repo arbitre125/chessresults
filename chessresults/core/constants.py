@@ -356,6 +356,7 @@ RECENT_POPULATION = "population"
 RECENT_GAME_SUMMARY = "game_summary"
 RECENT_EVENT_SUMMARY = "event_summary"
 RECENT_GRADING_LIST = "grading_list"
+RECENT_RATING_LIST = "rating_list"
 DEFAULT_RECENTS = (
     (RECENT_DATABASE, "~"),
     (RECENT_EMAIL_SELECTION, "~"),
@@ -373,6 +374,7 @@ DEFAULT_RECENTS = (
     (RECENT_GAME_SUMMARY, "~"),
     (RECENT_EVENT_SUMMARY, "~"),
     (RECENT_GRADING_LIST, "~"),
+    (RECENT_RATING_LIST, "~"),
 )
 
 # Default URLs to access ECF website.
@@ -418,6 +420,29 @@ DEFAULT_URLS = (
     ),
 )
 
+# ECF Grading and Rating list downloads.
+
+# Names of the relevant columns in the ECF Grading List csv download.
+# Moved from ecfogdrecord module.
+ECF_OGD_PLAYERCODE_FIELD = "Ref"
+ECF_OGD_PLAYERNAME_FIELD = "Name"
+ECF_OGD_PLAYERCLUBS_FIELDS = (
+    "ClubNam1",
+    "ClubNam2",
+    "ClubNam3",
+    "ClubNam4",
+    "ClubNam5",
+    "ClubNam6",
+)
+
+# Names of the relevant columns in the ECF Rating List csv and json downloads.
+# Moved from ecfogdrecord module.
+ECF_ORD_PLAYERCODE_FIELD = "ECF_code"
+ECF_ORD_PLAYERNAME_FIELD = "full_name"
+ECF_ORD_PLAYERCLUB_FIELD = "club_name"
+ECF_ORD_PLAYERCLUBS_FIELDS = (ECF_ORD_PLAYERCLUB_FIELD,)
+
+
 # Structure of ECF json downloads.
 A_C_CLUBS = "clubs"
 ACTIVE_CLUBS_KEYS = frozenset(
@@ -431,7 +456,7 @@ ACTIVE_CLUBS_KEYS = frozenset(
 )
 ACTIVE_CLUBS_ROW_KEY_NAMES = (
     "club_code",
-    "club_name",
+    "club_name",  # Do not assume it is same name as in rating download.
     "comment",
     "assoc_code",
     "assoc_name",
@@ -450,8 +475,8 @@ PLAYERS_RATINGS_KEYS = frozenset(
     ]
 )
 PLAYERS_RATINGS_COLUMN_NAMES = (
-    "ECF_code",
-    "full_name",
+    ECF_ORD_PLAYERCODE_FIELD,
+    ECF_ORD_PLAYERNAME_FIELD,
     "member_no",
     "FIDE_no",
     "gender",
@@ -469,5 +494,5 @@ PLAYERS_RATINGS_COLUMN_NAMES = (
     "original_blitz_online",
     "revised_blitz_online",
     "club_code",
-    "club_name",
+    ECF_ORD_PLAYERCLUB_FIELD,
 )

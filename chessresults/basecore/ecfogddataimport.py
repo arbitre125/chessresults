@@ -20,7 +20,7 @@ from ..core import ecfogddb
 from ..core import ecfogdrecord
 
 
-def copy_ecf_ogd_players_post_2006_rules(
+def validate_and_copy_ecf_ogd_players_post_2006_rules(
     results, logwidget=None, ecffile=None, parent=None, **kwargs
 ):
     """Import a new ECF downloadable OGD player file.
@@ -28,15 +28,23 @@ def copy_ecf_ogd_players_post_2006_rules(
     widget - the manager object for the ecf data import tab
 
     """
-    gcodes = _validate_ecf_ogd_players_post_2006_rules(logwidget, ecffile)
+    gcodes = validate_ecf_ogd_players_post_2006_rules(
+        logwidget, ecffile, **kwargs
+    )
     if gcodes is False:
         return
-    return _copy_ecf_ogd_players_post_2006_rules(
-        results, logwidget, ecffile, gcodes
-    )
+    return copy_ecf_ogd_players_post_2006_rules(results, logwidget, gcodes)
 
 
-def _validate_ecf_ogd_players_post_2006_rules(logwidget, ecffile):
+def validate_ecf_ogd_players_post_2006_rules(
+    logwidget,
+    ecffile,
+    playercode_field=None,
+    playername_field=None,
+    playerclubs_fields=None,
+    **kwargs
+):
+    """Return dict of update records if valid, or False if not."""
     if logwidget:
         logwidget.append_text("", timestamp=False)
         logwidget.append_text(
@@ -48,16 +56,13 @@ def _validate_ecf_ogd_players_post_2006_rules(logwidget, ecffile):
     gcodes = dict()
     duplicates = []
     checkfails = []
-    ref = ecfogdrecord._ECFOGDplayercodefield
-    name = ecfogdrecord._ECFOGDplayernamefield
-    clubs = ecfogdrecord._ECFOGDplayerclubsfields
     r = csv.DictReader(
         [o.decode("iso-8859-1") for o in ogdfile.textlines], ogdfile.fieldnames
     )
     for row in r:
         try:
-            gcodes.setdefault(row[ref], []).append(
-                (row[name], [row[c] for c in clubs])
+            gcodes.setdefault(row[playercode_field], []).append(
+                (row[playername_field], [row[c] for c in playerclubs_fields])
             )
         except:
             if logwidget:
@@ -102,7 +107,8 @@ def _validate_ecf_ogd_players_post_2006_rules(logwidget, ecffile):
     return gcodes
 
 
-def _copy_ecf_ogd_players_post_2006_rules(results, logwidget, ecffile, gcodes):
+def copy_ecf_ogd_players_post_2006_rules(results, logwidget, gcodes):
+    """Copy update in gcodes to database using record definition results."""
 
     # Load the ECF data.
     if logwidget:
