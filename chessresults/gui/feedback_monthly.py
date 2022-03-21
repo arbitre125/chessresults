@@ -31,9 +31,14 @@ from ..core import configuration
 _remove_dates_re = re.compile(r"\d{4}-\d{2}-\d{2}")
 _exact_re = re.compile(r"\s+Exact\s+match\s+(\d{6}[A-L])\s*\Z")
 _merge_re = re.compile(r"\s+(\d{6}[A-L])\s+was\s+(\d{6}[A-L])\s+")
+
+# The '... Revoke ...' version was expected in response to a 'commit'
+# submission, but the '...$' version is returned by the delayed 'check
+# and report' submission.  The chance to revoke has long expired.
 _match_to_re = re.compile(
-    r"\s+Matched\s+to\s+:\s+(\d{6}[A-L])\s+-\s+Revoke\s+"
+    r"\s+Matched\s+to\s+:\s+(\d{6}[A-L])(?:\s+-\s+Revoke\s+|$)"
 )
+
 _new_re = re.compile(r"\s+New\s+:\s+(\d{6}[A-L])\s*\Z")
 _no_code_re = re.compile(
     r"\s+\d+\s+-\s+Issue:\s+ECFCode\s+not\s+submitted\.\s+"

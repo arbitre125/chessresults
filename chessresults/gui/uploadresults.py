@@ -180,6 +180,17 @@ class _UploadResults:
             accelerator="Alt F9",
         )
         menu.add_separator()
+
+        # See comments just before save_response definition for
+        # reason this menu item is here and not in SubmitResults
+        # __init__() method.
+        menu.add_command(
+            label="Save Response",
+            command=self.save_response,
+            accelerator="Alt F11",
+        )
+        menu.add_separator()
+
         self.menu = menu
         self._bind_for_scrolling_only(text)
         for w in (root, frame, text):
@@ -586,45 +597,28 @@ class _UploadResults:
         widget.bind("<Next>", "continue")
         widget.bind("<End>", "continue")
 
-
-class SubmitResults(_UploadResults):
-    """Submit and commit results file to the ECF."""
-
-    def __init__(self):
-        """Build the user interface."""
-        super().__init__()
-        self.root.wm_title("Submit ECF Results Submission File")
-        self.menu.add_command(
-            label="Save Response",
-            command=self.save_response,
-            accelerator="Alt F11",
-        )
-        self.menu.add_separator()
-        tkinter.ttk.Label(master=self.frame, text=_EMAIL_TEXT).grid(
-            column=0, row=7, columnspan=2, pady=3
-        )
-
-    def set_email_graders_option(self, options):
-        """Send response to grader by email."""
-        if curl:
-            options.append("-F email_graders=")
-        elif requests:
-            options["email_graders"] = "on"
-
-    def set_report_only_option(self, options):
-        """Do nothing.
-
-        Default action is commit submission if it passes validation.
-
-        """
-
-    def set_create_new_ecf_codes_option(self, options):
-        """Do nothing.
-
-        Only submitters in the PRINCIPALS group are able to do this.
-
-        """
-
+    # Moved from SubmitResults because ECF responses do not happen as
+    # expected from description.  It seems necessary to be able to save
+    # responses to 'check and report' submissions to get new ECF codes
+    # reported in a response for applying feedback.
+    # Steps are:
+    #      1. Do a submission in a browser and request new ECF codes.
+    #      2. Do a 'submit and commit' submission in this application.
+    #         The response says the ECF codes will be allocated on
+    #         commit, but the commit seems to have been done already
+    #         because nothing is available to commit (pending?) when
+    #         accessed via browser and resubmitting the file gets the
+    #         response 'submission number already committed'.
+    #      3. Do a 'check and report' submission in this application.
+    #         The response says the 'new' players have been matched to
+    #         ECF codes; which appears to be true because the ECF code
+    #         download is able to retrieve the records.
+    #         Feedback processing will pick up the 'matches' and apply
+    #         them, saving quite a lot of fiddly effort.
+    #
+    # The responses given appear to be a step behind where the process
+    # has got to!
+    #
     def save_response(self, event=None):
         """Save response to a successful upload."""
         if self.most_recent_response is None:
@@ -719,6 +713,39 @@ class SubmitResults(_UploadResults):
                 )
             )
         )
+
+
+class SubmitResults(_UploadResults):
+    """Submit and commit results file to the ECF."""
+
+    def __init__(self):
+        """Build the user interface."""
+        super().__init__()
+        self.root.wm_title("Submit ECF Results Submission File")
+        tkinter.ttk.Label(master=self.frame, text=_EMAIL_TEXT).grid(
+            column=0, row=7, columnspan=2, pady=3
+        )
+
+    def set_email_graders_option(self, options):
+        """Send response to grader by email."""
+        if curl:
+            options.append("-F email_graders=")
+        elif requests:
+            options["email_graders"] = "on"
+
+    def set_report_only_option(self, options):
+        """Do nothing.
+
+        Default action is commit submission if it passes validation.
+
+        """
+
+    def set_create_new_ecf_codes_option(self, options):
+        """Do nothing.
+
+        Only submitters in the PRINCIPALS group are able to do this.
+
+        """
 
 
 # This is a guess at how to emulate the webpage 'Create new ECF codes' option
