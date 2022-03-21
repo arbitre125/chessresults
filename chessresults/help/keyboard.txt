@@ -239,7 +239,7 @@ ECF Events:
 
 Alt + u		Enter header detail of ECF Results Submission file.
 		ECF Event Detail tab.
-Alt + f		Save ECF Results Submission file.
+Alt + f		Create ECF Results Submission file.
 Alt + o		Upload file to ECF to check and report on submission.
 Alt + b		Upload file to ECF to submit submission and save feedback.
 Alt + k		Apply ECF Results rating feedback files to the database.

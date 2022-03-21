@@ -78,29 +78,29 @@ class ECFEvents(panel.PanelGridSelector):
         )
         self.define_button(
             self._btn_ecf_save,
-            text="Save file",
-            tooltip="Save results file for selected events.",
-            underline=5,
+            text="Create file",
+            tooltip="Create results file for selected events.",
+            underline=7,
             command=self.on_ecf_save,
         )
         self.define_button(
             self._btn_ecf_check_and_report,
             text="Check and Report file",
-            tooltip="Check and report previouly saved results file to ECF.",
+            tooltip="Check and report previouly created results file to ECF.",
             underline=13,
             command=self.on_ecf_check_and_report,
         )
         self.define_button(
             self._btn_ecf_submit,
             text="Submit file",
-            tooltip="Submit previouly saved results file to ECF.",
+            tooltip="Submit previouly created results file to ECF.",
             underline=2,
             command=self.on_ecf_submit,
         )
         self.define_button(
             self._btn_ecf_feedback_monthly,
             text="Feedback",
-            tooltip="Display a feedback email for a results upload to ECF.",
+            tooltip="Display saved feedback for an upload to ECF.",
             underline=7,
             switchpanel=True,
             command=self.on_ecf_results_feedback_monthly,
