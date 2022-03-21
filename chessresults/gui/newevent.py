@@ -45,7 +45,7 @@ class NewEvent(panel.PlainPanel):
 
         self.event = tkinter.LabelFrame(master=self.newevent, text="Event")
         self.gradingofficer = tkinter.LabelFrame(
-            master=self.newevent, text="Grading Officer"
+            master=self.newevent, text="Rating Officer"
         )
         self.gamefeeinvoice = tkinter.LabelFrame(
             master=self.newevent, text="Send Game Fee Invoice to"
@@ -100,7 +100,7 @@ class NewEvent(panel.PlainPanel):
         label.grid(row=0, column=1, sticky=tkinter.W)
         label = tkinter.Label(master=self.event, text="End Date")
         label.grid(row=0, column=2, sticky=tkinter.W)
-        label = tkinter.Label(master=self.event, text="ECF Code")
+        label = tkinter.Label(master=self.event, text="Event Code")
         label.grid(row=0, column=3, sticky=tkinter.W)
 
         self.gradingofficer.grid_columnconfigure(0, uniform="colg", weight=1)
