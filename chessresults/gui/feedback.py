@@ -340,6 +340,7 @@ class Feedback(panel.PlainPanel):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on Feedback page."""
+        super().describe_buttons()
         self.define_button(
             self._btn_closefeedback,
             text="Cancel Apply Feedback",

@@ -7,8 +7,9 @@
 
 import collections
 
+from chessvalidate.core import gameresults
+
 from . import constants
-from . import gameresults
 
 
 def get_event_identifier_from_game(game):
@@ -117,7 +118,7 @@ class ImportMerges(ImportResults):
     def translate_results_format(self):
         def game(data):
             if (
-                data[constants._result] in gameresults._storeresults
+                data[constants._result] in gameresults.storeresults
             ):  # constants._storeresults:
                 gamenumber = len(self.game)
                 self.game[gamenumber] = data

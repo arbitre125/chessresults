@@ -599,6 +599,7 @@ class Players(panel.PanedPanelGridSelectorBar):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on players page."""
+        super().describe_buttons()
         self.define_button(
             self._btn_aliases,
             text="Player Details",

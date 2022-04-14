@@ -9,7 +9,7 @@ Identify players in an event as players in previous events or as new players.
 
 Link new players with their English Chess Federation (ECF) grading codes.
 
-Submit results for events to the ECF for grading.
+Submit results for events to the ECF for rating.
 
 
 Contents

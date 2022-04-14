@@ -5,39 +5,22 @@
 """Email selection filter User Interface for Results application.
 
 """
-import os
-
-from emailstore.gui import select
+from chessvalidate.gui import selectemail
 
 from ..core import configuration
-from ..core import constants
 
 
-class SelectEmail(select.Select):
-
+class SelectEmail(selectemail.SelectEmail):
     """Add store configuration file to select.Select for opening files."""
 
-    def file_new(self):
-        """Delegate then update configuration if a file was opened."""
-        if self._folder is None:
-            self._folder = configuration.get_configuration_value(
-                constants.RECENT_EMAIL_SELECTION
-            )
-        super().file_new()
-        self._update_configuration()
+    def file_new(self, conf=None):
+        """Set configuration then delegate."""
+        if conf is None:
+            conf = configuration
+        super().file_new(conf=conf)
 
-    def file_open(self):
-        """Delegate then update configuration if a file was opened."""
-        if self._folder is None:
-            self._folder = configuration.get_configuration_value(
-                constants.RECENT_EMAIL_SELECTION
-            )
-        super().file_open()
-        self._update_configuration()
-
-    def _update_configuration(self):
-        if self._configuration is not None:
-            configuration.set_configuration_value(
-                constants.RECENT_EMAIL_SELECTION,
-                configuration.convert_home_directory_to_tilde(self._folder),
-            )
+    def file_open(self, conf=None):
+        """Set configuration then delegate."""
+        if conf is None:
+            conf = configuration
+        super().file_open(conf=conf)

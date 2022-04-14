@@ -421,6 +421,7 @@ class TakeonEdit(panel.PlainPanel):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on data input page."""
+        super().describe_buttons()
         self.define_button(
             self._btn_generate,
             text="Generate",

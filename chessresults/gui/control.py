@@ -40,13 +40,13 @@ from ..core.filespec import (
 from ..core import ecfdataimport
 from ..core import ecfclubdb
 from ..core import ecfplayerdb
-from . import control_lite
+from . import control_database
 from ..core import constants
 from . import ecfdownload
 from ..core import configuration
 
 
-class Control(control_lite.Control):
+class Control(control_database.Control):
 
     """The Control panel for a Results database."""
 
@@ -85,14 +85,7 @@ class Control(control_lite.Control):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on Control page."""
-        self.define_button(
-            self._btn_closedatabase,
-            text="Shut Database",
-            tooltip="Close the open database.",
-            underline=9,
-            switchpanel=True,
-            command=self.on_close_database,
-        )
+        super().describe_buttons()
         self.define_button(
             self._btn_ecfresultsfeedback,
             text="ECF Grading Feedback",
@@ -124,14 +117,6 @@ class Control(control_lite.Control):
             underline=4,
             switchpanel=True,
             command=self.on_ecf_clubs_download,
-        )
-        self.define_button(
-            self._btn_importevents,
-            text="Import Events",
-            tooltip="Import event data exported by Export Events.",
-            underline=0,
-            switchpanel=True,
-            command=self.on_import_events,
         )
         self.define_button(
             self._btn_ecfmasterfile,
@@ -166,23 +151,22 @@ class Control(control_lite.Control):
 
     def on_ecf_results_feedback(self, event=None):
         """Do ECF feedback actions."""
+        conf = configuration.Configuration()
         filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
             title="Open ECF feedback email or attachment",
             # defaultextension='.txt',
             # filetypes=(('ECF feedback', '*.txt'),),
-            initialdir=configuration.get_configuration_value(
+            initialdir=conf.get_configuration_value(
                 constants.RECENT_FEEDBACK_EMAIL
             ),
         )
         if not filepath:
             self.inhibit_context_switch(self._btn_ecfresultsfeedback)
             return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             constants.RECENT_FEEDBACK_EMAIL,
-            configuration.convert_home_directory_to_tilde(
-                os.path.dirname(filepath)
-            ),
+            conf.convert_home_directory_to_tilde(os.path.dirname(filepath)),
         )
         try:
             feedbackfile = open(filepath, "rb")
@@ -237,9 +221,7 @@ class Control(control_lite.Control):
                     (
                         "URL",
                         get_configuration_item(
-                            os.path.expanduser(
-                                os.path.join("~", constants.RESULTS_CONF)
-                            ),
+                            configuration.Configuration().get_configuration_file_name(),
                             default_url,
                             constants.DEFAULT_URLS,
                         ),
@@ -451,22 +433,21 @@ class Control(control_lite.Control):
 
     def display_ecf_zipped_file_contents(self):
         """Display ECF master data with date for confirmation of update."""
+        conf = configuration.Configuration()
         filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
             title="Open ECF data file",
             defaultextension=".zip",
             filetypes=(("ECF master lists", "*.zip"),),
-            initialdir=configuration.get_configuration_value(
+            initialdir=conf.get_configuration_value(
                 constants.RECENT_MASTERFILE
             ),
         )
         if not filepath:
             return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             constants.RECENT_MASTERFILE,
-            configuration.convert_home_directory_to_tilde(
-                os.path.dirname(filepath)
-            ),
+            conf.convert_home_directory_to_tilde(os.path.dirname(filepath)),
         )
 
         ziparchive = zipfile.ZipFile(filepath, "r")

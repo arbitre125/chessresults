@@ -14,7 +14,13 @@ import os
 from solentware_misc.gui.exceptionhandler import ExceptionHandler, FOCUS_ERROR
 from solentware_misc.core.getconfigurationitem import get_configuration_item
 
-from ..core import ecfrecord, ecfmaprecord, resultsrecord, constants
+from ..core import (
+    ecfrecord,
+    ecfmaprecord,
+    resultsrecord,
+    constants,
+    configuration,
+)
 from ..basecore import ecfdataimport
 
 
@@ -674,9 +680,7 @@ class ECFDownloadGradingCodeDialog(ECFDetailDialog):
             (
                 "URL",
                 get_configuration_item(
-                    os.path.expanduser(
-                        os.path.join("~", constants.RESULTS_CONF)
-                    ),
+                    configuration.Configuration().get_configuration_file_name(),
                     constants.PLAYER_INFO_URL,
                     constants.DEFAULT_URLS,
                 ),
@@ -842,9 +846,7 @@ class ECFDownloadPlayerNameDialog(ECFDetailDialog):
             (
                 "URL",
                 get_configuration_item(
-                    os.path.expanduser(
-                        os.path.join("~", constants.RESULTS_CONF)
-                    ),
+                    configuration.Configuration().get_configuration_file_name(),
                     constants.PLAYER_INFO_URL,
                     constants.DEFAULT_URLS,
                 ),
@@ -1009,9 +1011,7 @@ class ECFDownloadClubCodeDialog(ECFDetailDialog):
             (
                 "URL",
                 get_configuration_item(
-                    os.path.expanduser(
-                        os.path.join("~", constants.RESULTS_CONF)
-                    ),
+                    configuration.Configuration().get_configuration_file_name(),
                     constants.CLUB_INFO_URL,
                     constants.DEFAULT_URLS,
                 ),

@@ -1,4 +1,4 @@
-# control_lite.py
+# control_database.py
 # Copyright 2008 Roger Marsh
 # Licence: See LICENCE (BSD licence)
 
@@ -111,6 +111,7 @@ class Control(panel.PlainPanel):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on Control page."""
+        super().describe_buttons()
         self.define_button(
             self._btn_closedatabase,
             text="Shut Database",
@@ -135,23 +136,22 @@ class Control(panel.PlainPanel):
 
     def on_import_events(self, event=None):
         """Do import events actions."""
+        conf = configuration.Configuration()
         filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
             title="Open Event file",
             defaultextension=".bz2",
             filetypes=(("bz2 compressed", "*.bz2"),),
-            initialdir=configuration.get_configuration_value(
+            initialdir=conf.get_configuration_value(
                 constants.RECENT_IMPORT_EVENTS
             ),
         )
         if not filepath:
             self.inhibit_context_switch(self._btn_importevents)
             return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             constants.RECENT_IMPORT_EVENTS,
-            configuration.convert_home_directory_to_tilde(
-                os.path.dirname(filepath)
-            ),
+            conf.convert_home_directory_to_tilde(os.path.dirname(filepath)),
         )
         bz2file = bz2.BZ2File(filepath, "rb")
         text = bz2file.read()

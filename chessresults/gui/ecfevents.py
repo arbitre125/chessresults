@@ -12,13 +12,14 @@ import os
 
 from solentware_misc.gui import panel
 
+from chessvalidate.core import gameresults
+
 from . import ecfeventgrids
 from . import uploadresults
 from .feedback_monthly import show_ecf_results_feedback_monthly_tab
 from ..core import resultsrecord
 from ..core import ecfmaprecord
 from ..core import ecfrecord
-from ..core import gameresults
 from ..core import constants
 from ..core import filespec
 from ..core import configuration
@@ -68,6 +69,7 @@ class ECFEvents(panel.PanelGridSelector):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on ECF events page."""
+        super().describe_buttons()
         self.define_button(
             self._btn_ecfeventdetail,
             text="Update Event Detail",
@@ -183,7 +185,7 @@ class ECFEvents(panel.PanelGridSelector):
     def write_results_file_for_ecf(self):
         """Write results for selected events to ECF submission file.
 
-        Submission file format is defined at ****.
+        Submission file format is defined at www.ecfrating.org.uk/doc/.
 
         """
         esel = self.eventgrid.selection
@@ -490,7 +492,7 @@ class ECFEvents(panel.PanelGridSelector):
                 return pin_to_ecf_code[pin]
             spin = str(pin)
             if spin == str(0):
-                return constants.zero_not_0
+                return constants.ECF_ZERO_NOT_0
             else:
                 return spin
 
@@ -899,21 +901,20 @@ class ECFEvents(panel.PanelGridSelector):
 
         lines.append(ecf_line((dcc(constants.FINISH),)))
 
+        conf = configuration.Configuration()
         filepath = tkinter.filedialog.asksaveasfilename(
             parent=self.get_widget(),
             title="Save ECF Results submission file",
             initialfile=subfilename,
-            initialdir=configuration.get_configuration_value(
+            initialdir=conf.get_configuration_value(
                 constants.RECENT_SUBMISSION
             ),
         )
         if not filepath:
             return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             constants.RECENT_SUBMISSION,
-            configuration.convert_home_directory_to_tilde(
-                os.path.dirname(filepath)
-            ),
+            conf.convert_home_directory_to_tilde(os.path.dirname(filepath)),
         )
 
         of = open(filepath, "wb")

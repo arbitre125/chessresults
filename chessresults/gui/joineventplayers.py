@@ -53,6 +53,7 @@ class JoinEventPlayers(panel.PanedPanelGridSelector):
         """Define all action buttons that may appear on join event's players
         page.
         """
+        super().describe_buttons()
         self.define_button(
             self._btn_join,
             text="Join",

@@ -9,8 +9,9 @@ on database or to be new to this database.
 
 This module did the job of newplayers_lite before version 5.1 of ChessResults.
 
-This module now customises newplayers_lite for use with the ECF monthly
-rating system.
+This module customises newplayers_database, starting with version 6.0 of
+ChessResults, for use with the ECF monthly rating system.  Between these
+versions it customised newplayers_lite.
 
 """
 import tkinter
@@ -22,15 +23,16 @@ import json
 
 from solentware_misc.core.getconfigurationitem import get_configuration_item
 
-from . import newplayers_lite
+from . import newplayers_database
 from ..core import resultsrecord
 from ..core import ecfrecord
 from ..core import ecfmaprecord
 from ..core import constants
+from ..core import configuration
 from ..basecore.ecfdataimport import copy_single_ecf_players_post_2020_rules
 
 
-class NewPlayers(newplayers_lite.NewPlayers):
+class NewPlayers(newplayers_database.NewPlayers):
 
     """New Players panel for Results database with ECF monthly rating.
 
@@ -51,27 +53,7 @@ class NewPlayers(newplayers_lite.NewPlayers):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on new players page."""
-        self.define_button(
-            self._btn_merge,
-            text="Merge",
-            tooltip="Merge the selected players under the chosen reference.",
-            underline=0,
-            command=self.on_merge,
-        )
-        self.define_button(
-            self._btn_join,
-            text="Join",
-            tooltip="Join selected merged players under chosen reference.",
-            underline=0,
-            command=self.on_join,
-        )
-        self.define_button(
-            self._btn_person_details,
-            text="Players Details",
-            tooltip="Show details for bookmarked and selected players.",
-            underline=1,
-            command=self.on_person_details,
-        )
+        super().describe_buttons()
         self.define_button(
             self._btn_download_ecf_codes,
             text="Download ECF codes",
@@ -114,6 +96,15 @@ class NewPlayers(newplayers_lite.NewPlayers):
                 title,
                 reportedcodes=reportedcodes,
             )
+        if len(reportedcodes) == 0:
+            message = "No reported codes found in selected new players"
+        else:
+            message = "All reported codes processed"
+        tkinter.messagebox.showinfo(
+            parent=self.get_widget(),
+            message=message,
+            title=title,
+        )
 
     def _download_ecf_codes_for_player_reported_codes(
         self, aliasrecord, db, title, reportedcodes=None
@@ -308,7 +299,7 @@ class NewPlayers(newplayers_lite.NewPlayers):
     ):
         """Attempt to download ECF data for reported code."""
         urlname = get_configuration_item(
-            os.path.expanduser(os.path.join("~", constants.RESULTS_CONF)),
+            configuration.Configuration().get_configuration_file_name(),
             url_name,
             constants.DEFAULT_URLS,
         )

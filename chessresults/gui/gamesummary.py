@@ -11,18 +11,20 @@ import os
 from solentware_misc.gui.exceptionhandler import ExceptionHandler
 from solentware_misc.core.utilities import AppSysPersonName
 
+from chessvalidate.core.gameresults import (
+    displayresult as DISPLAYRESULT,
+)
+
 from . import reports
 from ..core import resultsrecord
 from ..core import filespec
-from ..core.gameresults import (
-    displayresult as DISPLAYRESULT,
-    hwin as HWIN,
-    awin as AWIN,
-    draw as DRAW,
-)
 from ..core import constants
 
-INVERT_RESULT = {HWIN: AWIN, DRAW: DRAW, AWIN: HWIN}
+INVERT_RESULT = {
+    constants.HWIN: constants.AWIN,
+    constants.DRAW: constants.DRAW,
+    constants.AWIN: constants.HWIN,
+}
 
 
 class _GameSummaryReport(reports.ChessResultsReport):

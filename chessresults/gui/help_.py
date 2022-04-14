@@ -1,62 +1,70 @@
-# help.py
+# help_.py
 # Copyright 2009 Roger Marsh
 # Licence: See LICENCE (BSD licence)
 
-"""Functions to create Help widgets for Results.
+"""Functions to create Help widgets for ChessResults.
+
+The varieties of ChessResults are:
+
+ChessResultsLite
+ChessResultsOGD
+ChessResultsECF
+
 """
 
 import tkinter
 
-import solentware_misc.gui.textreadonly
 from solentware_misc.gui.help import help_widget
 
-from .. import help
+from chessvalidate import help_ as chessvalidate_help_
+
+from .. import help_
 
 
 def help_about(master):
     """Display About document"""
 
-    help_widget(master, help.ABOUT, help)
+    help_widget(master, help_.ABOUT, help_)
 
 
 def help_file_size(master):
     """Display File Size document"""
 
-    help_widget(master, help.FILESIZE, help)
+    help_widget(master, help_.FILESIZE, help_)
 
 
 def help_guide(master):
     """Display Guide document"""
 
-    help_widget(master, help.GUIDE, help)
+    help_widget(master, help_.GUIDE, help_)
 
 
 def help_keyboard(master):
     """Display Keyboard actions document"""
 
-    help_widget(master, help.ACTIONS, help)
+    help_widget(master, help_.ACTIONS, help_)
 
 
 def help_samples(master):
     """Display Samples document"""
 
-    help_widget(master, help.SAMPLES, help)
+    help_widget(master, chessvalidate_help_.SAMPLES, chessvalidate_help_)
 
 
 def help_tablespecs(master):
     """Display csv file layouts document"""
 
-    help_widget(master, help.TABLESPECS, help)
+    help_widget(master, chessvalidate_help_.TABLESPECS, chessvalidate_help_)
 
 
 def help_notes(master):
     """Display Notes document"""
 
-    help_widget(master, help.NOTES, help)
+    help_widget(master, chessvalidate_help_.NOTES, chessvalidate_help_)
 
 
 if __name__ == "__main__":
-    # Display all help documents without running ChessResults application
+    # Display all help_ documents without running ChessResults application
 
     root = tkinter.Tk()
     help_about(root)

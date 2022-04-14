@@ -11,21 +11,21 @@ The collated results from the results report replace any existing results on
 the database for the reported events.
 
 """
-
-from .gameobjects import (
+from chessvalidate.core.gameresults import ecfresult
+from chessvalidate.core.gameobjects import (
     Game,
     SwissMatchGame,
     SwissGame,
     MatchGame,
     MatchReport,
 )
+
 from .resultsrecord import ResultsDBrecordEvent, ResultsDBrecordGame
 from .resultsrecord import ResultsDBrecordName, ResultsDBrecordPlayer
 from .resultsrecord import get_alias, get_name_from_record_value
 from .resultsrecord import get_events_matching_event_identity
 from .resultsrecord import get_games_for_event, get_affiliation_details
 from . import filespec
-from .gameresults import ecfresult
 
 
 class CollationDB(object):

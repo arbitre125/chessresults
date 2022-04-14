@@ -1,4 +1,4 @@
-# leagues_lite.py
+# leagues_database.py
 # Copyright 2008 Roger Marsh
 # Licence: See LICENCE (BSD licence)
 
@@ -14,15 +14,16 @@ import os
 import importlib
 
 from solentware_base import modulequery
-from solentware_misc.gui import threadqueue
 
-from ..core.season import Season
+from chessvalidate.core.season import Season
+from chessvalidate.gui import leagues_validate
+
 from ..core.takeonseason import TakeonSeason
 from . import sourceedit
 from . import takeonedit
-from . import control_lite
-from . import events_lite
-from . import newplayers_lite
+from . import control_database
+from . import events_database
+from . import newplayers_database
 from . import players
 from . import importevents
 from . import taskpanel
@@ -39,49 +40,42 @@ _DataSourceSet = "DataSourceSet"
 _KnownNamesDS = "KnownNamesDS"
 
 
-class Leagues(threadqueue.AppSysThreadQueue):
+class Leagues(leagues_validate.Leagues):
 
     """The Results frame for a Results database."""
 
-    _menu_opendata = "leagues_lite_menu_opendata"
-    _menu_opentakeondata = "leagues_lite_menu_opentakeondata"
+    _menu_opentakeondata = "leagues_database_menu_opentakeondata"
 
-    _tab_sourceedit = "leagues_lite_tab_sourceedit"
-    _tab_control = "leagues_lite_tab_control"
-    _tab_events = "leagues_lite_tab_events"
-    _tab_players = "leagues_lite_tab_players"
-    _tab_newplayers = "leagues_lite_tab_newplayers"
-    _tab_takeonedit = "leagues_lite_tab_takeonedit"
-    _tab_importevents = "leagues_lite_tab_importevents"
-    _tab_reportevent = "leagues_lite_tab_reportevent"
-    _tab_joineventplayers = "leagues_tab_joineventplayers"
+    _tab_control = "leagues_database_tab_control"
+    _tab_events = "leagues_database_tab_events"
+    _tab_players = "leagues_database_tab_players"
+    _tab_newplayers = "leagues_database_tab_newplayers"
+    _tab_takeonedit = "leagues_database_tab_takeonedit"
+    _tab_importevents = "leagues_database_tab_importevents"
+    _tab_reportevent = "leagues_database_tab_reportevent"
+    _tab_joineventplayers = "leagues_database_joineventplayers"
 
-    _state_dbclosed = "leagues_lite_state_dbclosed"
-    _state_dbopen = "leagues_lite_state_dbopen"
-    _state_dataopen = "leagues_lite_state_dataopen"
-    _state_dataopen_dbopen = "leagues_lite_state_dataopen_dbopen"
-    _state_takeonopen = "leagues_lite_state_takeonopen"
-    _state_takeonopen_dbopen = "leagues_lite_state_takeonopen_dbopen"
-    _state_dbopen_import_events = "leagues_lite_state_dbopen_import_events"
-    _state_dbopen_report_event = "leagues_lite_state_dbopen_report_event"
-    _state_joineventplayers = "leagues_lite_state_joineventplayers"
+    _state_dbopen = "leagues_database_state_dbopen"
+    _state_dataopen_dbopen = "leagues_database_state_dataopen_dbopen"
+    _state_takeonopen = "leagues_database_state_takeonopen"
+    _state_takeonopen_dbopen = "leagues_database_state_takeonopen_dbopen"
+    _state_dbopen_import_events = "leagues_database_state_dbopen_import_events"
+    _state_dbopen_report_event = "leagues_database_state_dbopen_report_event"
+    _state_joineventplayers = "leagues_database_state_joineventplayers"
 
-    def __init__(self, menubar=None, **kargs):
+    def __init__(self, master=None, cnf=dict(), **kargs):
         """Extend and define the results database results frame."""
-        super(Leagues, self).__init__(**kargs)
+        super(Leagues, self).__init__(master=master, cnf=cnf, **kargs)
 
         self.database = None
         self.database_folder = None
-        self.results_folder = None  # folder shown in SourceOpen.folder
-        self.results_data = None  # Season held in SourceOpen.data
-        self.results_folder_generic = None  # folder shown in SourceOpen.folder
-        self.menubar = menubar
         self._database_modulename = None
-        self._resultsdbkargs = kargs
         self._show_master_list_grading_codes = False
         self._show_grading_list_grading_codes = False
 
-        menu1 = tkinter.Menu(self.menubar, name="database", tearoff=False)
+    def define_menus(self):
+        """Override.  Define the application menus."""
+        menu1 = tkinter.Menu(self.menubar, tearoff=False)
         menu1.add_command(
             label="Open",
             underline=0,
@@ -103,7 +97,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
             underline=0,
             command=self.try_command(self.database_delete, menu1),
         )
-        menu2 = tkinter.Menu(self.menubar, name="results", tearoff=False)
+        menu2 = tkinter.Menu(self.menubar, tearoff=False)
         menu2.add_command(
             label="Open",
             underline=0,
@@ -126,32 +120,27 @@ class Leagues(threadqueue.AppSysThreadQueue):
         self.menubar.add_cascade(label="Documents", menu=menu2, underline=0)
         self.menubar.add_cascade(label="Results", menu=menu1, underline=0)
 
+    def define_tabs(self):
+        """Define the application tabs."""
+        super().define_tabs()
         self.define_tab(
             self._tab_control,
             text="Administration",
             tooltip="Open and close databases and import data.",
             underline=0,
-            tabclass=lambda **k: control_lite.Control(**k),
-            create_actions=(control_lite.Control._btn_opendatabase,),
-            destroy_actions=(control_lite.Control._btn_closedatabase,),
+            tabclass=lambda **k: self.results_control(**k),
+            create_actions=(control_database.Control._btn_opendatabase,),
+            destroy_actions=(control_database.Control._btn_closedatabase,),
         )
         self.define_tab(
             self._tab_events,
             text="Events",
             tooltip="Export event data",
             underline=0,
-            tabclass=lambda **k: events_lite.Events(gridhorizontal=False, **k),
-            destroy_actions=(control_lite.Control._btn_closedatabase,),
-        )
-        self.define_tab(
-            self._tab_sourceedit,
-            text="Edit",
-            tooltip=(
-                "Edit event source files and generate Results database input."
+            tabclass=lambda **k: self.results_events(
+                gridhorizontal=False, **k
             ),
-            underline=-1,
-            tabclass=lambda **k: self.document_edit(**k),
-            destroy_actions=(sourceedit.SourceEdit._btn_closedata,),
+            destroy_actions=(control_database.Control._btn_closedatabase,),
         )
         self.define_tab(
             self._tab_takeonedit,
@@ -173,10 +162,10 @@ class Leagues(threadqueue.AppSysThreadQueue):
             text="NewPlayers",
             tooltip="Identify new players and merge with existing players.",
             underline=0,
-            tabclass=lambda **k: newplayers_lite.NewPlayers(
+            tabclass=lambda **k: self.results_newplayers(
                 gridhorizontal=False, **k
             ),
-            destroy_actions=(control_lite.Control._btn_closedatabase,),
+            destroy_actions=(control_database.Control._btn_closedatabase,),
         )
         self.define_tab(
             self._tab_players,
@@ -184,7 +173,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
             tooltip="Merge or separate existing players.",
             underline=0,
             tabclass=lambda **k: players.Players(gridhorizontal=False, **k),
-            destroy_actions=(control_lite.Control._btn_closedatabase,),
+            destroy_actions=(control_database.Control._btn_closedatabase,),
         )
         self.define_tab(
             self._tab_joineventplayers,
@@ -194,7 +183,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
             tabclass=lambda **k: joineventplayers.JoinEventPlayers(**k),
             destroy_actions=(
                 joineventplayers.JoinEventPlayers._btn_cancel,
-                control_lite.Control._btn_closedatabase,
+                control_database.Control._btn_closedatabase,
             ),
         )
         self.define_tab(
@@ -205,7 +194,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
             tabclass=lambda **k: importevents.ImportEvents(**k),
             destroy_actions=(
                 importevents.ImportEvents._btn_closeimport,
-                control_lite.Control._btn_closedatabase,
+                control_database.Control._btn_closedatabase,
             ),
         )
         self.define_tab(
@@ -216,33 +205,36 @@ class Leagues(threadqueue.AppSysThreadQueue):
             tabclass=lambda **k: taskpanel.TaskPanel(**k),
             destroy_actions=(
                 taskpanel.TaskPanel._btn_closebackgroundtask,
-                control_lite.Control._btn_closedatabase,
+                control_database.Control._btn_closedatabase,
             ),
         )
 
-        self.define_state_transitions(
-            tab_state={
-                self._state_dbclosed: (),
+    def define_tab_states(self):
+        """Return dict of <state>:tuple(<tab>, ...)."""
+        tab_states = super().define_tab_states()
+        tab_states.update(
+            {
                 self._state_dbopen: (
                     self._tab_control,
                     self._tab_events,
                     self._tab_newplayers,
                     self._tab_players,
                 ),
-                self._state_dataopen: (self._tab_sourceedit,),
                 self._state_dataopen_dbopen: (self._tab_sourceedit,),
                 self._state_takeonopen: (self._tab_takeonedit,),
                 self._state_takeonopen_dbopen: (self._tab_takeonedit,),
                 self._state_dbopen_import_events: (self._tab_importevents,),
                 self._state_dbopen_report_event: (self._tab_reportevent,),
                 self._state_joineventplayers: (self._tab_joineventplayers,),
-            },
-            switch_state={
-                (None, None): [self._state_dbclosed, None],
-                (self._state_dbclosed, self._menu_opendata): [
-                    self._state_dataopen,
-                    self._tab_sourceedit,
-                ],
+            }
+        )
+        return tab_states
+
+    def define_state_switch_table(self):
+        """Return dict of tuple(<state>, <action>):list(<state>, <tab>)."""
+        switch_table = super().define_state_switch_table()
+        switch_table.update(
+            {
                 (self._state_dbopen, self._menu_opendata): [
                     self._state_dataopen_dbopen,
                     self._tab_sourceedit,
@@ -257,20 +249,16 @@ class Leagues(threadqueue.AppSysThreadQueue):
                 ],
                 (
                     self._state_dbclosed,
-                    control_lite.Control._btn_opendatabase,
+                    control_database.Control._btn_opendatabase,
                 ): [self._state_dbopen, self._tab_events],
                 (
                     self._state_dataopen,
-                    control_lite.Control._btn_opendatabase,
+                    control_database.Control._btn_opendatabase,
                 ): [self._state_dataopen_dbopen, self._tab_sourceedit],
                 (
                     self._state_takeonopen,
-                    control_lite.Control._btn_opendatabase,
+                    control_database.Control._btn_opendatabase,
                 ): [self._state_takeonopen_dbopen, self._tab_takeonedit],
-                (self._state_dataopen, sourceedit.SourceEdit._btn_closedata): [
-                    self._state_dbclosed,
-                    None,
-                ],
                 (
                     self._state_dataopen_dbopen,
                     sourceedit.SourceEdit._btn_closedata,
@@ -285,23 +273,26 @@ class Leagues(threadqueue.AppSysThreadQueue):
                 ): [self._state_dbopen, self._tab_events],
                 (
                     self._state_dbopen,
-                    control_lite.Control._btn_closedatabase,
+                    control_database.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
                 (
                     self._state_dataopen_dbopen,
-                    control_lite.Control._btn_closedatabase,
+                    control_database.Control._btn_closedatabase,
                 ): [self._state_dataopen, self._tab_sourceedit],
                 (
                     self._state_takeonopen_dbopen,
-                    control_lite.Control._btn_closedatabase,
+                    control_database.Control._btn_closedatabase,
                 ): [self._state_takeonopen, self._tab_takeonedit],
-                (self._state_dbopen, control_lite.Control._btn_importevents): [
+                (
+                    self._state_dbopen,
+                    control_database.Control._btn_importevents,
+                ): [
                     self._state_dbopen_import_events,
                     self._tab_importevents,
                 ],
                 (
                     self._state_dbopen,
-                    events_lite.Events._btn_join_event_new_players,
+                    events_database.Events._btn_join_event_new_players,
                 ): [self._state_joineventplayers, self._tab_joineventplayers],
                 (
                     self._state_joineventplayers,
@@ -311,27 +302,24 @@ class Leagues(threadqueue.AppSysThreadQueue):
                     self._state_dbopen_import_events,
                     importevents.ImportEvents._btn_closeimport,
                 ): [self._state_dbopen, self._tab_control],
-                (self._state_dbopen, events_lite.Events._btn_exportevents): [
+                (
+                    self._state_dbopen,
+                    events_database.Events._btn_exportevents,
+                ): [
                     self._state_dbopen_report_event,
                     self._tab_reportevent,
                 ],
-                (self._state_dbopen, events_lite.Events._btn_event_summary): [
+                (
+                    self._state_dbopen,
+                    events_database.Events._btn_event_summary,
+                ): [
                     self._state_dbopen_report_event,
                     self._tab_reportevent,
                 ],
-                (self._state_dbopen, events_lite.Events._btn_performance): [
-                    self._state_dbopen_report_event,
-                    self._tab_reportevent,
-                ],
-                (self._state_dbopen, events_lite.Events._btn_game_summary): [
-                    self._state_dbopen_report_event,
-                    self._tab_reportevent,
-                ],
-                (self._state_dbopen, events_lite.Events._btn_prediction): [
-                    self._state_dbopen_report_event,
-                    self._tab_reportevent,
-                ],
-                (self._state_dbopen, events_lite.Events._btn_population): [
+                (
+                    self._state_dbopen,
+                    events_database.Events._btn_game_summary,
+                ): [
                     self._state_dbopen_report_event,
                     self._tab_reportevent,
                 ],
@@ -341,18 +329,19 @@ class Leagues(threadqueue.AppSysThreadQueue):
                 ): [self._state_dbopen, self._tab_events],
                 (
                     self._state_dbopen_report_event,
-                    control_lite.Control._btn_closedatabase,
+                    control_database.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
                 (
                     self._state_dbopen_import_events,
-                    control_lite.Control._btn_closedatabase,
+                    control_database.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
                 (
                     self._state_joineventplayers,
-                    control_lite.Control._btn_closedatabase,
+                    control_database.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
-            },
+            }
         )
+        return switch_table
 
     def _add_ecf_url_item(self, menu):
         pass
@@ -385,7 +374,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
             if dlg == tkinter.messagebox.YES:
                 self._database_close()
                 self.database = None
-                self.switch_context(control_lite.Control._btn_closedatabase)
+                self.switch_context(
+                    control_database.Control._btn_closedatabase
+                )
                 self.set_error_file_on_close_databasee()
                 # return False to inhibit context switch if invoked from close
                 # Database button on tab because no state change is, or can be,
@@ -443,7 +434,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
                 )
             )
             self.database = None
-            self.switch_context(control_lite.Control._btn_closedatabase)
+            self.switch_context(control_database.Control._btn_closedatabase)
             self.set_error_file_on_close_databasee()
             tkinter.messagebox.showinfo(
                 parent=self.get_widget(), title="Delete", message=message
@@ -465,12 +456,11 @@ class Leagues(threadqueue.AppSysThreadQueue):
             )
             return
 
+        conf = configuration.Configuration()
         database_folder = tkinter.filedialog.askdirectory(
             parent=self.get_widget(),
             title="Select folder for new results database",
-            initialdir=configuration.get_configuration_value(
-                constants.RECENT_DATABASE
-            ),
+            initialdir=conf.get_configuration_value(constants.RECENT_DATABASE),
         )
         if not database_folder:
             tkinter.messagebox.showinfo(
@@ -513,9 +503,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
                     title="New",
                 )
                 return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             constants.RECENT_DATABASE,
-            configuration.convert_home_directory_to_tilde(database_folder),
+            conf.convert_home_directory_to_tilde(database_folder),
         )
 
         # Set the error file in top folder of chess database
@@ -626,10 +616,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
             )
             return
 
+        conf = configuration.Configuration()
         if self.database_folder is None:
-            initdir = configuration.get_configuration_value(
-                constants.RECENT_DATABASE
-            )
+            initdir = conf.get_configuration_value(constants.RECENT_DATABASE)
         else:
             initdir = self.database_folder
         database_folder = tkinter.filedialog.askdirectory(
@@ -645,9 +634,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
                 title="Open",
             )
             return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             constants.RECENT_DATABASE,
-            configuration.convert_home_directory_to_tilde(database_folder),
+            conf.convert_home_directory_to_tilde(database_folder),
         )
 
         # Set the error file in top folder of chess database
@@ -790,7 +779,7 @@ class Leagues(threadqueue.AppSysThreadQueue):
         self.database_folder = database_folder
         self.set_error_file()
         self.set_ecf_url_defaults()
-        self.switch_context(control_lite.Control._btn_opendatabase)
+        self.switch_context(control_database.Control._btn_opendatabase)
         self.get_control_context().show_buttons_for_open_database()
         self.get_control_context().create_buttons()
 
@@ -831,8 +820,20 @@ class Leagues(threadqueue.AppSysThreadQueue):
         self.get_widget().winfo_toplevel().destroy()
 
     def document_edit(self, **kargs):
-        """Return class to create document editor."""
+        """Return sourceedit.SourceEdit class instance."""
         return sourceedit.SourceEdit(**kargs)
+
+    def results_control(self, **kargs):
+        """Return control_database.Control class instance."""
+        return control_database.Control(**kargs)
+
+    def results_events(self, **kargs):
+        """Return events_database.Events class instance."""
+        return events_database.Events(**kargs)
+
+    def results_newplayers(self, **kargs):
+        """Return newplayers_database.NewPlayers class instance."""
+        return newplayers_database.NewPlayers(**kargs)
 
     def get_control_context(self):
         """Return the database control page."""
@@ -986,10 +987,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
             )
             return
 
+        conf = configuration.Configuration()
         if self.results_folder is None:
-            initdir = configuration.get_configuration_value(
-                constants.RECENT_DOCUMENT
-            )
+            initdir = conf.get_configuration_value(constants.RECENT_DOCUMENT)
         else:
             initdir = self.results_folder
         results_folder = tkinter.filedialog.askdirectory(
@@ -1027,11 +1027,9 @@ class Leagues(threadqueue.AppSysThreadQueue):
             if results_data.open_documents(self.get_widget()):
                 self.results_data = results_data
                 self.results_folder = results_folder
-                configuration.set_configuration_value(
+                conf.set_configuration_value(
                     constants.RECENT_DOCUMENT,
-                    configuration.convert_home_directory_to_tilde(
-                        results_folder
-                    ),
+                    conf.convert_home_directory_to_tilde(results_folder),
                 )
                 return True
 

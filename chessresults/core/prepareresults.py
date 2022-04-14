@@ -104,7 +104,7 @@ class PrepareResults(object):
 
         pinvaluemap = dict()
         keeppins = pinreadmap - pinmap
-        cc_gccc = cc._grading_code_check_characters  # avoid long line later
+        cc_gccc = cc.GRADING_CODE_CHECK_CHARACTERS  # avoid long line later
         extract = []
         filesprocessed = [None]
         for f, text in self.get_lines():
@@ -181,7 +181,7 @@ class PrepareResults(object):
                 if key in keymap:
                     if key in pinmap:
                         if value not in pinvaluemap:
-                            if len(value) != cc._grading_code_length:
+                            if len(value) != cc.GRADING_CODE_LENGTH:
                                 pinvaluemap[value] = value
                             elif value[-1] in cc_gccc and value[:-1].isdigit():
                                 pinvaluemap[value] = "-".join(
@@ -220,7 +220,7 @@ class PrepareResults(object):
                         data[keymap[key]] = value
                 elif key in gradingcodemap:
                     if cc._pcode in data:
-                        if len(value) == cc._grading_code_length:
+                        if len(value) == cc.GRADING_CODE_LENGTH:
                             if value[:-1] in data[cc._pcode]:
                                 self.error.append(
                                     (

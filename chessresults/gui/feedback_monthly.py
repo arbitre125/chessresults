@@ -636,6 +636,7 @@ class FeedbackMonthly(panel.PlainPanel):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on Feedback page."""
+        super().describe_buttons()
         self.define_button(
             self._btn_closefeedbackmonthly,
             text="Cancel Apply Feedback",
@@ -705,23 +706,20 @@ def show_ecf_results_feedback_monthly_tab(tab, button):
     The button has a different name, for state purposes, on each tab.
 
     """
+    conf = configuration.Configuration()
     filepath = tkinter.filedialog.askopenfilename(
         parent=tab.get_widget(),
         title="Open Saved ECF Feedback",
         # defaultextension='.txt',
         # filetypes=(('ECF feedback', '*.txt'),),
-        initialdir=configuration.get_configuration_value(
-            constants.RECENT_FEEDBACK
-        ),
+        initialdir=conf.get_configuration_value(constants.RECENT_FEEDBACK),
     )
     if not filepath:
         tab.inhibit_context_switch(button)
         return
-    configuration.set_configuration_value(
+    conf.set_configuration_value(
         constants.RECENT_FEEDBACK,
-        configuration.convert_home_directory_to_tilde(
-            os.path.dirname(filepath)
-        ),
+        conf.convert_home_directory_to_tilde(os.path.dirname(filepath)),
     )
     try:
         feedbackfile = open(filepath, "rb")

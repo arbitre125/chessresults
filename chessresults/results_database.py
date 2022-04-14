@@ -1,17 +1,18 @@
-# results_ecf.py
-# Copyright 2008 Roger Marsh
+# results_database.py
+# Copyright 2022 Roger Marsh
 # Licence: See LICENCE (BSD licence)
 
-"""Chess results database application with ECF results submission"""
+"""Chess results database application"""
 
 if __name__ == "__main__":
 
     from . import APPLICATION_NAME
 
-    # Keep the 'Grading' name because a 'Rating' version may be built using
-    # SQL in a natural way, without options to use database engines other
-    # than SQLite3.
-    application_name = "".join((APPLICATION_NAME, "Grading"))
+    # '', not 'Lite', because the 'ECF' and 'OGD' versions add some functions
+    # and remove a few too.
+    # results_lite.py is a slight misnomer because nothing is taken out of
+    # the imaginary results.py module.
+    application_name = "".join((APPLICATION_NAME, ""))
     try:
         from solentware_misc.gui.startstop import (
             start_application_exception,
@@ -36,7 +37,7 @@ if __name__ == "__main__":
         raise SystemExit("Unable to import start application utilities")
     try:
         from .gui.resultsroot import Results
-        from .gui.leagues import Leagues
+        from .gui.leagues_database import Leagues
     except Exception as error:
         start_application_exception(
             error, appname=application_name, action="import"

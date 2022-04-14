@@ -182,6 +182,7 @@ class ECFPlayers(panel.PanedPanelGridSelectorBar):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on ECF club codes page."""
+        super().describe_buttons()
         self.define_button(
             self._btn_break_affiliation,
             text="Break Club Affiliation",

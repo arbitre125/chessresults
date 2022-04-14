@@ -20,12 +20,12 @@ from ..minorbases.textapi import TextapiError
 from ..core.filespec import ECFOGDPLAYER_FILE_DEF, MAPECFOGDPLAYER_FILE_DEF
 from ..core import ecfogddataimport
 from ..core import ecfogddb
-from . import control_lite
+from . import control_database
 from ..core import configuration
 from ..core import constants
 
 
-class Control(control_lite.Control):
+class Control(control_database.Control):
 
     """The Control panel for a Results database."""
 
@@ -50,22 +50,7 @@ class Control(control_lite.Control):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on Control page."""
-        self.define_button(
-            self._btn_closedatabase,
-            text="Shut Database",
-            tooltip="Close the open database.",
-            underline=9,
-            switchpanel=True,
-            command=self.on_close_database,
-        )
-        self.define_button(
-            self._btn_importevents,
-            text="Import Events",
-            tooltip="Import event data exported by Export Events.",
-            underline=0,
-            switchpanel=True,
-            command=self.on_import_events,
-        )
+        super().describe_buttons()
         self.define_button(
             self._btn_ecfogdratingfile,
             text="ECF Rating List",
@@ -106,22 +91,21 @@ class Control(control_lite.Control):
 
     def display_ecf_ogd_csv_file_contents(self):
         """Display ECF master data with date for confirmation of update."""
+        conf = configuration.Configuration()
         filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
             title="Open ECF data file",
             defaultextension=".csv",
             filetypes=(("ECF rating lists", "*.csv"),),
-            initialdir=configuration.get_configuration_value(
+            initialdir=conf.get_configuration_value(
                 constants.RECENT_RATING_LIST
             ),
         )
         if not filepath:
             return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             constants.RECENT_RATING_LIST,
-            configuration.convert_home_directory_to_tilde(
-                os.path.dirname(filepath)
-            ),
+            conf.convert_home_directory_to_tilde(os.path.dirname(filepath)),
         )
 
         # Go with 'zip' logic for speed of implementation, not UI convenience.
@@ -155,22 +139,21 @@ class Control(control_lite.Control):
 
     def display_ecf_ogd_zipped_file_contents(self):
         """Display ECF master data with date for confirmation of update."""
+        conf = configuration.Configuration()
         filepath = tkinter.filedialog.askopenfilename(
             parent=self.get_widget(),
             title="Open ECF data file",
             defaultextension=".zip",
             filetypes=(("ECF grading lists", "*.zip"),),
-            initialdir=configuration.get_configuration_value(
+            initialdir=conf.get_configuration_value(
                 constants.RECENT_GRADING_LIST
             ),
         )
         if not filepath:
             return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             constants.RECENT_GRADING_LIST,
-            configuration.convert_home_directory_to_tilde(
-                os.path.dirname(filepath)
-            ),
+            conf.convert_home_directory_to_tilde(os.path.dirname(filepath)),
         )
 
         ziparchive = zipfile.ZipFile(filepath, "r")

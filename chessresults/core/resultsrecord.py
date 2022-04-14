@@ -18,8 +18,10 @@ from solentware_misc.core.utilities import (
 # Hack while some non-ISO format dates survive on game records
 from solentware_misc.core.utilities import AppSysDate
 
+from chessvalidate.core.gameresults import ecfresult
+
 from . import filespec
-from .gameresults import ecfresult, awin, draw, hwin
+from .constants import AWIN, DRAW, HWIN
 
 # see note in ResultsDBrecordPlayer about possible modification
 
@@ -983,13 +985,13 @@ def get_events_for_performance_calculation(database, events):
                     alias[g.value.homeplayer]
                 )
                 result = dict()
-                if g.value.result == awin:
+                if g.value.result == AWIN:
                     result[alias[g.value.awayplayer]] = 1
                     result[alias[g.value.homeplayer]] = -1
-                elif g.value.result == hwin:
+                elif g.value.result == HWIN:
                     result[alias[g.value.awayplayer]] = -1
                     result[alias[g.value.homeplayer]] = 1
-                elif g.value.result == draw:
+                elif g.value.result == DRAW:
                     result[alias[g.value.awayplayer]] = 0
                     result[alias[g.value.homeplayer]] = 0
                 games[g.key.recno] = result

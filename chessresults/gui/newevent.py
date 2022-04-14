@@ -389,6 +389,7 @@ class NewEvent(panel.PlainPanel):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on events page."""
+        super().describe_buttons()
         self.define_button(
             self._btn_ok,
             text="Ok",

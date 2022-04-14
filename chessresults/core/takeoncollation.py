@@ -4,8 +4,9 @@
 
 """Class to reconcile event schedule (eg. fixture list) with reported results.
 """
+from chessvalidate.core import gameobjects
 
-from . import gameobjects, importcollation, constants
+from . import importcollation, constants
 from .importresults import get_player_identifier_from_game
 
 

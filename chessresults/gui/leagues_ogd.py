@@ -11,14 +11,13 @@ import importlib
 from . import control_ogd
 from . import events_ogd
 from . import newplayers_ogd
-from . import players
 from . import ogdgradingcodes
-from . import leagues_lite
+from . import leagues_database
 from . import importecfogd
 from .. import ECF_OGD_DATA_IMPORT_MODULE
 
 
-class Leagues(leagues_lite.Leagues):
+class Leagues(leagues_database.Leagues):
 
     """The Results frame for a Results database.
 
@@ -41,41 +40,9 @@ class Leagues(leagues_lite.Leagues):
 
         self._show_grading_list_grading_codes = True
 
-        self.define_tab(
-            self._tab_control,
-            text="Administration",
-            tooltip="Open and close databases and import data.",
-            underline=0,
-            tabclass=lambda **k: control_ogd.Control(**k),
-            create_actions=(control_ogd.Control._btn_opendatabase,),
-            destroy_actions=(control_ogd.Control._btn_closedatabase,),
-        )
-        self.define_tab(
-            self._tab_events,
-            text="Events",
-            tooltip="Export event data",
-            underline=0,
-            tabclass=lambda **k: events_ogd.Events(gridhorizontal=False, **k),
-            destroy_actions=(control_ogd.Control._btn_closedatabase,),
-        )
-        self.define_tab(
-            self._tab_newplayers,
-            text="NewPlayers",
-            tooltip="Identify new players and merge with existing players.",
-            underline=0,
-            tabclass=lambda **k: newplayers_ogd.NewPlayers(
-                gridhorizontal=False, **k
-            ),
-            destroy_actions=(control_ogd.Control._btn_closedatabase,),
-        )
-        self.define_tab(
-            self._tab_players,
-            text="Players",
-            tooltip="Merge or separate existing players.",
-            underline=0,
-            tabclass=lambda **k: players.Players(gridhorizontal=False, **k),
-            destroy_actions=(control_ogd.Control._btn_closedatabase,),
-        )
+    def define_tabs(self):
+        """Define the application tabs."""
+        super().define_tabs()
         self.define_tab(
             self._tab_ecfogdgradingcodes,
             text="Grading Codes",
@@ -109,8 +76,11 @@ class Leagues(leagues_lite.Leagues):
             ),
         )
 
-        self.define_state_transitions(
-            tab_state={
+    def define_tab_states(self):
+        """Return dict of <state>:tuple(<tab>, ...)."""
+        tab_states = super().define_tab_states()
+        tab_states.update(
+            {
                 self._state_dbopen: (
                     self._tab_control,
                     self._tab_events,
@@ -118,14 +88,22 @@ class Leagues(leagues_lite.Leagues):
                     self._tab_players,
                     self._tab_ecfogdgradingcodes,
                 ),
+                self._state_dataopen_dbopen: (self._tab_sourceedit,),
                 self._state_importecfogd_grading: (
                     self._tab_importecfogd_grading,
                 ),
                 self._state_importecfogd_rating: (
                     self._tab_importecfogd_rating,
                 ),
-            },
-            switch_state={
+            }
+        )
+        return tab_states
+
+    def define_state_switch_table(self):
+        """Return dict of tuple(<state>, <action>):list(<state>, <tab>)."""
+        switch_table = super().define_state_switch_table()
+        switch_table.update(
+            {
                 (
                     self._state_dbopen,
                     control_ogd.Control._btn_copyecfogdgradingfile,
@@ -156,11 +134,24 @@ class Leagues(leagues_lite.Leagues):
                     self._state_importecfogd_rating,
                     control_ogd.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
-            },
+            }
         )
+        return switch_table
 
     def set_ecfogddataimport_module(self, enginename):
         """Import the ECF reference data import module."""
         self._ecfogddataimport_module = importlib.import_module(
             ECF_OGD_DATA_IMPORT_MODULE[enginename], "chessresults.gui"
         )
+
+    def results_control(self, **kargs):
+        """Return control_ogd.Control class instance."""
+        return control_ogd.Control(**kargs)
+
+    def results_events(self, **kargs):
+        """Return events_ogd.Events class instance."""
+        return events_ogd.Events(**kargs)
+
+    def results_newplayers(self, **kargs):
+        """Return newplayers_ogd.NewPlayers class instance."""
+        return newplayers_ogd.NewPlayers(**kargs)

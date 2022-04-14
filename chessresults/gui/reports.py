@@ -29,21 +29,18 @@ class ChessResultsReport(AppSysReport):
 
     def on_save(self, event=None):
         """Override to support initialdir argument."""
+        conf = configuration.Configuration()
         filepath = tkinter.filedialog.asksaveasfilename(
             parent=self._toplevel,
             title=self._save_title,
-            initialdir=configuration.get_configuration_value(
-                self.configuration_item
-            ),
+            initialdir=conf.get_configuration_value(self.configuration_item),
             defaultextension=".txt",
         )
         if not filepath:
             return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             self.configuration_item,
-            configuration.convert_home_directory_to_tilde(
-                os.path.dirname(filepath)
-            ),
+            conf.convert_home_directory_to_tilde(os.path.dirname(filepath)),
         )
         outfile = open(filepath, mode="wb")
         try:

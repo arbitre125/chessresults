@@ -9,10 +9,10 @@ import tkinter.messagebox
 from ..core import resultsrecord
 from ..core import ecfmaprecord
 from ..core import filespec
-from . import events_lite
+from . import events_database
 
 
-class Events(events_lite.Events):
+class Events(events_database.Events):
 
     """The Events panel for a Results database."""
 
@@ -29,21 +29,7 @@ class Events(events_lite.Events):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on events page."""
-        self.define_button(
-            self._btn_dropevent,
-            text="Delete Event",
-            tooltip="Delete the selected event from the database.",
-            underline=2,
-            command=self.on_drop_event,
-        )
-        self.define_button(
-            self._btn_join_event_new_players,
-            text="Join Event New Players",
-            tooltip="Join new players with same same as earlier events.",
-            underline=0,
-            switchpanel=True,
-            command=self.on_join_event_new_players,
-        )
+        super().describe_buttons()
         self.define_button(
             self._btn_ecfplayers,
             text="To ECF",
@@ -52,35 +38,6 @@ class Events(events_lite.Events):
             ),
             underline=1,
             command=self.on_ecf_players,
-        )
-        self.define_button(
-            self._btn_exportevents,
-            text="Export Events",
-            tooltip=" ".join(
-                (
-                    "Export event data in text format recognised by Import",
-                    "Events.",
-                )
-            ),
-            underline=1,
-            switchpanel=True,
-            command=self.on_export_events,
-        )
-        self.define_button(
-            self._btn_game_summary,
-            text="Game Summary",
-            tooltip="Show game summary for selected events.",
-            underline=2,
-            switchpanel=True,
-            command=self.on_game_summary,
-        )
-        self.define_button(
-            self._btn_event_summary,
-            text="Event Summary",
-            tooltip="Show event summary for selected events.",
-            underline=7,
-            switchpanel=True,
-            command=self.on_event_summary,
         )
 
     def show_event_panel_actions_allowed_buttons(self):

@@ -4,9 +4,9 @@
 
 """Extract results from a file in this applications export format.
 """
+from chessvalidate.core.gameresults import displayresult
 
 from . import constants
-from .gameresults import displayresult
 
 
 def get_event_from_player(p):

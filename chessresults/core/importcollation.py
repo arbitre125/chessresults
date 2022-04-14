@@ -5,7 +5,8 @@
 """Collate results imported from another results database.
 """
 
-from . import gameobjects
+from chessvalidate.core import gameobjects
+
 from . import constants
 from .importreports import get_player_identifier
 

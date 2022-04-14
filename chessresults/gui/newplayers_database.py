@@ -1,4 +1,4 @@
-# newplayers_lite.py
+# newplayers_database.py
 # Copyright 2008 Roger Marsh
 # Licence: See LICENCE (BSD licence)
 
@@ -7,9 +7,10 @@
 Identify new players.  Declare the new player to be the same as one already
 on database or to be new to this database.
 
-This module was called newplayers before version 5.1 of ChessResults.
+This module was called newplayers before version 5.1 of ChessResults, and
+newplayers_lite since then befor version 6.0 of ChessResults.
 
-The newplayers module now customises newplayers_lite for use with the ECF
+The newplayers module now customises newplayers_database for use with the ECF
 monthly rating system.
 
 """
@@ -71,6 +72,7 @@ class NewPlayers(panel.PanedPanelGridSelectorBar):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on new players page."""
+        super().describe_buttons()
         self.define_button(
             self._btn_merge,
             text="Merge",

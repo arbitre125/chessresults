@@ -67,6 +67,7 @@ class ECFGradingCodes(panel.PanedPanelGridSelectorBar):
 
     def describe_buttons(self):
         """Define all action buttons that may appear on ECF grading code page."""
+        super().describe_buttons()
         self.define_button(
             self._btn_identify,
             text="Link Grading Code",

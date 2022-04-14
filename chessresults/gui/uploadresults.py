@@ -224,18 +224,19 @@ class _UploadResults:
 
     def select_submission_file(self, event=None):
         """Select a results submission file."""
+        conf = configuration.Configuration()
         localfilename = tkinter.filedialog.askopenfilename(
             parent=self.text,
             title="Browse Results Submission File",
-            initialdir=configuration.get_configuration_value(
+            initialdir=conf.get_configuration_value(
                 constants.RECENT_SUBMISSION
             ),
         )
         if not localfilename:
             return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             constants.RECENT_SUBMISSION,
-            configuration.convert_home_directory_to_tilde(
+            conf.convert_home_directory_to_tilde(
                 os.path.dirname(localfilename)
             ),
         )
@@ -667,20 +668,17 @@ class _UploadResults:
                 ),
             )
         )
+        conf = configuration.Configuration()
         filename = tkinter.filedialog.asksaveasfilename(
             parent=self.text,
             title=title,
-            initialdir=configuration.get_configuration_value(
-                constants.RECENT_FEEDBACK
-            ),
+            initialdir=conf.get_configuration_value(constants.RECENT_FEEDBACK),
         )
         if not filename:
             return
-        configuration.set_configuration_value(
+        conf.set_configuration_value(
             constants.RECENT_FEEDBACK,
-            configuration.convert_home_directory_to_tilde(
-                os.path.dirname(filename)
-            ),
+            conf.convert_home_directory_to_tilde(os.path.dirname(filename)),
         )
         of = open(filename, mode="w")
         try:

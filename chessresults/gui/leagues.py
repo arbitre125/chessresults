@@ -20,7 +20,7 @@ from . import ecfclubcodes
 from . import ecfevents
 from . import ecfplayers
 from . import newevent
-from . import leagues_lite
+from . import leagues_database
 from . import importecfdata
 from . import feedback
 from . import feedback_monthly
@@ -32,7 +32,7 @@ from . import configuredialog_hack
 from ..core import configuration
 
 
-class Leagues(leagues_lite.Leagues):
+class Leagues(leagues_database.Leagues):
 
     """The Results frame for a Results database."""
 
@@ -61,46 +61,9 @@ class Leagues(leagues_lite.Leagues):
 
         self._show_master_list_grading_codes = True
 
-        self.define_tab(
-            self._tab_control,
-            text="Administration",
-            tooltip="Open and close databases and import data.",
-            underline=0,
-            tabclass=lambda **k: control.Control(**k),
-            create_actions=(control.Control._btn_opendatabase,),
-            destroy_actions=(control.Control._btn_closedatabase,),
-        )
-        self.define_tab(
-            self._tab_events,
-            text="Events",
-            tooltip=" ".join(
-                (
-                    "Export event data and initiate preparation of results",
-                    "for submission to ECF",
-                )
-            ),
-            underline=0,
-            tabclass=lambda **k: events.Events(gridhorizontal=False, **k),
-            destroy_actions=(control.Control._btn_closedatabase,),
-        )
-        self.define_tab(
-            self._tab_newplayers,
-            text="NewPlayers",
-            tooltip="Identify new players and merge with existing players.",
-            underline=0,
-            tabclass=lambda **k: newplayers.NewPlayers(
-                gridhorizontal=False, **k
-            ),
-            destroy_actions=(control.Control._btn_closedatabase,),
-        )
-        self.define_tab(
-            self._tab_players,
-            text="Players",
-            tooltip="Merge or separate existing players.",
-            underline=0,
-            tabclass=lambda **k: players.Players(gridhorizontal=False, **k),
-            destroy_actions=(control.Control._btn_closedatabase,),
-        )
+    def define_tabs(self):
+        """Define the application tabs."""
+        super().define_tabs()
         self.define_tab(
             self._tab_ecfgradingcodes,
             text="ECF Codes",
@@ -203,8 +166,11 @@ class Leagues(leagues_lite.Leagues):
             ),
         )
 
-        self.define_state_transitions(
-            tab_state={
+    def define_tab_states(self):
+        """Return dict of <state>:tuple(<tab>, ...)."""
+        tab_states = super().define_tab_states()
+        tab_states.update(
+            {
                 self._state_dbopen: (
                     self._tab_control,
                     self._tab_events,
@@ -226,8 +192,15 @@ class Leagues(leagues_lite.Leagues):
                 ),
                 self._state_clubsdownload: (self._tab_clubsdownload,),
                 self._state_playersdownload: (self._tab_playersdownload,),
-            },
-            switch_state={
+            }
+        )
+        return tab_states
+
+    def define_state_switch_table(self):
+        """Return dict of tuple(<state>, <action>):list(<state>, <tab>)."""
+        switch_table = super().define_state_switch_table()
+        switch_table.update(
+            {
                 (
                     self._state_dbopen,
                     ecfevents.ECFEvents._btn_ecfeventdetail,
@@ -318,8 +291,9 @@ class Leagues(leagues_lite.Leagues):
                     self._state_responsefeedbackmonthly,
                     control.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
-            },
+            }
         )
+        return switch_table
 
     def get_ecf_event_detail_context(self):
         """Return the ECF event page."""
@@ -331,6 +305,18 @@ class Leagues(leagues_lite.Leagues):
             ECF_DATA_IMPORT_MODULE[enginename], "chessresults.gui"
         )
 
+    def results_control(self, **kargs):
+        """Return control.Control class instance."""
+        return control.Control(**kargs)
+
+    def results_events(self, **kargs):
+        """Return events.Events class instance."""
+        return events.Events(**kargs)
+
+    def results_newplayers(self, **kargs):
+        """Return newplayers.NewPlayers class instance."""
+        return newplayers.NewPlayers(**kargs)
+
     def set_ecf_url_defaults(self):
         """Set URL defaults for ECF website.
 
@@ -338,7 +324,7 @@ class Leagues(leagues_lite.Leagues):
         home directory.
 
         """
-        default = os.path.expanduser(os.path.join("~", constants.RESULTS_CONF))
+        default = configuration.Configuration().get_configuration_file_name()
 
         if not os.path.exists(default):
             urls = "\n".join([" ".join(u) for u in constants.DEFAULT_URLS])
@@ -363,25 +349,26 @@ class Leagues(leagues_lite.Leagues):
 
     def _add_ecf_url_item(self, menu):
         """Override to provide edit ECF URL defaults."""
-        menu.add_command(
+        menu.insert_separator(tkinter.END)
+        menu.insert_command(
+            tkinter.END,
             label="ECF URLs",
             underline=4,
             command=self.try_command(self.edit_ecf_url_defaults, menu),
         )
-        menu.add_separator()
+        menu.insert_separator(tkinter.END)
 
     def edit_ecf_url_defaults(self):
         """Edit URL defaults for ECF website if the defaults file exists."""
         url_items = {
             default[0]: default[1] for default in constants.DEFAULT_URLS
         }
-        configuration.get_configuration_text_and_values_for_items_from_file(
-            url_items
-        )
+        conf = configuration.Configuration()
+        conf.get_configuration_text_and_values_for_items_from_file(url_items)
         config_text = []
         for k, v in sorted(url_items.items()):
             config_text.append(
-                " ".join((k, configuration.get_configuration_value(k, v)))
+                " ".join((k, conf.get_configuration_value(k, v)))
             )
         config_text = "\n".join(config_text)
 
@@ -426,6 +413,6 @@ class Leagues(leagues_lite.Leagues):
 
         if edited_text is None:
             return
-        configuration.set_configuration_values_from_text(
+        conf.set_configuration_values_from_text(
             edited_text, config_items=url_items
         )

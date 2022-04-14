@@ -33,9 +33,10 @@ a single file making it difficult to forget some data.)
 import os
 import collections
 
+from chessvalidate.core import gameresults
+
 from . import matchteams
 from . import constants as cc
-from . import gameresults
 
 # This should be used upstream but could not locate place.
 homeplayerwhitemap = {True: "yes", False: "no"}
@@ -279,12 +280,12 @@ class ConvertResults(object):
             else:
                 game[cc._section] = s
             c = game.get(cc._gcolor, None)
-            if c == cc._white:
+            if c == cc.WHITE:
                 game[cc._homeplayerwhite] = cc._yes
-            elif c == cc._black:
+            elif c == cc.BLACK:
                 game[cc._homeplayerwhite] = cc._no
             else:
-                game[cc._homeplayerwhite] = cc._nocolor
+                game[cc._homeplayerwhite] = cc.NOCOLOR
             for player, pin, serial, pcode in (
                 (cc._homeplayer, cc._homepin, cc._homeserial, cc._pcode1),
                 (cc._awayplayer, cc._awaypin, cc._awayserial, cc._pcode2),
@@ -390,10 +391,10 @@ class ConvertResults(object):
             if key in keymap:
                 if key in pinmap:
                     if value not in pinvaluemap:
-                        if len(value) != cc._grading_code_length:
+                        if len(value) != cc.GRADING_CODE_LENGTH:
                             pinvaluemap[value] = value
                         elif (
-                            value[-1] in cc._grading_code_check_characters
+                            value[-1] in cc.GRADING_CODE_CHECK_CHARACTERS
                             and value[:-1].isdigit()
                         ):
                             pinvaluemap[value] = "-".join(
@@ -407,7 +408,7 @@ class ConvertResults(object):
                     data[keymap[key]] = value
             elif key in gradingcodemap:
                 if cc._pcode in data:
-                    if len(value) == cc._grading_code_length:
+                    if len(value) == cc.GRADING_CODE_LENGTH:
                         if value[:-1] in data[cc._pcode]:
                             self.converterror = (
                                 "Grading code ",
@@ -517,7 +518,7 @@ class ConvertResults(object):
                                 )
                             ][cc._affiliation],
                             "\t\t\t",
-                            gameresults._storeresults[game[cc._result]],
+                            gameresults.storeresults[game[cc._result]],
                             "\t\t",
                             game[cc._awayplayer],
                             "\t\t\t",
@@ -759,22 +760,22 @@ class ConvertSubmissionFile(ConvertResults):
     """Import data from file formatted as ECF results submission file."""
 
     results = {
-        cc.result_01: gameresults.awin,  # cc._loss,
-        cc.result_55: gameresults.draw,  # cc._draw,
-        cc.result_10: gameresults.hwin,  # cc._win,
+        cc.RESULT_01: cc.AWIN,  # cc._loss,
+        cc.RESULT_55: cc.DRAW,  # cc._draw,
+        cc.RESULT_10: cc.HWIN,  # cc._win,
     }
     colour = {
-        cc.colour_white: True,  # cc._white,
-        cc.colour_black: False,  # cc._black,
-        cc.colour_w: True,  # cc._white,
-        cc.colour_b: False,  # cc._black,
+        cc.ECF_COLOUR_WHITE: True,  # cc.WHITE,
+        cc.ECF_COLOUR_BLACK: False,  # cc.BLACK,
+        cc.ECF_COLOUR_W: True,  # cc.WHITE,
+        cc.ECF_COLOUR_B: False,  # cc.BLACK,
     }
     colourdefault = {
-        cc.colourdefault_all: cc._white_on_all,
-        cc.colourdefault_even: cc._black_on_odd,
-        cc.colourdefault_none: cc._black_on_all,
-        cc.colourdefault_odd: cc._white_on_odd,
-        cc.colourdefault_unknown: cc._color_not_specified,
+        cc.ECF_COLOURDEFAULT_ALL: cc.WHITE_ON_ALL,
+        cc.ECF_COLOURDEFAULT_EVEN: cc.BLACK_ON_ODD,
+        cc.ECF_COLOURDEFAULT_NONE: cc.BLACK_ON_ALL,
+        cc.ECF_COLOURDEFAULT_ODD: cc.WHITE_ON_ODD,
+        cc.ECF_COLOURDEFAULT_UNKNOWN: cc.COLOR_NOT_SPECIFIED,
     }
 
     def translate_results_format(self):
@@ -783,13 +784,13 @@ class ConvertSubmissionFile(ConvertResults):
             # data[cc._gcolor] = ConvertSubmissionFile.colour[
             # data[cc._gcolor].lower()]
             # except:
-            # data[cc._gcolor] = cc._nocolor
+            # data[cc._gcolor] = cc.NOCOLOR
             try:
                 data[cc._gcolor] = ConvertSubmissionFile.colour[
                     data[cc._gcolor].lower()
                 ]
             except:
-                data[cc._gcolor] = None  # cc._nocolor
+                data[cc._gcolor] = None  # cc.NOCOLOR
 
         def convert_colour_default_text(data):
             try:
@@ -797,7 +798,7 @@ class ConvertSubmissionFile(ConvertResults):
                     data[cc._mcolor].lower()
                 ]
             except:
-                data[cc._mcolor] = cc._nocolor
+                data[cc._mcolor] = cc.NOCOLOR
 
         def convert_result_text(data):
             try:
@@ -805,7 +806,7 @@ class ConvertSubmissionFile(ConvertResults):
                     data[cc._gresult]
                 ]
             except:
-                data[cc._gresult] = cc._void
+                data[cc._gresult] = cc.VOID
 
         def get_event(data, context):
             k = str(len(self.event) + 1)
@@ -818,7 +819,7 @@ class ConvertSubmissionFile(ConvertResults):
         def get_game(data, context):
             convert_result_text(data)
             if (
-                data[cc._gresult] in gameresults._storeresults
+                data[cc._gresult] in gameresults.storeresults
             ):  # cc._storeresults:
                 k = str(len(self.game) + 1)
                 self.game[k] = data
@@ -1044,27 +1045,27 @@ class ConvertLeagueDump(ConvertResults):
     """Import data from dump of League program database."""
 
     results = {
-        cc.result_0: cc._tbr,
-        cc.result_1: gameresults.awin,  # cc._loss,
-        cc.result_2: gameresults.draw,  # cc._draw,
-        cc.result_3: gameresults.hwin,  # cc._win,
-        cc.result_4: cc._awaydefault,
-        cc.result_5: cc._homedefault,
-        cc.result_6: cc._void,
-        cc.result_7: cc._winbye,
-        cc.result_8: cc._drawbye,
+        cc.result_0: cc.TBR,
+        cc.result_1: cc.AWIN,  # cc._loss,
+        cc.result_2: cc.DRAW,  # cc._draw,
+        cc.result_3: cc.HWIN,  # cc._win,
+        cc.result_4: cc.AWAYDEFAULT,
+        cc.result_5: cc.HOMEDEFAULT,
+        cc.result_6: cc.VOID,
+        cc.result_7: cc.WINBYE,
+        cc.result_8: cc.DRAWBYE,
     }
     colour = {
-        cc.colour_1: True,  # cc._white,
-        cc.colour_2: False,  # cc._black,
-        cc.colour_0: None,  # cc._nocolor,
+        cc.colour_1: True,  # cc.WHITE,
+        cc.colour_2: False,  # cc.BLACK,
+        cc.colour_0: None,  # cc.NOCOLOR,
     }
     colourdefault = {
-        cc.colourdefault_1: cc._white_on_all,
-        cc.colourdefault_4: cc._black_on_odd,
-        cc.colourdefault_0: cc._color_not_specified,
-        cc.colourdefault_2: cc._white_on_odd,
-        cc.colourdefault_3: cc._black_on_all,
+        cc.colourdefault_1: cc.WHITE_ON_ALL,
+        cc.colourdefault_4: cc.BLACK_ON_ODD,
+        cc.colourdefault_0: cc.COLOR_NOT_SPECIFIED,
+        cc.colourdefault_2: cc.WHITE_ON_ODD,
+        cc.colourdefault_3: cc.BLACK_ON_ALL,
     }
 
     def __init__(self, pinprefix):
@@ -1131,7 +1132,7 @@ class ConvertLeagueDump(ConvertResults):
             try:
                 data[cc._gcolor] = ConvertLeagueDump.colour[data[cc._gcolor]]
             except:
-                data[cc._gcolor] = cc._nocolor
+                data[cc._gcolor] = cc.NOCOLOR
 
         def convert_colour_default_text(data):
             try:
@@ -1139,7 +1140,7 @@ class ConvertLeagueDump(ConvertResults):
                     data[cc._mcolor].lower()
                 ]
             except:
-                data[cc._mcolor] = cc._nocolor
+                data[cc._mcolor] = cc.NOCOLOR
 
         def convert_result_text(data):
             try:
@@ -1147,7 +1148,7 @@ class ConvertLeagueDump(ConvertResults):
                     data[cc._gresult]
                 ]
             except:
-                data[cc._gresult] = cc._void
+                data[cc._gresult] = cc.VOID
 
         def get_event(data, context):
             self.event[data[cc._ecode]] = data
@@ -1157,7 +1158,7 @@ class ConvertLeagueDump(ConvertResults):
         def get_game(data, context):
             convert_result_text(data)
             if (
-                data[cc._gresult] in gameresults._storeresults
+                data[cc._gresult] in gameresults.storeresults
             ):  # cc._storeresults:
                 self.game[data[cc._gcode]] = data
                 convert_date_to_iso(data, cc._gdate)

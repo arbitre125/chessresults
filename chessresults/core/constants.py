@@ -2,8 +2,77 @@
 # Copyright 2008 Roger Marsh
 # Licence: See LICENCE (BSD licence)
 
-"""Constants used in Results application.
+"""Constants used in the Lite, OGD, and ECF, versions of ChessResults.
+
+Constants shared with the ChessResultsReport version are imported from
+the chessresults.core.constants module.
+
 """
+from chessvalidate.core.constants import (
+    LOSS,
+    DRAWN,
+    WIN,
+    HWIN,
+    AWIN,
+    DRAW,
+    HWIN_DEFAULT,
+    AWIN_DEFAULT,
+    DOUBLEDEFAULT,
+    DRAWDEFAULT,
+    HBYE,
+    ABYE,
+    HBYEHALF,
+    ABYEHALF,
+    TOBEREPORTED,
+    _VOID,
+    NOTARESULT,
+    DEFAULTED,
+    TBRSTRING,
+    RESULT_01,
+    RESULT_55,
+    RESULT_10,
+    ECF_RESULT_DD,
+    ECF_RESULT_1D,
+    ECF_RESULT_D1,
+    EVENT_CONF,
+    RECENT_EMAIL_SELECTION,
+    RECENT_EMAIL_EXTRACTION,
+    RECENT_DOCUMENT,
+    REPORT_SECTION,
+    REPORT_DAY,
+    REPORT_DATE,
+    REPORT_ROUND,
+    REPORT_HOME_TEAM,
+    REPORT_HOME_TEAM_SCORE,
+    REPORT_HOME_PLAYER,
+    REPORT_RESULT,
+    REPORT_AWAY_PLAYER,
+    REPORT_AWAY_TEAM_SCORE,
+    REPORT_AWAY_TEAM,
+    REPORT_BOARD,
+    REPORT_HOME_PLAYER_COLOUR,
+    REPORT_EVENT,
+    TABULAR_REPORT_ROW_ORDER,
+    FIRST_PLAYER_WHITE_PIECES,
+    FIRST_PLAYER_BLACK_PIECES,
+    NULL_PLAYER,
+    HOME_PLAYER_WHITE,
+    GRADING_ONLY,
+    SECTION,
+    HOME_TEAM_NAME,
+    AWAY_TEAM_NAME,
+    HOME_PLAYER,
+    AWAY_PLAYER,
+    GAME_COUNT,
+    MATCH_SCORE,
+    ONLY_REPORT,
+    AUTHORIZATION,
+    ROUND_DUP_REP,
+    COMPETITION_DUP_REP,
+    SOURCE_DUP_REP,
+    BOARD_DUP_REP,
+    RESULT_DUP_REP,
+)
 
 # Keys in <key>=<value> in data transfer files. Value ended by '\n'.
 _event = "event"
@@ -49,62 +118,66 @@ _homeserial = "homeserial"
 _awayserial = "awayserial"
 _identified = "identified"
 
-# To figure out team names and affiliations'''
+# To figure out team names and affiliations.
 _names = "names"
 
-# Chosen way of presenting game results in readable format.'''
-_tbr = "tbr"
-# _loss = '0-1'
-# _draw = 'draw'
-# _win = '1-0'
-_awaydefault = "1-def"
-_homedefault = "def-1"
-_void = "void"
-_winbye = "bye+"
-_drawbye = "bye="
-_white = "w"
-_black = ""
-_nocolor = ""
-_white_on_all = "whiteonall"
-_black_on_all = "blackonall"
-_black_on_odd = "blackonodd"
-_white_on_odd = "whiteonodd"
-_color_not_specified = "notspecified"
+# Chosen way of presenting game results in readable format.
+TBR = "tbr"
+AWAYDEFAULT = "1-def"  # Other 'away default' items say who won.
+HOMEDEFAULT = "def-1"  # Other 'home default' items say who won.
+VOID = "void"
+WINBYE = "bye+"
+DRAWBYE = "bye="
+WHITE = "w"  # Different names because literals "WHITE" and "BLACK" exist too?
+BLACK = "b"  # Should be "b" surely, but seems to have been "" for ages.
+NOCOLOR = ""
+WHITE_ON_ALL = "whiteonall"
+BLACK_ON_ALL = "blackonall"
+BLACK_ON_ODD = "blackonodd"
+WHITE_ON_ODD = "whiteonodd"
+COLOR_NOT_SPECIFIED = "notspecified"
+
+# Game score identifiers on database game records.
+# h... refers to first-named player usually the home player in team context.
+# a... refers to second-named player usually the away player in team context.
+# No assumption is made about which player has the white or black pieces.
+
+# Commentary on printed results.
 
 # Encoding of values used on ECF submission files.
-result_01 = "01"
-result_55 = "55"
-result_10 = "10"
-colour_white = "white"
-colour_black = "black"
-colour_w = "w"
-colour_b = ""
-colourdefault_all = "all"
-colourdefault_even = "even"
-colourdefault_none = "none"
-colourdefault_odd = "odd"
-colourdefault_unknown = "unknown"
-"""The Results File Field Definitions document (FieldDef.htm dated Oct 2006)
-reserves PIN PIN1 and PIN2 value "0" for use with results encoded by the SCORE
-values "d1" "d5" and "dd".
-
-This conflicts with the use of database record numbers as PIN PIN1 and PIN2
-values for database engines which use 0 as a record number (after use of the
-standard conversion of integer to string).
-
-The ECF submission file generator will replace "0" by "zero_not_0" in PIN PIN1
-and PIN2 to comply with the convention.
-
-It is hoped that this value will provide those who look at the submission file
-with a sufficient clue to what is going on: and at least assure them that it
-is not a mistake.
-
-It is also hoped that "zero_not_0" is a sufficiently unusual value that it will
-not be used by other grading programs as a valid PIN separate from "0".  Thus
-avoiding problems that may arise from the conventional use of "zero_not_0" by
-this program to cope with the ECF submission file conventional use of "0".
-"""
-zero_not_0 = "zero_not_0"
+#
+# The Results File Field Definitions document (FieldDef.htm dated Oct 2006)
+# reserves PIN PIN1 and PIN2 value "0" for use with results encoded by the
+# SCORE values "d1" "d5" and "dd".
+#
+# This conflicts with the use of database record numbers as PIN PIN1 and
+# PIN2 values for database engines which use 0 as a record number (after
+# use of the standard conversion of integer to string).
+#
+# The ECF submission file generator will replace "0" by "zero_not_0" in PIN
+# PIN1 and PIN2 to comply with the convention.
+#
+# It is hoped that this value will provide those who look at the submission
+# file with a sufficient clue to what is going on: and at least assure them
+# that it is not a mistake.
+#
+# It is also hoped that "zero_not_0" is a sufficiently unusual value that
+# it will not be used by other grading programs as a valid PIN separate
+# from "0".  Thus avoiding problems that may arise from the conventional
+# use of "zero_not_0" by this program to cope with the ECF submission file
+# conventional use of "0".
+ECF_RESULT_0d = "0d"
+ECF_RESULT_d0 = "d0"
+ECF_COLOUR_WHITE = "white"
+ECF_COLOUR_BLACK = "black"
+ECF_COLOUR_W = "w"
+ECF_COLOUR_B = ""
+ECF_COLOURDEFAULT_ALL = "all"
+ECF_COLOURDEFAULT_EVEN = "even"
+ECF_COLOURDEFAULT_NONE = "none"
+ECF_COLOURDEFAULT_ODD = "odd"
+ECF_COLOURDEFAULT_UNKNOWN = "unknown"
+ECF_ZERO_NOT_0 = "zero_not_0"
 
 # Encoding of values used on league database extract.
 result_0 = "0"
@@ -125,11 +198,7 @@ colourdefault_2 = "2"
 colourdefault_3 = "3"
 colourdefault_4 = "4"
 
-# Games with following results are stored on database
-# Maybe move to gameresults
-# _storeresults = {_loss:None, _draw:None, _win:None}
-
-# Keys used on league database extract
+# Keys used on league database extract.
 ECODE = "ECODE"
 ENAME = "ENAME"
 EBCF = "EBCF"
@@ -210,7 +279,7 @@ match = "match"
 
 # Dictionary key for values extracted from submission files or league
 # database extract. These keys are the same as field names on League database
-# unless the value is used in the results database structure
+# unless the value is used in the results database structure.
 _ecode = ECODE
 _ename = _event  # ENAME
 _edate = _startdate  # EDATE
@@ -240,9 +309,9 @@ _rpairing = RPAIRING
 _plennickname = PLENNICKNAME
 _plenforename = PLENFORENAME
 
-# Keys used on ECF submission files
+# Keys used on ECF submission files.
 
-# Those used in ECF submissions generated by this package
+# Those used in ECF submissions generated by this package.
 EVENT_DETAILS = "EVENT DETAILS"
 EVENT_CODE = "EVENT CODE"
 EVENT_NAME = "EVENT NAME"
@@ -286,7 +355,7 @@ BOARD = "BOARD"
 COLOUR = "COLOUR"
 FINISH = "FINISH"
 
-# Those available for use in ECF submissions (so merges.py must know)
+# Those available for use in ECF submissions (so merges.py must know).
 RESULTS_DATE = "RESULTS DATE"
 SURNAME = "SURNAME"
 INITIALS = "INITIALS"
@@ -313,9 +382,11 @@ _initials = INITIALS
 _resultsdata = "games"
 _ecfdata = "data"
 
-# Used by merges.py preparesource.py mainly
-_grading_code_length = 7
-_grading_code_check_characters = "ABCDEFGHJKL"
+# Used in validation of ECF codes, formerly Grading codes.
+GRADING_CODE_LENGTH = 7
+GRADING_CODE_CHECK_CHARACTERS = "ABCDEFGHJKL"
+
+# Used by merges.py preparesource.py mainly.
 _section_is_match = "M"
 _event_matches = "Event Matches"
 _yes = "yes"
@@ -334,17 +405,13 @@ OTHER_TYPE = "O"
 
 # Event configuration file.
 # The default extracted.conf file name defined in emailextract is not used.
-EVENT_CONF = "event.conf"
 
 # Most recently accessed database and configuation files for selecting and
 # extracting text from emails to documents.
 # Some could be per database, but done per user.
-RESULTS_CONF = ".chessresults.conf"
 RECENT_DATABASE = "database"
-RECENT_EMAIL_SELECTION = "collection"
-RECENT_EMAIL_EXTRACTION = "event"
-RECENT_DOCUMENT = "document"
 RECENT_SUBMISSION = "submission"
+RECENT_SOURCE_SUBMISSION = "source_submission"
 RECENT_FEEDBACK = "feedback"
 RECENT_FEEDBACK_EMAIL = "feedback_email"
 RECENT_MASTERFILE = "masterfile"
@@ -357,25 +424,6 @@ RECENT_GAME_SUMMARY = "game_summary"
 RECENT_EVENT_SUMMARY = "event_summary"
 RECENT_GRADING_LIST = "grading_list"
 RECENT_RATING_LIST = "rating_list"
-DEFAULT_RECENTS = (
-    (RECENT_DATABASE, "~"),
-    (RECENT_EMAIL_SELECTION, "~"),
-    (RECENT_EMAIL_EXTRACTION, "~"),
-    (RECENT_DOCUMENT, "~"),
-    (RECENT_SUBMISSION, "~"),
-    (RECENT_FEEDBACK, "~"),
-    (RECENT_FEEDBACK_EMAIL, "~"),
-    (RECENT_MASTERFILE, "~"),
-    (RECENT_IMPORT_EVENTS, "~"),
-    (RECENT_EXPORT_EVENTS, "~"),
-    (RECENT_PERFORMANCES, "~"),
-    (RECENT_PREDICTIONS, "~"),
-    (RECENT_POPULATION, "~"),
-    (RECENT_GAME_SUMMARY, "~"),
-    (RECENT_EVENT_SUMMARY, "~"),
-    (RECENT_GRADING_LIST, "~"),
-    (RECENT_RATING_LIST, "~"),
-)
 
 # Default URLs to access ECF website.
 # These are copied to a file, paired with a user, which may need editing
@@ -496,3 +544,22 @@ PLAYERS_RATINGS_COLUMN_NAMES = (
     "club_code",
     ECF_ORD_PLAYERCLUB_FIELD,
 )
+
+# Names of columns in tabular game reports generated by ChessResults.
+# These are not used by emailextractor module which defines names of entries
+# in the extract text configuration file which name the columns.
+# The constants defined here are REPORT_SECTION, and so forth, while the
+# constants in emailextractor are _REPORT_SECTION, and so forth.
+
+# Suitable for sorting rows into order for easy eyeball inspection.
+
+# Suitable for generating parsable " ".join(row) from csv file.
+# ECF code and ECF membership number should be prefixes to the player name
+# in REPORT_HOME_PLAYER, and suffixes in REPORT_AWAY_PLAYER, if they are
+# reported to avoid confusion if only one player has these.
+
+# Display value for side indicator in game records and structures.
+
+# Problem indicators for duplicate game reports.
+# Some have suffix _DUP_REP because at least one other constant had the
+# same name originally, defined in another module.
