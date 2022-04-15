@@ -14,7 +14,7 @@ ChessResults, for use with the ECF monthly rating system.  Between these
 versions it did the job of newplayers_database.
 
 """
-from . import newplayers_database
+from .. import newplayers_database
 
 
 class NewPlayers(newplayers_database.NewPlayers):

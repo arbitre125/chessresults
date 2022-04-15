@@ -27,9 +27,9 @@ try:
 except ModuleNotFoundError:
     requests = None
 
-from ..core import feedback_html
-from ..core import configuration
-from ..core import constants
+from ...core.ecf import feedback_html
+from ...core import configuration
+from ...core import constants
 
 _AVOID_SCROLLBAR = "avoidscrollbar"
 _START_TEXT = " ".join(

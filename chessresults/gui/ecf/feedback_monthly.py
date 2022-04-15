@@ -20,13 +20,13 @@ from solentware_misc.gui import panel
 from solentware_misc.gui import textreadonly
 from solentware_misc.gui import tasklog
 
-from ..core import ecfmaprecord
-from ..core import resultsrecord
-from ..core import filespec
-from ..core import constants
-from ..core import ecfrecord
-from ..core import feedback_html
-from ..core import configuration
+from ...core.ecf import ecfmaprecord
+from ...core.ecf import ecfrecord
+from ...core.ecf import feedback_html
+from ...core import resultsrecord
+from ...core import filespec
+from ...core import constants
+from ...core import configuration
 
 _remove_dates_re = re.compile(r"\d{4}-\d{2}-\d{2}")
 _exact_re = re.compile(r"\s+Exact\s+match\s+(\d{6}[A-L])\s*\Z")

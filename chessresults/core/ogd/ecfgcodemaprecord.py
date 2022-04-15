@@ -8,7 +8,7 @@
 from solentware_base.core.record import KeyData
 from solentware_base.core.record import ValueList, Record
 
-from . import filespec
+from .. import filespec
 
 
 class ECFmapOGDkeyPlayer(KeyData):

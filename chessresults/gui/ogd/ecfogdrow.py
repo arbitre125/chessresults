@@ -15,8 +15,8 @@ from solentware_grid.gui.datarow import (
     ROW,
 )
 
-from .datarow import DataRow
-from ..core import ecfogdrecord
+from ..datarow import DataRow
+from ...core.ogd import ecfogdrecord
 
 
 class ECFrefOGDrowPlayer(ecfogdrecord.ECFrefOGDrecordPlayer, DataRow):

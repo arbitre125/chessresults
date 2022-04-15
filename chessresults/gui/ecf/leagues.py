@@ -14,22 +14,22 @@ from solentware_misc.gui.configuredialog import ConfigureDialog
 from . import control
 from . import events
 from . import newplayers
-from . import players
 from . import ecfgradingcodes
 from . import ecfclubcodes
 from . import ecfevents
 from . import ecfplayers
-from . import newevent
-from . import leagues_database
 from . import importecfdata
 from . import feedback
 from . import feedback_monthly
 from . import activeclubs
 from . import ratedplayers
-from .. import ECF_DATA_IMPORT_MODULE
-from ..core import constants
-from . import configuredialog_hack
-from ..core import configuration
+from .. import newevent
+from .. import leagues_database
+from .. import players
+from .. import configuredialog_hack
+from ... import ECF_DATA_IMPORT_MODULE
+from ...core import constants
+from ...core import configuration
 
 
 class Leagues(leagues_database.Leagues):
@@ -58,8 +58,6 @@ class Leagues(leagues_database.Leagues):
     def __init__(self, master=None, cnf=dict(), **kargs):
         """Extend and define the results database results frame."""
         super(Leagues, self).__init__(master=master, cnf=cnf, **kargs)
-
-        self._show_master_list_grading_codes = True
 
     def define_tabs(self):
         """Define the application tabs."""

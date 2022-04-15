@@ -11,16 +11,16 @@ from solentware_misc.core.utilities import AppSysPersonName
 
 from chesscalc.gui import performance, prediction, population
 
-from ..core import (
+from ...core import (
     constants,
     filespec,
     resultsrecord,
 )
-from . import (
+from .. import (
     reports,
 )
-from . import events_database
-from .taskpanel import TaskPanel
+from .. import events_database
+from ..taskpanel import TaskPanel
 
 
 class Events(events_database.Events):

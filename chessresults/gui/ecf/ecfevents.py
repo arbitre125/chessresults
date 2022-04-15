@@ -17,12 +17,12 @@ from chessvalidate.core import gameresults
 from . import ecfeventgrids
 from . import uploadresults
 from .feedback_monthly import show_ecf_results_feedback_monthly_tab
-from ..core import resultsrecord
-from ..core import ecfmaprecord
-from ..core import ecfrecord
-from ..core import constants
-from ..core import filespec
-from ..core import configuration
+from ...core.ecf import ecfmaprecord
+from ...core.ecf import ecfrecord
+from ...core import resultsrecord
+from ...core import constants
+from ...core import filespec
+from ...core import configuration
 from . import ecferrors
 
 

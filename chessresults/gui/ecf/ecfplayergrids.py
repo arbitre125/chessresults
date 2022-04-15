@@ -11,8 +11,8 @@ from solentware_grid.core import dataclient
 
 from . import ecfrow
 from . import ecfmaprow
-from . import playergrids
-from ..core import filespec
+from .. import playergrids
+from ...core import filespec
 
 
 class ECFPlayerGrid(playergrids.PlayerGrid):

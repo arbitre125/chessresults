@@ -18,7 +18,7 @@ may still exist.
 from solentware_base.core.record import KeyData
 from solentware_base.core.record import Value, ValueList, Record
 
-from . import filespec
+from .. import filespec
 
 
 class ECFrefOGDkeyPlayer(KeyData):

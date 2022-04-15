@@ -14,7 +14,7 @@ ever played a graded game (since early 1990s in practice).
 
 """
 
-from . import filespec
+from .. import filespec
 
 
 def _do_ecf_downloaded_data_import(

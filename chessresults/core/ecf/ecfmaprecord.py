@@ -10,9 +10,9 @@ from ast import literal_eval
 from solentware_base.core.record import KeyData
 from solentware_base.core.record import ValueList, Record, Value
 
-from . import filespec
+from .. import filespec
 from . import ecfrecord
-from .resultsrecord import get_unpacked_player_identity
+from ..resultsrecord import get_unpacked_player_identity
 
 
 class ECFmapDBkeyClub(KeyData):

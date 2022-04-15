@@ -1,6 +1,6 @@
 # __init__.py
-# Copyright 2009 Roger Marsh
+# Copyright 2022 Roger Marsh
 # Licence: See LICENCE (BSD licence)
 
-"""Data manipulation for Results data and access to databases.
+"""Data manipulation specific to databases which submit results to ECF.
 """

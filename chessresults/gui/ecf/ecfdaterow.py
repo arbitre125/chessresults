@@ -15,8 +15,8 @@ from solentware_grid.gui.datarow import (
     ROW,
 )
 
-from .datarow import DataRow
-from ..core.ecfrecord import ECFrefDBrecordECFdate
+from ..datarow import DataRow
+from ...core.ecf.ecfrecord import ECFrefDBrecordECFdate
 
 
 class ECFrefDBrowECFdate(ECFrefDBrecordECFdate, DataRow):

@@ -12,7 +12,7 @@ from solentware_base.core.record import Value, ValueList, Record
 
 from . import ecfclubdb
 from . import ecfplayerdb
-from . import filespec
+from .. import filespec
 
 New = "New"
 _Change = "Change"

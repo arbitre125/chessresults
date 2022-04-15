@@ -8,7 +8,7 @@ Identify new players.  Declare the new player to be the same as one already
 on database or to be new to this database.
 
 """
-from . import newplayers_database
+from .. import newplayers_database
 
 
 class NewPlayers(newplayers_database.NewPlayers):

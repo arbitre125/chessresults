@@ -16,13 +16,13 @@ import os
 import zipfile
 import io
 
-from ..minorbases.textapi import TextapiError
-from ..core.filespec import ECFOGDPLAYER_FILE_DEF, MAPECFOGDPLAYER_FILE_DEF
-from ..core import ecfogddataimport
-from ..core import ecfogddb
-from . import control_database
-from ..core import configuration
-from ..core import constants
+from .. import control_database
+from ...minorbases.textapi import TextapiError
+from ...core.filespec import ECFOGDPLAYER_FILE_DEF, MAPECFOGDPLAYER_FILE_DEF
+from ...core.ogd import ecfogddataimport
+from ...core.ogd import ecfogddb
+from ...core import configuration
+from ...core import constants
 
 
 class Control(control_database.Control):

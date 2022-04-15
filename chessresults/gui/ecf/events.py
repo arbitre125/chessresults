@@ -6,10 +6,11 @@
 """
 import tkinter.messagebox
 
-from ..core import resultsrecord
-from ..core import ecfmaprecord
-from ..core import filespec
-from . import events_database
+from ...core.ecf import ecfmaprecord
+from ...core.ecf import ecfrecord
+from ...core import filespec
+from ...core import resultsrecord
+from .. import events_database
 
 
 class Events(events_database.Events):
@@ -234,3 +235,28 @@ class Events(events_database.Events):
             message="\n".join((pmsg, cmsg)),
             title="Events",
         )
+
+    def get_gradingcodes(self, database):
+        """Return dict of ECF codes for players, default empty dict."""
+        return {
+            p: ecfmaprecord.get_merge_grading_code_for_person(database, person)
+            for p, person in resultsrecord.get_persons(
+                database, players
+            ).items()
+        }
+
+    def get_ecfplayernames(self, database, gradingcodes):
+        """Return dict of player names for ECF codes, default empty dict."""
+        ecfplayers = {}
+        for p in gradingcodes:
+            if gradingcodes[p]:
+                r = ecfrecord.get_ecf_player_for_grading_code(
+                    database, gradingcodes[p]
+                )
+                if r:
+                    ecfplayers[p] = r.value.ECFname
+                else:
+                    ecfplayers[p] = ""
+            else:
+                ecfplayers[p] = ""
+        return ecfplayers

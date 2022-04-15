@@ -16,10 +16,10 @@ from solentware_grid.gui.datarow import (
     ROW,
 )
 
-from .datarow import DataRow
-from ..core import ecfmaprecord
-from ..core import resultsrecord
-from ..core import ecfrecord
+from ..datarow import DataRow
+from ...core import resultsrecord
+from ...core.ecf import ecfmaprecord
+from ...core.ecf import ecfrecord
 
 
 class ECFmapDBrowNewPlayer(ecfmaprecord.ECFmapDBrecordClub, DataRow):

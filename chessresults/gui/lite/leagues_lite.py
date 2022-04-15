@@ -5,7 +5,7 @@
 """Results database Leagues frame class.
 """
 
-from . import leagues_database
+from .. import leagues_database
 from . import control_lite
 from . import events_lite
 from . import newplayers_lite

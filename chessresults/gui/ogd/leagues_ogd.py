@@ -12,9 +12,9 @@ from . import control_ogd
 from . import events_ogd
 from . import newplayers_ogd
 from . import ogdgradingcodes
-from . import leagues_database
 from . import importecfogd
-from .. import ECF_OGD_DATA_IMPORT_MODULE
+from .. import leagues_database
+from ... import ECF_OGD_DATA_IMPORT_MODULE
 
 
 class Leagues(leagues_database.Leagues):
@@ -37,8 +37,6 @@ class Leagues(leagues_database.Leagues):
     def __init__(self, master=None, cnf=dict(), **kargs):
         """Extend and define the results database results frame."""
         super(Leagues, self).__init__(master=master, cnf=cnf, **kargs)
-
-        self._show_grading_list_grading_codes = True
 
     def define_tabs(self):
         """Define the application tabs."""

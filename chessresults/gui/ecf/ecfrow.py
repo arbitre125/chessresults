@@ -15,9 +15,9 @@ from solentware_grid.gui.datarow import (
     ROW,
 )
 
-from .datarow import DataRow
-from ..core import ecfrecord
-from ..core import ecfmaprecord
+from ..datarow import DataRow
+from ...core.ecf import ecfrecord
+from ...core.ecf import ecfmaprecord
 
 
 class ECFrefDBrowECFClub(ecfrecord.ECFrefDBrecordECFclub, DataRow):

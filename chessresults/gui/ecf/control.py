@@ -30,20 +30,20 @@ from solentware_misc.gui import dialogue
 from solentware_misc.core.getconfigurationitem import get_configuration_item
 
 from .feedback_monthly import show_ecf_results_feedback_monthly_tab
-from ..minorbases.dbaseapi import dBaseapiError
-from ..core.filespec import (
+from . import ecfdownload
+from .. import control_database
+from ...minorbases.dbaseapi import dBaseapiError
+from ...core.filespec import (
     ECFPLAYER_FILE_DEF,
     ECFCLUB_FILE_DEF,
     ECFTXN_FILE_DEF,
     MAPECFPLAYER_FILE_DEF,
 )
-from ..core import ecfdataimport
-from ..core import ecfclubdb
-from ..core import ecfplayerdb
-from . import control_database
-from ..core import constants
-from . import ecfdownload
-from ..core import configuration
+from ...core import constants
+from ...core import configuration
+from ...core.ecf import ecfdataimport
+from ...core.ecf import ecfclubdb
+from ...core.ecf import ecfplayerdb
 
 
 class Control(control_database.Control):

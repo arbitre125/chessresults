@@ -23,13 +23,13 @@ import json
 
 from solentware_misc.core.getconfigurationitem import get_configuration_item
 
-from . import newplayers_database
-from ..core import resultsrecord
-from ..core import ecfrecord
-from ..core import ecfmaprecord
-from ..core import constants
-from ..core import configuration
-from ..basecore.ecfdataimport import copy_single_ecf_players_post_2020_rules
+from .. import newplayers_database
+from ...core.ecf import ecfrecord
+from ...core.ecf import ecfmaprecord
+from ...core import resultsrecord
+from ...core import constants
+from ...core import configuration
+from ...basecore.ecfdataimport import copy_single_ecf_players_post_2020_rules
 
 
 class NewPlayers(newplayers_database.NewPlayers):

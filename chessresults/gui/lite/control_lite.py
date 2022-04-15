@@ -9,7 +9,7 @@ on this panel.
 
 """
 
-from . import control_database
+from .. import control_database
 
 
 class Control(control_database.Control):

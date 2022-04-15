@@ -11,7 +11,7 @@ from os.path import split
 
 from solentware_base.core.record import KeyText, ValueText, RecordText
 
-from ..minorbases.textapi import (
+from ...minorbases.textapi import (
     Textapi,
     TextapiRoot,
     FILE,

@@ -12,11 +12,11 @@ import tkinter.messagebox
 from solentware_misc.gui import panel
 
 from . import ogdplayergrids
-from ..core import ecfogdrecord
-from ..core import ecfgcodemaprecord
-from ..core import resultsrecord
-from . import ecfdetail
-from ..core import filespec
+from ..ecf import ecfdetail
+from ...core.ogd import ecfogdrecord
+from ...core.ogd import ecfgcodemaprecord
+from ...core import resultsrecord
+from ...core import filespec
 
 
 class ECFGradingCodes(panel.PanedPanelGridSelectorBar):

@@ -9,9 +9,9 @@ import tkinter
 
 from solentware_grid.core.dataclient import DataSource
 
-from . import eventgrids
-from .resultsrow import ResultsDBrowEvent
-from ..core import filespec
+from .. import eventgrids
+from ..resultsrow import ResultsDBrowEvent
+from ...core import filespec
 
 
 class ECFEventBaseGrid(eventgrids.EventBaseGrid):

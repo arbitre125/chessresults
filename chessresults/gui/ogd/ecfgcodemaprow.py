@@ -16,10 +16,10 @@ from solentware_grid.gui.datarow import (
     ROW,
 )
 
-from .datarow import DataRow
-from ..core import resultsrecord
-from ..core import ecfogdrecord
-from ..core import ecfgcodemaprecord
+from ..datarow import DataRow
+from ...core import resultsrecord
+from ...core.ogd import ecfogdrecord
+from ...core.ogd import ecfgcodemaprecord
 
 
 class ECFmapOGDrowPlayer(resultsrecord.ResultsDBrecordPlayer, DataRow):

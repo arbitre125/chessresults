@@ -14,10 +14,10 @@ import tkinter.messagebox
 
 from solentware_misc.gui import panel, dialogue
 
-from ..core import ecfrecord
-from ..core import ecfmaprecord
-from ..core import resultsrecord
-from ..core import filespec
+from ...core.ecf import ecfrecord
+from ...core.ecf import ecfmaprecord
+from ...core import resultsrecord
+from ...core import filespec
 from . import ecfplayergrids
 
 

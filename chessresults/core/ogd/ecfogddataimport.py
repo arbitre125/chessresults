@@ -13,8 +13,8 @@ addition of this source to the menu.
 
 """
 
-from . import filespec
-from . import constants
+from .. import filespec
+from .. import constants
 
 
 def _do_ecf_ogd_data_import(

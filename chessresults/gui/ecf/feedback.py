@@ -17,11 +17,11 @@ from solentware_misc.gui import panel
 from solentware_misc.gui import textreadonly
 from solentware_misc.gui import tasklog
 
-from ..core import ecfmaprecord
-from ..core import resultsrecord
-from ..core import filespec
-from ..core import constants
-from ..core import ecfrecord
+from ...core import resultsrecord
+from ...core import filespec
+from ...core import constants
+from ...core.ecf import ecfrecord
+from ...core.ecf import ecfmaprecord
 
 subline = "Line "
 pinline = "New Player - Pin "

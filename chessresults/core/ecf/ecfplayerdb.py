@@ -10,7 +10,7 @@ from os.path import split
 
 from solentware_base.core.record import KeydBaseIII, Value, RecorddBaseIII
 
-from ..minorbases.dbaseapi import (
+from ...minorbases.dbaseapi import (
     dBaseapi,
     FOLDER,
     FIELDS,

@@ -16,9 +16,9 @@ from solentware_grid.core.dataclient import DataSource
 
 from solentware_misc.gui import logpanel, tasklog, exceptionhandler
 
-from ..minorbases.textapi import TextapiError
-from ..core import ecfogddb
-from .minorbases.textdatarow import TextDataRow, TextDataHeader
+from ...minorbases.textapi import TextapiError
+from ...core.ogd import ecfogddb
+from ..minorbases.textdatarow import TextDataRow, TextDataHeader
 
 
 class ImportECFOGD(logpanel.WidgetAndLogPanel):

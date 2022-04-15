@@ -22,12 +22,12 @@ from solentware_misc.gui import logpanel
 from solentware_misc.gui import textreadonly
 from solentware_misc.gui import tasklog
 
-from ..core import ecfmaprecord
-from ..core import resultsrecord
-from ..core import filespec
-from ..core import constants
-from ..core import ecfrecord
-from ..core import ecfdataimport
+from ...core import resultsrecord
+from ...core import filespec
+from ...core import constants
+from ...core.ecf import ecfmaprecord
+from ...core.ecf import ecfrecord
+from ...core.ecf import ecfdataimport
 
 _REFRESH_FILE_FIELD = {
     filespec.ECFPLAYER_FILE_DEF: filespec.ECFPLAYERNAME_FIELD_DEF,

@@ -14,14 +14,16 @@ import os
 from solentware_misc.gui.exceptionhandler import ExceptionHandler, FOCUS_ERROR
 from solentware_misc.core.getconfigurationitem import get_configuration_item
 
-from ..core import (
-    ecfrecord,
-    ecfmaprecord,
+from ...core import (
     resultsrecord,
     constants,
     configuration,
 )
-from ..basecore import ecfdataimport
+from ...core.ecf import (
+    ecfrecord,
+    ecfmaprecord,
+)
+from ...basecore import ecfdataimport
 
 
 class ECFDetailDialog(ExceptionHandler):
