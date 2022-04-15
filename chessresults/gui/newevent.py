@@ -10,7 +10,7 @@ import tkinter.messagebox
 
 from solentware_misc.gui import panel
 
-from ..core import ecfrecord
+from ..core.ecf import ecfrecord
 from ..core import resultsrecord
 from ..core import filespec
 

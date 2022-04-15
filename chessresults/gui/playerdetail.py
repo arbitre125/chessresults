@@ -15,11 +15,11 @@ from solentware_misc.gui import dialogue
 
 from ..core import mergeplayers
 from ..core import resultsrecord
-from ..core import ecfmaprecord
 from ..core import filespec
-from ..core import ecfrecord
-from ..core import ecfgcodemaprecord
-from ..core import ecfogdrecord
+from ..core.ecf import ecfmaprecord
+from ..core.ecf import ecfrecord
+from ..core.ogd import ecfgcodemaprecord
+from ..core.ogd import ecfogdrecord
 
 
 def display_player_details(myself, selections, title):

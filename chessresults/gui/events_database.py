@@ -24,10 +24,6 @@ from ..core import (
     constants,
     filespec,
     resultsrecord,
-    ecfmaprecord,
-    ecfrecord,
-    ecfgcodemaprecord,
-    ecfogdrecord,
     configuration,
 )
 from ..core.importreports import convert_alias_to_transfer_format
@@ -889,6 +885,14 @@ class Events(panel.PanelGridSelector):
             logwidget.append_text("Extract completed.")
             logwidget.append_text_only("")
 
+    def get_gradingcodes(self, database):
+        """Return dict of ECF codes for players, default empty dict."""
+        return {}
+
+    def get_ecfplayernames(self, database, gradingcodes):
+        """Return dict of player names for ECF codes, default empty dict."""
+        return {}
+
     def generate_event_summary(self, database, logwidget):
         """Write events selected for summary to serial file."""
         esel = self.eventgrid.selection
@@ -1017,26 +1021,7 @@ class Events(panel.PanelGridSelector):
                 eventnumbers[k] = len(eventnumbers)
 
         # Maybe put this in subclass methods eventually.
-        if self.get_appsys().show_master_list_grading_codes:
-            gradingcodes = {
-                p: ecfmaprecord.get_merge_grading_code_for_person(
-                    database, person
-                )
-                for p, person in resultsrecord.get_persons(
-                    database, players
-                ).items()
-            }
-        elif self.get_appsys().show_grading_list_grading_codes:
-            gradingcodes = {
-                p: ecfgcodemaprecord.get_grading_code_for_person(
-                    database, person
-                )
-                for p, person in resultsrecord.get_persons(
-                    database, players
-                ).items()
-            }
-        else:
-            gradingcodes = {}
+        gradingcodes = self.get_gradingcodes(database)
 
         # gradingcodes above needed the first step in setting players.
         players = {p: players[p].value.name for p in players}
@@ -1048,30 +1033,7 @@ class Events(panel.PanelGridSelector):
         # Ignoring them should be correct, and seems ok too.
         # Find and delete them offline.
         # See basecore.ecfdataimport too.
-        if self.get_appsys().show_master_list_grading_codes:
-            ecfplayers = {}
-            for p in gradingcodes:
-                if gradingcodes[p]:
-                    r = ecfrecord.get_ecf_player_for_grading_code(
-                        database, gradingcodes[p]
-                    )
-                    if r:
-                        ecfplayers[p] = r.value.ECFname
-                    else:
-                        ecfplayers[p] = ""
-                else:
-                    ecfplayers[p] = ""
-        elif self.get_appsys().show_grading_list_grading_codes:
-            ecfplayers = {
-                p: ecfogdrecord.get_ecf_ogd_player_for_grading_code(
-                    database, gradingcodes[p]
-                ).value.ECFOGDname
-                if gradingcodes[p]
-                else ""
-                for p in gradingcodes
-            }
-        else:
-            ecfplayers = {}
+        ecfplayers = self.get_ecfplayernames(database, gradingcodes)
 
         # Prepare sorted list of games using decoded values from game records
         games = sorted(

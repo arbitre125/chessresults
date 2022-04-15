@@ -24,10 +24,10 @@ any download.
 """
 
 from ..core import filespec
-from ..core import ecfrecord
-from ..core import ecfclubdb
-from ..core import ecfplayerdb
-from ..core import ecfmaprecord
+from ..core.ecf import ecfrecord
+from ..core.ecf import ecfclubdb
+from ..core.ecf import ecfplayerdb
+from ..core.ecf import ecfmaprecord
 
 
 def copy_ecf_clubs_post_2020_rules(

@@ -23,8 +23,8 @@ from ..core.resultsrecord import (
     get_name,
     get_alias,
 )
-from ..core.ecfmaprecord import get_grading_code_for_person
-from ..core.ecfrecord import get_ecf_player_for_grading_code
+from ..core.ecf.ecfmaprecord import get_grading_code_for_person
+from ..core.ecf.ecfrecord import get_ecf_player_for_grading_code
 from ..core import collationdb
 from ..core import filespec
 

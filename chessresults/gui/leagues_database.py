@@ -70,8 +70,6 @@ class Leagues(leagues_validate.Leagues):
         self.database = None
         self.database_folder = None
         self._database_modulename = None
-        self._show_master_list_grading_codes = False
-        self._show_grading_list_grading_codes = False
 
     def define_menus(self):
         """Override.  Define the application menus."""
@@ -1177,16 +1175,6 @@ class Leagues(leagues_validate.Leagues):
         self._knownnamesdatasource_module = importlib.import_module(
             KNOWN_NAME_DATASOURCE_MODULE[enginename], "chessresults.gui"
         )
-
-    @property
-    def show_master_list_grading_codes(self):
-        """ """
-        return self._show_master_list_grading_codes
-
-    @property
-    def show_grading_list_grading_codes(self):
-        """ """
-        return self._show_grading_list_grading_codes
 
     def get_event_detail_context(self):
         """Return the event page."""

@@ -57,25 +57,6 @@ class AliasGrid(PlayerGrid):
         dr.register_in(self, self.on_data_change)
 
 
-class AliasLinkGrid(PlayerGrid):
-
-    """Grid for all players with grading code link."""
-
-    def __init__(self, panel, **kwargs):
-        """Custom PlayerGrid for the playeralias index."""
-        super(AliasLinkGrid, self).__init__(panel, **kwargs)
-        dr = self.appsyspanel.get_appsys().get_data_register()
-        self.make_header(resultsrow.ResultsDBrowAliasLink.header_specification)
-        ds = dataclient.DataSource(
-            self.appsyspanel.get_appsys().get_results_database(),
-            filespec.PLAYER_FILE_DEF,
-            filespec.PLAYERNAME_FIELD_DEF,
-            newrow=resultsrow.ResultsDBrowAliasLink,
-        )
-        self.set_data_source(ds)
-        dr.register_in(self, self.on_data_change)
-
-
 class IdentityGrid(PlayerGrid):
 
     """Grid for identified players."""

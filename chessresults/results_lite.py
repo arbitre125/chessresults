@@ -37,7 +37,7 @@ if __name__ == "__main__":
         raise SystemExit("Unable to import start application utilities")
     try:
         from .gui.resultsroot import Results
-        from .gui.leagues_lite import Leagues
+        from .gui.lite.leagues_lite import Leagues
     except Exception as error:
         start_application_exception(
             error, appname=application_name, action="import"

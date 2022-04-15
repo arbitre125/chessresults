@@ -16,8 +16,8 @@ addition of this source to the menu.
 import csv
 
 from ..core import filespec
-from ..core import ecfogddb
-from ..core import ecfogdrecord
+from ..core.ogd import ecfogddb
+from ..core.ogd import ecfogdrecord
 
 
 def validate_and_copy_ecf_ogd_players_post_2006_rules(

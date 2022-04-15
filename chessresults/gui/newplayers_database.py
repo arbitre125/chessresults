@@ -19,6 +19,7 @@ import tkinter.messagebox
 
 from solentware_misc.gui import panel, dialogue
 
+from . import aliaslinkgrids
 from . import playergrids
 from . import playerdetail
 from ..core import resultsrecord
@@ -54,7 +55,7 @@ class NewPlayers(panel.PanedPanelGridSelectorBar):
                     slavegrids=("<KeyPress-F8>",),
                 ),
                 dict(
-                    grid=playergrids.AliasLinkGrid,
+                    grid=aliaslinkgrids.AliasLinkGrid,
                     selectlabel="Select Player Reference:  ",
                     gridfocuskey="<KeyPress-F8>",
                     selectfocuskey="<KeyPress-F6>",

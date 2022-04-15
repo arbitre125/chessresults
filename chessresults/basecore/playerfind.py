@@ -14,7 +14,8 @@ results for the current event.
 
 """
 
-from ..core import resultsrecord, ecfmaprecord, ecfrecord
+from ..core import resultsrecord
+from ..core.ecf import ecfmaprecord, ecfrecord
 
 
 def find_player_names_in_other_editions_of_event(db, event):

@@ -17,10 +17,10 @@ from solentware_misc.gui import panel, reports, dialogue
 from . import playergrids
 from . import playerdetail
 from ..core import resultsrecord
-from ..core import ecfmaprecord
 from ..core import mergeplayers
 from ..core import filespec
-from ..core import ecfgcodemaprecord
+from ..core.ecf import ecfmaprecord
+from ..core.ogd import ecfgcodemaprecord
 
 
 class Players(panel.PanedPanelGridSelectorBar):
