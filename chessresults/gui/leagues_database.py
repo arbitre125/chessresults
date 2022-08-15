@@ -66,7 +66,6 @@ class Leagues(leagues_validate.Leagues):
     def __init__(self, master=None, cnf=dict(), **kargs):
         """Extend and define the results database results frame."""
         super(Leagues, self).__init__(master=master, cnf=cnf, **kargs)
-
         self.database = None
         self.database_folder = None
         self._database_modulename = None
@@ -342,12 +341,7 @@ class Leagues(leagues_validate.Leagues):
         return switch_table
 
     def _add_ecf_url_item(self, menu):
-        pass
-
-    def close_season(self):
-        """Close results data source files."""
-        self.results_data.close()
-        self.results_data = None
+        """Subclasses should override this if edit ECF URL defaults needed."""
 
     def database_close(self):
         """Close results database."""
@@ -506,14 +500,8 @@ class Leagues(leagues_validate.Leagues):
             conf.convert_home_directory_to_tilde(database_folder),
         )
 
-        # Set the error file in top folder of chess database
-        # self.ui.set_error_file_name(
-        # filename=os.path.join(database_folder, constants.ERROR_LOG))
-
         # the default preference order is used rather than ask the user or
-        # an order specific to this application.  An earlier version of this
-        # module implements a dialogue to pick a database engine if there is
-        # a choice.
+        # an order specific to this application.
         idm = modulequery.installed_database_modules()
         if len(idm) == 0:
             tkinter.messagebox.showinfo(
@@ -548,61 +536,9 @@ class Leagues(leagues_validate.Leagues):
                 title="New",
             )
             return
-        if self._database_modulename != _modulename:
-            if self._database_modulename is not None:
-                tkinter.messagebox.showinfo(
-                    parent=self.get_widget(),
-                    message="".join(
-                        (
-                            "The database engine needed for this database ",
-                            "is not the one already in use.\n\nYou will ",
-                            "have to Quit and start the application again ",
-                            "to create this database.",
-                        )
-                    ),
-                    title="New",
-                )
-                return
-            self._database_enginename = _enginename
-            self._database_modulename = _modulename
-
-            def import_name(modulename, name):
-                try:
-                    module = __import__(
-                        modulename, globals(), locals(), [name]
-                    )
-                except ImportError:
-                    return None
-                return getattr(module, name)
-
-            self._database_class = import_name(_modulename, _ResultsDB)
-            self._datasourceset_class = import_name(
-                self._database_class._datasourceset_modulename, _DataSourceSet
-            )
-            self._knownnames_class = import_name(
-                self._database_class._knownnames_modulename, _KnownNamesDS
-            )
-            self.set_ecfdataimport_module(_enginename)
-            self.set_ecfogddataimport_module(_enginename)
-            self.set_knownnamesdatasource_module(_enginename)
-
-        try:
-            self._database_open(database_folder)
-        except Exception as exc:
-            tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message="".join(
-                    (
-                        "Unable to create database\n\n",
-                        str(database_folder),
-                        "\n\nThe reported reason is:\n\n",
-                        str(exc),
-                    )
-                ),
-                title="New",
-            )
-            self._database_close()
-            self.database = None
+        self._open_database_with_engine(
+            database_folder, _modulename, _enginename, "New", "create"
+        )
 
     def database_open(self):
         """Open results database."""
@@ -636,10 +572,6 @@ class Leagues(leagues_validate.Leagues):
             constants.RECENT_DATABASE,
             conf.convert_home_directory_to_tilde(database_folder),
         )
-
-        # Set the error file in top folder of chess database
-        # self.ui.set_error_file_name(
-        # filename=os.path.join(chessfolder, constants.ERROR_LOG))
 
         ed = modulequery.modules_for_existing_databases(
             database_folder, FileSpec()
@@ -707,19 +639,28 @@ class Leagues(leagues_validate.Leagues):
             )
             return
         _modulename = APPLICATION_DATABASE_MODULE[_enginename]
+        self._open_database_with_engine(
+            database_folder, _modulename, _enginename, "Open", "open"
+        )
+
+    def _open_database_with_engine(
+        self, database_folder, _modulename, _enginename, title, action
+    ):
+        """Open results database with database engine."""
         if self._database_modulename != _modulename:
             if self._database_modulename is not None:
                 tkinter.messagebox.showinfo(
                     parent=self.get_widget(),
                     message="".join(
                         (
-                            "The database engine needed for this database ",
-                            "is not the one already in use.\n\nYou will ",
-                            "have to Quit and start the application again ",
-                            "to open this database.",
+                            "The database engine needed for this database is ",
+                            "not the one already in use.\n\nYou will have to ",
+                            "Quit and start the application again to ",
+                            action,
+                            " this database.",
                         )
                     ),
-                    title="Open",
+                    title=title,
                 )
                 return
             self._database_enginename = _enginename
@@ -752,13 +693,15 @@ class Leagues(leagues_validate.Leagues):
                 parent=self.get_widget(),
                 message="".join(
                     (
-                        "Unable to open database\n\n",
+                        "Unable to ",
+                        action,
+                        " database\n\n",
                         str(database_folder),
                         "\n\nThe reported reason is:\n\n",
                         str(exc),
                     )
                 ),
-                title="Open",
+                title=title,
             )
             self._database_close()
             self.database = None
@@ -817,10 +760,6 @@ class Leagues(leagues_validate.Leagues):
         self._database_quit()
         self.get_widget().winfo_toplevel().destroy()
 
-    def document_edit(self, **kargs):
-        """Return sourceedit.SourceEdit class instance."""
-        return sourceedit.SourceEdit(**kargs)
-
     def results_control(self, **kargs):
         """Return control_database.Control class instance."""
         return control_database.Control(**kargs)
@@ -853,21 +792,9 @@ class Leagues(leagues_validate.Leagues):
         """Return the ECF Online Grading Database import module."""
         return self._ecfogddataimport_module
 
-    def get_thread_queue(self):
-        """Return the queue for methods to be called in the background thread."""
-        return self.queue
-
-    def get_results_context(self):
-        """Return the data input page."""
-        return self
-
     def get_results_database(self):
         """Return the open database."""
         return self.database
-
-    def get_season_folder(self):
-        """Return widget containing results data folder name."""
-        return self.results_folder
 
     def results_close(self):
         """Close results source document."""
@@ -894,20 +821,6 @@ class Leagues(leagues_validate.Leagues):
                 self.switch_context(sourceedit.SourceEdit._btn_closedata)
             self.set_error_file_on_close_source()
 
-    def results_open(self):
-        """Open results source documents."""
-
-        ro = self._results_open(Season)
-        if ro:
-            self.set_error_file()
-            self.results_folder_generic = self.results_folder
-            self.set_results_edit_context()
-            return True
-
-    def set_results_edit_context(self):
-        """Display the results edit page and hide open database if any."""
-        self.switch_context(self._menu_opendata)
-
     def set_takeon_edit_context(self):
         """Display results take on edit page and hide open database if any."""
         self.switch_context(self._menu_opentakeondata)
@@ -933,7 +846,6 @@ class Leagues(leagues_validate.Leagues):
 
     def takeon_open(self):
         """Open results data take on documents."""
-
         ro = self._takeon_open(TakeonSeason)
         if ro:
             self.set_error_file()
@@ -958,82 +870,6 @@ class Leagues(leagues_validate.Leagues):
             return
         self._database_close()
         self.database = None
-
-    def _results_open(self, eventseason, title=" "):
-        """Open results source documents."""
-        title = "".join(("Open", title, "Documents"))
-
-        if not self.is_state_switch_allowed(self._menu_opendata):
-            tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message="Cannot open a Results folder from the current tab",
-                title=title,
-            )
-            return
-
-        if self.results_data is not None:
-            dlg = tkinter.messagebox.showinfo(
-                parent=self.get_widget(),
-                message="".join(
-                    (
-                        "Close the source documents in\n",
-                        self.results_folder,
-                        "\nfirst.",
-                    )
-                ),
-                title=title,
-            )
-            return
-
-        conf = configuration.Configuration()
-        if self.results_folder is None:
-            initdir = conf.get_configuration_value(constants.RECENT_DOCUMENT)
-        else:
-            initdir = self.results_folder
-        results_folder = tkinter.filedialog.askdirectory(
-            parent=self.get_widget(),
-            title=" ".join((title, "folder")),
-            initialdir=initdir,
-        )
-        if results_folder:
-            results_data = eventseason(results_folder)
-            if not os.path.exists(results_folder):
-                if not tkinter.messagebox.askyesno(
-                    parent=self.get_widget(),
-                    message="".join(
-                        (
-                            results_folder,
-                            "\ndoes not exist.",
-                            "\nConfirm that a folder is to be created ",
-                            "containing new empty documents.",
-                        )
-                    ),
-                    title=title,
-                ):
-                    return
-                try:
-                    os.makedirs(results_folder)
-                except OSError:
-                    dlg = tkinter.messagebox.showinfo(
-                        parent=self.get_widget(),
-                        message=" ".join(
-                            (results_folder, "\ncould not be created.")
-                        ),
-                        title=title,
-                    )
-                    return
-            if results_data.open_documents(self.get_widget()):
-                self.results_data = results_data
-                self.results_folder = results_folder
-                conf.set_configuration_value(
-                    constants.RECENT_DOCUMENT,
-                    conf.convert_home_directory_to_tilde(results_folder),
-                )
-                return True
-
-    def _set_folder_generic(self):
-        """Copy open folder name to self.results_folder_generic."""
-        self.results_folder_generic = self.results_folder
 
     def _takeon_open(self, eventseason, title=" "):
         """Open results data take on source documents."""
@@ -1102,15 +938,6 @@ class Leagues(leagues_validate.Leagues):
                 self.results_folder = results_folder
                 return True
 
-    def set_ecf_url_defaults(self):
-        """Do nothing.
-
-        Override in classes which communicate with ECF website to set up
-        default URLs for ECF uploads and downloads.
-
-        """
-        pass
-
     def set_error_file(self):
         """Set the error log for file being opened.
 
@@ -1119,12 +946,8 @@ class Leagues(leagues_validate.Leagues):
 
         """
         if self.database is None:
-            # Set the error file in folder of results source data
-            Leagues.set_error_file_name(
-                os.path.join(self.results_folder, ERROR_LOG)
-            )
+            super().set_error_file()
         else:
-            # Set the error file in folder of results database
             Leagues.set_error_file_name(
                 os.path.join(self.database_folder, ERROR_LOG)
             )
@@ -1136,7 +959,7 @@ class Leagues(leagues_validate.Leagues):
 
         """
         if self.database is None:
-            Leagues.set_error_file_name(None)
+            super().set_error_file_on_close_source()
         else:
             Leagues.set_error_file_name(
                 os.path.join(self.database_folder, ERROR_LOG)
@@ -1154,12 +977,6 @@ class Leagues(leagues_validate.Leagues):
             Leagues.set_error_file_name(
                 os.path.join(self.results_folder, ERROR_LOG)
             )
-
-    def set_ecfdataimport_module(self, enginename):
-        """Do nothing.  Subclass must override to import module."""
-
-    def set_ecfogddataimport_module(self, enginename):
-        """Do nothing.  Subclass must override to import module."""
 
     # It is not clear why both this method, and the direct imports to
     # self._knownnames_class in database_new() and database_open(), exist.

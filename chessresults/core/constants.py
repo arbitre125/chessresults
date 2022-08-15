@@ -34,7 +34,6 @@ from chessvalidate.core.constants import (
     ECF_RESULT_DD,
     ECF_RESULT_1D,
     ECF_RESULT_D1,
-    EVENT_CONF,
     RECENT_EMAIL_SELECTION,
     RECENT_EMAIL_EXTRACTION,
     RECENT_DOCUMENT,

@@ -56,19 +56,3 @@ class Results(chessvalidate.gui.resultsroot.Results):
     def help_keyboard(self):
         """Display list of keyboard actions for Results application."""
         help_.help_keyboard(self.root)
-
-    def configure_extract_text_from_emails(self):
-        """Set parameters that control results extraction from emails."""
-        configure.Configure(
-            master=self.root,
-            use_toplevel=True,
-            application_name="".join((APPLICATION_NAME, " (extract text)")),
-        )
-
-    def configure_email_selection(self):
-        """Set parameters that control email selection from mailboxes."""
-        selectemail.SelectEmail(
-            master=self.root,
-            use_toplevel=True,
-            application_name="".join((APPLICATION_NAME, " (select emails)")),
-        )
