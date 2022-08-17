@@ -23,7 +23,7 @@ from . import feedback
 from . import feedback_monthly
 from . import activeclubs
 from . import ratedplayers
-from .. import newevent
+from . import newevent
 from .. import leagues_database
 from .. import players
 from .. import configuredialog_hack

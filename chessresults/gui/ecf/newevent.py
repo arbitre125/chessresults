@@ -10,9 +10,9 @@ import tkinter.messagebox
 
 from solentware_misc.gui import panel
 
-from ..core.ecf import ecfrecord
-from ..core import resultsrecord
-from ..core import filespec
+from ...core.ecf import ecfrecord
+from ...core import resultsrecord
+from ...core import filespec
 
 
 class NewEvent(panel.PlainPanel):
