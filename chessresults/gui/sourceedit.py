@@ -135,13 +135,13 @@ class SourceEdit(sourceedit.SourceEdit):
             )
         )
 
-    def report_players_by_club(self, data, separator=None):
+    def report_players_by_club(self, data):
         """Append list of players sorted by club to results report."""
         if len(data.collation.reports.error):
             return
         gca = self.get_appsys().show_master_list_grading_codes
         db = self.get_appsys().get_results_database()
-        clubs = data.collation.get_players_by_club(separator)
+        clubs = data.collation.get_players_by_club()
         eventname = set()
         for cp in clubs.values():
             for pn in cp:
