@@ -8,11 +8,12 @@
 import tkinter
 import tkinter.messagebox
 
-from solentware_misc.gui import panel
+from solentware_misc.gui import panel, frame
 
 from ...core.ecf import ecfrecord
 from ...core import resultsrecord
 from ...core import filespec
+from .ecfeventcopy import ECFEventCopy
 
 
 class NewEvent(panel.PlainPanel):
@@ -20,6 +21,7 @@ class NewEvent(panel.PlainPanel):
     """The NewEvent panel for a Results database."""
 
     _btn_ok = "newevent_ok"
+    _btn_copy = "newevent_copy"
     _btn_refresh = "newevent_refresh"
     _btn_cancel = "newevent_cancel"
 
@@ -27,7 +29,7 @@ class NewEvent(panel.PlainPanel):
         """Extend and define the results database new event panel."""
         super(NewEvent, self).__init__(parent=parent, cnf=cnf, **kargs)
         self.show_panel_buttons(
-            (self._btn_ok, self._btn_refresh, self._btn_cancel)
+            (self._btn_ok, self._btn_copy, self._btn_refresh, self._btn_cancel)
         )
         self.create_buttons()
 
@@ -38,10 +40,10 @@ class NewEvent(panel.PlainPanel):
         self.newevent.grid_columnconfigure(1, uniform="col", weight=3)
         self.newevent.grid_columnconfigure(2, uniform="col", weight=1)
         self.newevent.grid_rowconfigure(0, uniform="row", weight=1)
-        self.newevent.grid_rowconfigure(1, uniform="row", weight=1)
-        self.newevent.grid_rowconfigure(2, uniform="row", weight=1)
-        self.newevent.grid_rowconfigure(3, uniform="row", weight=1)
-        self.newevent.grid_rowconfigure(4, uniform="row", weight=1)
+        self.newevent.grid_rowconfigure(1, uniform="row", weight=2)
+        self.newevent.grid_rowconfigure(2, uniform="row", weight=2)
+        self.newevent.grid_rowconfigure(3, uniform="row", weight=2)
+        self.newevent.grid_rowconfigure(4, uniform="row", weight=2)
 
         self.event = tkinter.LabelFrame(master=self.newevent, text="Event")
         self.gradingofficer = tkinter.LabelFrame(
@@ -355,27 +357,13 @@ class NewEvent(panel.PlainPanel):
         )
         label.grid(row=3, column=2, sticky=tkinter.NSEW, columnspan=2)
 
-        db = self.get_appsys().get_results_database()
-        self.eventrecord = resultsrecord.get_event_from_record_value(
-            db.get_primary_record(
-                filespec.EVENT_FILE_DEF,
-                self.get_appsys()
-                .get_ecf_event_detail_context()
-                .eventgrid.selection[0][-1],
-            )
-        )
-        self.ecfeventrecord = ecfrecord.get_ecf_event(
-            db.get_primary_record(
-                filespec.ECFEVENT_FILE_DEF,
-                db.database_cursor(
-                    filespec.ECFEVENT_FILE_DEF,
-                    filespec.ECFEVENTIDENTITY_FIELD_DEF,
-                ).get_unique_primary_for_index_key(
-                    db.encode_record_number(
-                        self.eventrecord.value.get_event_identity()
-                    )
-                ),
-            )
+        (
+            self.eventrecord,
+            self.ecfeventrecord,
+        ) = self._get_event_and_ecf_event_records(
+            self.get_appsys()
+            .get_ecf_event_detail_context()
+            .eventgrid.selection
         )
         self.populate_event_control()
 
@@ -392,16 +380,23 @@ class NewEvent(panel.PlainPanel):
         super().describe_buttons()
         self.define_button(
             self._btn_ok,
-            text="Ok",
+            text="Save",
+            tooltip="Put the event details on the database.",
+            underline=2,
+            command=self.on_ok,
+        )
+        self.define_button(
+            self._btn_copy,
+            text="Copy from list",
             tooltip=" ".join(
                 (
-                    "Put the event details on the database. Return to previous",
-                    "display.",
+                    "Display event list and select event from which details ",
+                    "are copied.",
                 )
             ),
             switchpanel=True,
-            underline=1,
-            command=self.on_ok,
+            underline=0,
+            command=self.on_copy,
         )
         self.define_button(
             self._btn_refresh,
@@ -412,14 +407,14 @@ class NewEvent(panel.PlainPanel):
         )
         self.define_button(
             self._btn_cancel,
-            text="Cancel",
+            text="Back to list",
             tooltip=" ".join(
                 (
-                    "Return to the previous display. Event details are NOT put",
-                    "on database.",
+                    "Return to the previous display. Event details are NOT ",
+                    "put on database.",
                 )
             ),
-            underline=2,
+            underline=0,
             switchpanel=True,
             command=self.on_cancel,
         )
@@ -427,7 +422,7 @@ class NewEvent(panel.PlainPanel):
     def event_details_ok(self):
         """Return response from update validation and confirmation dialogue."""
 
-        def change_value(control, value):
+        def _change_value(control, value):
             control.delete("1.0", tkinter.END)
             control.insert(tkinter.END, value)
 
@@ -537,7 +532,7 @@ class NewEvent(panel.PlainPanel):
                 if not v.isdigit():
                     errors.append("Rate of Play specifications must be digits")
                 else:
-                    # change_value(rop, v)
+                    # _change_value(rop, v)
                     rop.delete(0, tkinter.END)
                     rop.insert(tkinter.END, v)
         if len(errors):
@@ -614,6 +609,7 @@ class NewEvent(panel.PlainPanel):
 
     def on_cancel(self, event=None):
         """Cancel event details amendment."""
+        del event
         if tkinter.messagebox.askyesno(
             parent=self.get_widget(),
             message="Confirm request to cancel event details amendment",
@@ -624,6 +620,7 @@ class NewEvent(panel.PlainPanel):
 
     def on_refresh(self, event=None):
         """Clear event details form."""
+        del event
         if self.ecfeventrecord is None:
             msg = "Confirm request to clear event details form"
         else:
@@ -637,47 +634,38 @@ class NewEvent(panel.PlainPanel):
 
     def on_ok(self, event=None):
         """Update event details."""
+        del event
         if self.event_details_ok():
             self.new_event_update()
             return
-        self.inhibit_context_switch(self._btn_ok)
+
+    def on_copy(self, event=None):
+        """Switch to copy details from event panel."""
+        del event
 
     def populate_event_control(self):
         """Populate new event widget with data from record."""
 
-        def change_text_value(control, value):
-            control.delete("1.0", tkinter.END)
-            control.insert(tkinter.END, value)
-
-        def change_value(control, value):
-            control.delete(0, tkinter.END)
-            control.insert(tkinter.END, value)
-
-        def change_fixed_value(control, value):
-            control.configure(state=tkinter.NORMAL)
-            change_value(control, value)
-            control.configure(state="readonly")
-
         if self.ecfeventrecord:
             v = self.ecfeventrecord.value
-            change_fixed_value(self.eventname, v.eventname)
-            change_fixed_value(self.eventstartdate, v.eventstartdate)
-            change_fixed_value(self.eventenddate, v.eventenddate)
-            change_value(self.eventcode, v.eventcode)
-            change_value(self.graderemail, v.graderemail)
-            change_value(self.gradername, v.gradername)
-            change_text_value(self.graderaddress, v.graderaddress)
-            change_value(self.graderpostcode, v.graderpostcode)
-            change_value(self.movesfirst, v.movesfirst)
-            change_value(self.moveslater, v.moveslater)
-            change_value(self.minutesonly, v.minutesonly)
-            change_value(self.minutesfirst, v.minutesfirst)
-            change_value(self.minuteslater, v.minuteslater)
-            change_value(self.minuteslast, v.minuteslast)
-            change_value(self.secondspermove, v.secondspermove)
-            change_value(self.treasurername, v.treasurername)
-            change_text_value(self.treasureraddress, v.treasureraddress)
-            change_value(self.treasurerpostcode, v.treasurerpostcode)
+            _change_fixed_value(self.eventname, v.eventname)
+            _change_fixed_value(self.eventstartdate, v.eventstartdate)
+            _change_fixed_value(self.eventenddate, v.eventenddate)
+            _change_value(self.eventcode, v.eventcode)
+            _change_value(self.graderemail, v.graderemail)
+            _change_value(self.gradername, v.gradername)
+            _change_text_value(self.graderaddress, v.graderaddress)
+            _change_value(self.graderpostcode, v.graderpostcode)
+            _change_value(self.movesfirst, v.movesfirst)
+            _change_value(self.moveslater, v.moveslater)
+            _change_value(self.minutesonly, v.minutesonly)
+            _change_value(self.minutesfirst, v.minutesfirst)
+            _change_value(self.minuteslater, v.minuteslater)
+            _change_value(self.minuteslast, v.minuteslast)
+            _change_value(self.secondspermove, v.secondspermove)
+            _change_value(self.treasurername, v.treasurername)
+            _change_text_value(self.treasureraddress, v.treasureraddress)
+            _change_value(self.treasurerpostcode, v.treasurerpostcode)
             self.informfide.set(v.informfide)
             self.informchessmoves.set(v.informchessmoves)
             self.informgrandprix.set(v.informgrandprix)
@@ -689,28 +677,28 @@ class NewEvent(panel.PlainPanel):
             self.defaultcolour.set(v.defaultcolour)
             self.adjudication.set(v.adjudication)
         else:
-            change_fixed_value(self.eventname, self.eventrecord.value.name)
-            change_fixed_value(
+            _change_fixed_value(self.eventname, self.eventrecord.value.name)
+            _change_fixed_value(
                 self.eventstartdate, self.eventrecord.value.startdate
             )
-            change_fixed_value(
+            _change_fixed_value(
                 self.eventenddate, self.eventrecord.value.enddate
             )
-            change_value(self.eventcode, "")
-            change_value(self.graderemail, "")
-            change_value(self.gradername, "")
-            change_text_value(self.graderaddress, "")
-            change_value(self.graderpostcode, "")
-            change_value(self.movesfirst, "")
-            change_value(self.moveslater, "")
-            change_value(self.minutesonly, "")
-            change_value(self.minutesfirst, "")
-            change_value(self.minuteslater, "")
-            change_value(self.minuteslast, "")
-            change_value(self.secondspermove, "")
-            change_value(self.treasurername, "")
-            change_text_value(self.treasureraddress, "")
-            change_value(self.treasurerpostcode, "")
+            _change_value(self.eventcode, "")
+            _change_value(self.graderemail, "")
+            _change_value(self.gradername, "")
+            _change_text_value(self.graderaddress, "")
+            _change_value(self.graderpostcode, "")
+            _change_value(self.movesfirst, "")
+            _change_value(self.moveslater, "")
+            _change_value(self.minutesonly, "")
+            _change_value(self.minutesfirst, "")
+            _change_value(self.minuteslater, "")
+            _change_value(self.minuteslast, "")
+            _change_value(self.secondspermove, "")
+            _change_value(self.treasurername, "")
+            _change_text_value(self.treasureraddress, "")
+            _change_value(self.treasurerpostcode, "")
             self.informfide.set(0)
             self.informchessmoves.set(0)
             self.informgrandprix.set(0)
@@ -721,3 +709,82 @@ class NewEvent(panel.PlainPanel):
             self.informwest.set(0)
             self.defaultcolour.set(0)
             self.adjudication.set(0)
+
+    def copy_event_detail(self, selection):
+        """Copy event detail from record to widget excluding event identity.
+
+        Event identity includes event code and submission as well as name,
+        start date, and end date.
+
+        """
+        (
+            eventrecord,
+            ecfeventrecord,
+        ) = self._get_event_and_ecf_event_records(selection)
+        if eventrecord is None or ecfeventrecord is None:
+            return False
+        v = ecfeventrecord.value
+        _change_value(self.graderemail, v.graderemail)
+        _change_value(self.gradername, v.gradername)
+        _change_text_value(self.graderaddress, v.graderaddress)
+        _change_value(self.graderpostcode, v.graderpostcode)
+        _change_value(self.movesfirst, v.movesfirst)
+        _change_value(self.moveslater, v.moveslater)
+        _change_value(self.minutesonly, v.minutesonly)
+        _change_value(self.minutesfirst, v.minutesfirst)
+        _change_value(self.minuteslater, v.minuteslater)
+        _change_value(self.minuteslast, v.minuteslast)
+        _change_value(self.secondspermove, v.secondspermove)
+        _change_value(self.treasurername, v.treasurername)
+        _change_text_value(self.treasureraddress, v.treasureraddress)
+        _change_value(self.treasurerpostcode, v.treasurerpostcode)
+        self.informfide.set(v.informfide)
+        self.informchessmoves.set(v.informchessmoves)
+        self.informgrandprix.set(v.informgrandprix)
+        self.informeast.set(v.informeast)
+        self.informmidlands.set(v.informmidlands)
+        self.informnorth.set(v.informnorth)
+        self.informsouth.set(v.informsouth)
+        self.informwest.set(v.informwest)
+        self.defaultcolour.set(v.defaultcolour)
+        self.adjudication.set(v.adjudication)
+        return True
+
+    def _get_event_and_ecf_event_records(self, selection):
+        db = self.get_appsys().get_results_database()
+        eventrecord = resultsrecord.get_event_from_record_value(
+            db.get_primary_record(
+                filespec.EVENT_FILE_DEF,
+                selection[0][-1],
+            )
+        )
+        ecfeventrecord = ecfrecord.get_ecf_event(
+            db.get_primary_record(
+                filespec.ECFEVENT_FILE_DEF,
+                db.database_cursor(
+                    filespec.ECFEVENT_FILE_DEF,
+                    filespec.ECFEVENTIDENTITY_FIELD_DEF,
+                ).get_unique_primary_for_index_key(
+                    db.encode_record_number(
+                        eventrecord.value.get_event_identity()
+                    )
+                ),
+            )
+        )
+        return (eventrecord, ecfeventrecord)
+
+
+def _change_text_value(control, value):
+    control.delete("1.0", tkinter.END)
+    control.insert(tkinter.END, value)
+
+
+def _change_value(control, value):
+    control.delete(0, tkinter.END)
+    control.insert(tkinter.END, value)
+
+
+def _change_fixed_value(control, value):
+    control.configure(state=tkinter.NORMAL)
+    _change_value(control, value)
+    control.configure(state="readonly")

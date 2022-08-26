@@ -17,6 +17,7 @@ from . import newplayers
 from . import ecfgradingcodes
 from . import ecfclubcodes
 from . import ecfevents
+from . import ecfeventcopy
 from . import ecfplayers
 from . import importecfdata
 from . import feedback
@@ -40,6 +41,7 @@ class Leagues(leagues_database.Leagues):
     _tab_ecfgradingcodes = "leagues_tab_ecfgradingcodes"
     _tab_ecfclubcodes = "leagues_tab_ecfclubcodes"
     _tab_ecfevents = "leagues_tab_ecfevents"
+    _tab_ecfeventcopy = "leagues_tab_ecfeventcopy"
     _tab_ecfplayers = "leagues_tab_ecfplayers"
     _tab_importecfdata = "leagues_tab_importecfdata"
     _tab_importfeedback = "leagues_tab_importfeedback"
@@ -48,6 +50,7 @@ class Leagues(leagues_database.Leagues):
     _tab_playersdownload = "leagues_tab_playersdownload"
 
     _state_ecfeventdetail = "leagues_state_ecfeventdetail"
+    _state_ecfeventcopy = "leagues_state_ecfeventcopy"
     _state_importecfdata = "leagues_state_importecfdata"
     _state_importfeedback = "leagues_state_importfeedback"
     _state_importfeedbackmonthly = "leagues_state_importfeedback_monthly"
@@ -97,6 +100,16 @@ class Leagues(leagues_database.Leagues):
             text="ECF Event Detail",
             tooltip="Update details of event for submission to ECF.",
             tabclass=lambda **k: newevent.NewEvent(**k),
+            destroy_actions=(
+                newevent.NewEvent._btn_cancel,
+                control.Control._btn_closedatabase,
+            ),
+        )
+        self.define_tab(
+            self._tab_ecfeventcopy,
+            text="Copy ECF Event Detail",
+            tooltip="Select event and copy details to ECF Event Detail tab.",
+            tabclass=lambda **k: ecfeventcopy.ECFEventCopy(**k),
             destroy_actions=(
                 newevent.NewEvent._btn_cancel,
                 control.Control._btn_closedatabase,
@@ -180,6 +193,7 @@ class Leagues(leagues_database.Leagues):
                     self._tab_ecfevents,
                 ),
                 self._state_ecfeventdetail: (self._tab_ecfeventdetail,),
+                self._state_ecfeventcopy: (self._tab_ecfeventcopy,),
                 self._state_importecfdata: (self._tab_importecfdata,),
                 self._state_importfeedback: (self._tab_importfeedback,),
                 self._state_importfeedbackmonthly: (
@@ -203,9 +217,9 @@ class Leagues(leagues_database.Leagues):
                     self._state_dbopen,
                     ecfevents.ECFEvents._btn_ecfeventdetail,
                 ): [self._state_ecfeventdetail, self._tab_ecfeventdetail],
-                (self._state_ecfeventdetail, newevent.NewEvent._btn_ok): [
-                    self._state_dbopen,
-                    self._tab_ecfevents,
+                (self._state_ecfeventdetail, newevent.NewEvent._btn_copy): [
+                    self._state_ecfeventcopy,
+                    self._tab_ecfeventcopy,
                 ],
                 (self._state_ecfeventdetail, newevent.NewEvent._btn_cancel): [
                     self._state_dbopen,
@@ -289,6 +303,20 @@ class Leagues(leagues_database.Leagues):
                     self._state_responsefeedbackmonthly,
                     control.Control._btn_closedatabase,
                 ): [self._state_dbclosed, None],
+                (
+                    self._state_ecfeventcopy,
+                    ecfeventcopy.ECFEventCopy._btn_ecfeventcopy,
+                ): [
+                    self._state_ecfeventdetail,
+                    self._tab_ecfeventdetail,
+                ],
+                (
+                    self._state_ecfeventcopy,
+                    ecfeventcopy.ECFEventCopy._btn_ecfeventback,
+                ): [
+                    self._state_ecfeventdetail,
+                    self._tab_ecfeventdetail,
+                ],
             }
         )
         return switch_table
