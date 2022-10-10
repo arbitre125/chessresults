@@ -45,8 +45,8 @@ class GameSummary(ExceptionHandler):
         ).value
 
         self.summary = _GameSummaryReport(
-            parent,
-            "".join(
+            parent=parent,
+            title="".join(
                 (
                     "Game Summary for ",
                     rv.name,

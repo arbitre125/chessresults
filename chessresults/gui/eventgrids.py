@@ -16,7 +16,11 @@ from .resultsrow import ResultsDBrowEvent
 from ..core import filespec
 
 
-class EventBaseGrid(gridbindings.GridBindings, DataGridReadOnly):
+# DataGridReadOnly placed first, in base class list, to keep things going.
+# Changing the argument to DataGridReadOnly from positional to keyword will
+# probably allow the original order to be restored and a single call of
+# super().__init__ to replace the two specific __init__ calls.
+class EventBaseGrid(DataGridReadOnly, gridbindings.GridBindings):
 
     """Base class for grid widgets used on event page."""
 

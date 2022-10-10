@@ -236,7 +236,7 @@ class Events(events_database.Events):
             title="Events",
         )
 
-    def get_gradingcodes(self, database):
+    def get_gradingcodes(self, database, players):
         """Return dict of ECF codes for players, default empty dict."""
         return {
             p: ecfmaprecord.get_merge_grading_code_for_person(database, person)

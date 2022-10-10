@@ -58,6 +58,8 @@ class Leagues(leagues_database.Leagues):
     _state_clubsdownload = "leagues_state_clubsdownload"
     _state_playersdownload = "leagues_state_playersdownload"
 
+    show_master_list_grading_codes = True
+
     def __init__(self, master=None, cnf=dict(), **kargs):
         """Extend and define the results database results frame."""
         super(Leagues, self).__init__(master=master, cnf=cnf, **kargs)

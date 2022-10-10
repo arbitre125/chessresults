@@ -155,8 +155,8 @@ def display_player_details(myself, selections, title):
             )
         )
         dialogue.Report(
-            myself,
-            title,
+            parent=myself,
+            title=title,
             action_titles={"Save": "Save Player Details"},
             wrap=tkinter.WORD,
             tabstyle="tabular",

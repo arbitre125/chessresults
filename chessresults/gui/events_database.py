@@ -1021,7 +1021,7 @@ class Events(panel.PanelGridSelector):
                 eventnumbers[k] = len(eventnumbers)
 
         # Maybe put this in subclass methods eventually.
-        gradingcodes = self.get_gradingcodes(database)
+        gradingcodes = self.get_gradingcodes(database, players)
 
         # gradingcodes above needed the first step in setting players.
         players = {p: players[p].value.name for p in players}

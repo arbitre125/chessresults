@@ -688,7 +688,7 @@ class Leagues(leagues_validate.Leagues):
 
         try:
             self._database_open(database_folder)
-        except Exception as exc:
+        except KeyError as exc:
             tkinter.messagebox.showinfo(
                 parent=self.get_widget(),
                 message="".join(
